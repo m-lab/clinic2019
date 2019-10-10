@@ -3,7 +3,8 @@ import shallowEquals, { shallowEqualsDebug } from '../utils/shallowEquals';
 
 let debugAll = false;
 if (typeof __DEBUG_COMPUTED_PROPS__ !== 'undefined') {
-  debugAll = __DEBUG_COMPUTED_PROPS__;
+  // NOTE: This was commented out in building the Incident Viewer Demo. We don't know what it does.
+  // debugAll = __DEBUG_COMPUTED_PROPS__;
 }
 
 /**

@@ -3,6 +3,8 @@ import d3 from '../../d3';
 
 import { colorsFor } from '../../utils/color';
 import { LineChart, CountChart } from '../../components';
+// import LineChart from '../../components/LineChart/LineChart.jsx';
+// import CountChart from '../../components/CountChart/CountChart.jsx';
 import { multiExtent } from '../../utils/array';
 import addComputedProps from '../../hoc/addComputedProps';
 import { testThreshold } from '../../constants';
