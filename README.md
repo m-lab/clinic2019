@@ -20,9 +20,9 @@ Beyond the demo, we plan to document this interface so that arbitary incidents c
 
 * **badPeriod (Date startTime,  Date endTime)**: This shows the duration of the incident period. For example, this could be a year long period characterized a 30 percent drop in internet download speed in a certain area relative to the previous year, which would be a good period in this example.
 
-* **severity (float metric, string metricUnit)**: This is a parameter to represent a metric that communicates how severe the incident is. 
+* **severity float metric**: This is a parameter to represent a metric that communicates how severe the incident is. This float is between 0.0 and 1.0 where 1.0 is the most severe incident of its type.
 
-* **impact (int impactMetric, string impactDescription)**: This shows the impact the incident has on internet users or internet infrastructure. This could be the number of user tests affected by the incident for example.
+* **testAffected int impactMetric**: This shows the impact the incident has on internet users or internet infrastructure. This could be the number of user tests affected by the incident for example.
 
 
 A UML class diagram of what an incident class object will look like:
