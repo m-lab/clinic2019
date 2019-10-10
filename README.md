@@ -16,13 +16,13 @@ This demo will have access to a single, static incident object that it will disp
 For our demo, we create an Incident class that implements this interface. We plan on using the internet perforamance data currently sitting in the BigQuery, to leverage this class and make incidents. We will then pass these incidents to our front end, for them to be visualized.
 Beyond the demo, we plan to document this interface so that arbitary incidents can be created and vizualized in the viz system will augement as long as they implement our interface.
 
-* **goodPeriod (Date startTime, Date endTime)**: This shows the duration of a good period in the internet performance date before an incident starts happening. A good period in this context can be defined as, for example, a year long period that is characterized by a healthy internet performance and is incident free.
+* **goodPeriod** (Date startTime, Date endTime): This shows the duration of a good period in the internet performance date before an incident starts happening. A good period in this context can be defined as, for example, a year long period that is characterized by a healthy internet performance and is incident free.
 
-* **badPeriod (Date startTime,  Date endTime)**: This shows the duration of the incident period. For example, this could be a year long period characterized a 30 percent drop in internet download speed in a certain area relative to the previous year, which would be a good period in this example.
+* **badPeriod** (Date startTime,  Date endTime): This shows the duration of the incident period. For example, this could be a year long period characterized a 30 percent drop in internet download speed in a certain area relative to the previous year, which would be a good period in this example.
 
-* **severity float metric**: This is a parameter to represent a metric that communicates how severe the incident is. This float is between 0.0 and 1.0 where 1.0 is the most severe incident of its type.
+* **severity** float metric: This is a parameter to represent a metric that communicates how severe the incident is. This float is between 0.0 and 1.0 where 1.0 is the most severe incident of its type.
 
-* **testAffected int impactMetric**: This shows the impact the incident has on internet users or internet infrastructure. This could be the number of user tests affected by the incident for example.
+* **testAffected** int impactMetric: This shows the impact the incident has on internet users or internet infrastructure. This could be the number of user tests affected by the incident for example.
 
 
 A UML class diagram of what an incident class object will look like:
