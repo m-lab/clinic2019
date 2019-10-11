@@ -1,7 +1,7 @@
 import React from 'react';
 import logo from './mlab-logo.png';
 import './App.css';
-import { LineChartWithIncidents } from './components/';
+import { LineChart } from './components/';
 
 function App() {
   console.log("test")
@@ -10,7 +10,7 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         
-        <LineChartWithIncidents></LineChartWithIncidents>
+        <LineChart></LineChart>
 
       </header>
     </div>
