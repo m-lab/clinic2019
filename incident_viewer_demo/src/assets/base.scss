@@ -1,0 +1,53 @@
+// Import our custom bootstrap version
+@import "variables";
+@import "bootstrap_custom";
+@import "./font-awesome/scss/font-awesome.scss";
+@import "chart";
+
+// Generic site-wide css here
+body {
+  font-weight: 300;
+  background: #fff;
+}
+
+em {
+  font-style: normal;
+  font-weight: 500;
+  color: #555;
+}
+
+.section, .subsection {
+  border-top: 1px solid #e0e0e0;
+  padding-top: 12px;
+  margin-bottom: 40px;
+
+  header {
+    h2 {
+      margin-bottom: 20px;
+      margin-top: 5px;
+    }
+
+    h3 {
+      margin-top: 0;
+    }
+  }
+}
+
+.section:first-child, .section.no-border {
+  border-top: none;
+}
+
+
+.facet-by-selector,
+.breakdown-by-selector,
+.metric-selector,
+.time-aggregation-selector,
+.client-isp-selector {
+  margin-bottom: 40px;
+}
+
+.client-isp-selector {
+  .IspSelect {
+    margin-bottom: 0;
+  }
+}

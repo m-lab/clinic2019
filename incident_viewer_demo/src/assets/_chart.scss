@@ -1,0 +1,39 @@
+@import 'variables';
+
+.chart {
+  background: #fff;
+
+  text {
+    font-family: $font-family-sans-serif;
+  }
+
+  .axis-label {
+    font-size: 12px;
+    fill: #666;
+  }
+
+  .highlight-y,
+  .highlight-x {
+    font-size: 10px;
+    fill: #333;
+    font-weight: 500;
+  }
+
+  .highlight-circle {
+    stroke: #aaa;
+    fill: #bbb;
+  }
+
+  .y-axis, .x-axis {
+    font-size: 10px;
+
+    path, line {
+      stroke: #ddd;
+      shape-rendering: crispEdges;
+    }
+
+    text {
+      fill: #888;
+    }
+  }
+}
