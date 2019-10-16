@@ -1,6 +1,18 @@
 import React from 'react';
 import logo from './mlab-logo.png';
 import './App.css';
+import LineChartWithCounts from './LineChart/LineChartWithCounts.jsx'
+
+// // Handle all of the discombobulated variables that the chart takes in.
+// chartId = "providers-time-series"
+// colors = 
+// counts = 
+// clientIspCounts = 
+// clientIspTimeSeriesData = 
+// annotationTimeSeries = 
+// highlightTimeSeriesDate = 
+// highlightTimeSeriesLine =
+
 
 function App() {
   return (
@@ -10,14 +22,23 @@ function App() {
         <p>
           Hello M-Lab Team! Edit <code>src/App.js</code> to change this text.
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <LineChartWithCounts
+          // id={chartId}
+          // colors={colors}
+          // counts={counts}
+          // highlightCounts={clientIspCounts}
+          // series={clientIspTimeSeriesData}
+          // annotationSeries={annotationTimeSeries}
+          // onHighlightDate={this.onHighlightTimeSeriesDate}
+          // highlightDate={highlightTimeSeriesDate}
+          // onHighlightLine={this.onHighlightTimeSeriesLine}
+          // highlightLine={highlightTimeSeriesLine}
+          // yFormatter={viewMetric.formatter}
+          // xKey="date"
+          // yAxisLabel={viewMetric.label}
+          // yAxisUnit={viewMetric.unit}
+          // yKey={viewMetric.dataKey}
+          />
       </header>
     </div>
   );
