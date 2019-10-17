@@ -2,7 +2,7 @@ import React, { PureComponent, PropTypes } from 'react';
 import d3 from '../chart_support/d3';
 
 import { colorsFor } from '../chart_support/color';
-import { LineChart } from '/';
+import LineChart from './LineChart.jsx';
 import CountChart from '../chart_support/CountChart/CountChart.jsx'
 import { multiExtent } from '../chart_support/array';
 import addComputedProps from '../chart_support/addComputedProps';
