@@ -1,10 +1,10 @@
 import React, { PureComponent, PropTypes } from 'react';
-import d3 from '/d3';
+import d3 from '../d3';
 
-import addComputedProps from '/addComputedProps';
-import { testThreshold } from '/constants';
+import addComputedProps from '../addComputedProps';
+import { testThreshold } from '../constants';
 
-import { formatNumber } from '/format';
+import { formatNumber } from '../format';
 
 import './CountChart.scss';
 
