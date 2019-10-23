@@ -5,4 +5,4 @@
  *
  */
 
-export Legend from './Legend/Legend';
+export { Legend } from './Legend/Legend';

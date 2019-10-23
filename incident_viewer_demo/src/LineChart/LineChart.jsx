@@ -3,7 +3,7 @@ import d3 from '../chart_support/d3';
 import { multiExtent, findClosestSorted, findEqualSorted } from '../chart_support/array';
 import { colorsFor } from '../chart_support/color';
 import { standardLineChunkedDefinitions } from '../chart_support/chart';
-import { Legend } from '../chart_support/d3-components';
+import Legend from '../chart_support/d3-components/Legend/Legend.js';
 import addComputedProps from '../chart_support/addComputedProps';
 import { testThreshold } from '../chart_support/constants';
 

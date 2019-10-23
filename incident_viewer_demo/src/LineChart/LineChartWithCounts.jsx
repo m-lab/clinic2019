@@ -17,7 +17,7 @@ function visProps(props) {
 
   series = Array.isArray(series) ? series : [series];
 
-  // ensure annotation series is an array
+  // en ure annotation series is an array
   if (annotationSeries && !Array.isArray(annotationSeries)) {
     annotationSeries = [annotationSeries];
   }
