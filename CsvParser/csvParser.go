@@ -56,7 +56,7 @@ func CsvParser(filePath string) [100]DefaultIncident{
 		log.Fatal(err)
 	}
 
-	for i := 1 ; i < 100; i++{
+	for i := 0 ; i < 100; i++{
 	
 		rec, err = reader.Read()
 
