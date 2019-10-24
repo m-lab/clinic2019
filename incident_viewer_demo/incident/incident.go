@@ -7,9 +7,9 @@ type Incident interface {
 	badPeriod() (time.Time, time.Time)
 	severity() float64
 	testsAffected() int
-	severityUnits() string
 	goodPeriodInfo() string
 	badPeriodInfo() string
+	incidentInfo() string
 }
 
 type DefaultIncident struct {
@@ -35,10 +35,6 @@ func (i *DefaultIncident) severity() float64 {
 
 func (i *DefaultIncident) testsAffected() int {
 	return i.numTestsAffected
-}
-
-func (i *DefaultIncident) severityUnits() string {
-	return "percent"
 }
 
 func (i *DefaultIncident) goodPeriodInfo() string {
