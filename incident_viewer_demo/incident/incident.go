@@ -3,38 +3,52 @@ package incident
 import "time"
 
 type Incident interface {
-	getGoodPeriod() (time.Time, time.Time)
-	getBadPeriod() (time.Time, time.Time)
-	getSeverity() float64
-	getTestsAffected() int
-	getSeverityUnits() string
+	goodPeriod() (time.Time, time.Time)
+	badPeriod() (time.Time, time.Time)
+	severity() float64
+	testsAffected() int
+	severityUnits() string
+	goodPeriodInfo() string
+	badPeriodInfo() string
 }
 
 type DefaultIncident struct {
-	goodStartTime time.Time
-	goodEndTime   time.Time
-	badStartTime  time.Time
-	badEndTime    time.Time
-	severity      float64
-	testsAffected int
+	goodStartTime    time.Time
+	goodEndTime      time.Time
+	badStartTime     time.Time
+	badEndTime       time.Time
+	severityDecimal  float64
+	numTestsAffected int
 }
 
-func (i *DefaultIncident) getGoodPeriod() (time.Time, time.Time) {
+func (i *DefaultIncident) goodPeriod() (time.Time, time.Time) {
 	return i.goodStartTime, i.goodEndTime
 }
 
-func (i *DefaultIncident) getBadPeriod() (time.Time, time.Time) {
+func (i *DefaultIncident) badPeriod() (time.Time, time.Time) {
 	return i.badStartTime, i.badEndTime
 }
 
-func (i *DefaultIncident) getSeverity() float64 {
-	return i.severity
+func (i *DefaultIncident) severity() float64 {
+	return i.severityDecimal
 }
 
-func (i *DefaultIncident) getTestsAffected() int {
-	return i.testsAffected
+func (i *DefaultIncident) testsAffected() int {
+	return i.numTestsAffected
 }
 
-func (i *DefaultIncident) getSeverityUnits() string {
+func (i *DefaultIncident) severityUnits() string {
 	return "percent"
+}
+
+func (i *DefaultIncident) goodPeriodInfo() string {
+	return "good info placeholder text"
+}
+
+func (i *DefaultIncident) badPeriodInfo() string {
+	return "bad info placeholder text"
+}
+
+func (i *DefaultIncident) incidentInfo() string {
+	return "incident info placeholder text"
 }

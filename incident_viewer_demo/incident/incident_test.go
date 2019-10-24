@@ -11,7 +11,7 @@ type timeAr struct {
 	end   time.Time
 }
 
-func Test_getGoodPeriod(t *testing.T) {
+func Test_goodPeriod(t *testing.T) {
 	type args struct {
 	}
 	tests := []struct {
@@ -35,10 +35,10 @@ func Test_getGoodPeriod(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s, e := (&tt.input).getGoodPeriod()
+			s, e := (&tt.input).goodPeriod()
 			got := timeAr{s, e}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("getGoodPeriod() = %v, want %v", got, tt.want)
+				t.Errorf("goodPeriod() = %v, want %v", got, tt.want)
 			}
 		})
 	}
