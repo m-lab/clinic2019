@@ -1,4 +1,4 @@
-package time
+package CsvParser
 
 import(
 	"io"
@@ -24,6 +24,10 @@ type DefaultIncident struct {
 	badEndTime    time.Time
 	severity      float64
 	testsAffected int
+}
+
+func (i *DefaultIncident) getSeverity() float64 {
+	return i.severity
 }
 
 func CsvParser(filePath string) [100]DefaultIncident{
