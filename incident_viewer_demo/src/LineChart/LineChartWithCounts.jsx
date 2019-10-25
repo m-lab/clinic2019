@@ -32,6 +32,7 @@ function visProps(props) {
   const xMax = plotAreaWidth;
 
   let xDomain = xExtent;
+
   if (!xDomain && series) {
     xDomain = multiExtent([...series, ...annotationSeries], d => d[xKey], oneSeries => oneSeries.results);
   }
