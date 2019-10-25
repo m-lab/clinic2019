@@ -11,10 +11,13 @@ var i DefaultIncident = DefaultIncident{time.Date(2000, 12, 12, 0, 0, 0, 0, time
 	time.Date(2001, 12, 12, 0, 0, 0, 0, time.UTC),
 	time.Date(2001, 12, 12, 1, 0, 0, 0, time.UTC),
 	time.Date(2002, 12, 12, 0, 0, 0, 0, time.UTC),
+	50.2,
+	25.1,
 	0.5,
 	123456,
 }
 
+/* Struct used for testing a time period */
 type timeAr struct {
 	start time.Time
 	end   time.Time
@@ -29,7 +32,7 @@ func Test_goodPeriod(t *testing.T) {
 		want  timeAr
 	}{
 		{
-			name:  "Return two time objects",
+			name:  "Return two time objects for the good period",
 			input: i,
 			want: timeAr{time.Date(2000, 12, 12, 0, 0, 0, 0, time.UTC),
 				time.Date(2001, 12, 12, 0, 0, 0, 0, time.UTC)},
@@ -56,7 +59,7 @@ func Test_badPeriod(t *testing.T) {
 		want  timeAr
 	}{
 		{
-			name:  "Return two time objects",
+			name:  "Return two time objects for the bad period",
 			input: i,
 			want: timeAr{time.Date(2001, 12, 12, 1, 0, 0, 0, time.UTC),
 				time.Date(2002, 12, 12, 0, 0, 0, 0, time.UTC)},
@@ -83,7 +86,7 @@ func Test_severity(t *testing.T) {
 		want  float64
 	}{
 		{
-			name:  "Return a decimal number between 0 and 1",
+			name:  "Return a decimal number between 0 and 1 representing the severity",
 			input: i,
 			want:  0.5,
 		},

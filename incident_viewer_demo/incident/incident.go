@@ -1,6 +1,9 @@
 package incident
 
-import "time"
+import (
+	"strconv"
+	"time"
+)
 
 type Incident interface {
 	goodPeriod() (time.Time, time.Time)
@@ -17,6 +20,8 @@ type DefaultIncident struct {
 	goodEndTime      time.Time
 	badStartTime     time.Time
 	badEndTime       time.Time
+	avgGoodDS        float64
+	avgBadDS         float64
 	severityDecimal  float64
 	numTestsAffected int
 }
@@ -38,13 +43,21 @@ func (i *DefaultIncident) testsAffected() int {
 }
 
 func (i *DefaultIncident) goodPeriodInfo() string {
-	return "good info placeholder text"
+	ds := strconv.FormatFloat(i.avgGoodDS, 'f', 2, 64)
+	s := i.goodStartTime.String()
+	e := i.goodEndTime.String()
+	return "Average download speed: " + ds + " from " + s + " - " + e
 }
 
 func (i *DefaultIncident) badPeriodInfo() string {
-	return "bad info placeholder text"
+	ds := strconv.FormatFloat(i.avgBadDS, 'f', 2, 64)
+	s := i.badStartTime.String()
+	e := i.badEndTime.String()
+	return "Average download speed: " + ds + " from " + s + " - " + e
 }
 
 func (i *DefaultIncident) incidentInfo() string {
-	return "incident info placeholder text"
+	s := strconv.FormatFloat(i.severityDecimal, 'f', 2, 64)
+	ta := strconv.Itoa(i.numTestsAffected)
+	return "Download speed dropped by " + s + " affecting " + ta + "tests"
 }
