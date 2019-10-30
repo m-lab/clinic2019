@@ -171,7 +171,7 @@ class LineChartWithCounts extends PureComponent {
             />
           </g>
           <g transform={`translate(0 ${lineChartHeight})`}>
-            <CountChart
+            {/* <CountChart
               data={counts}
               highlightData={highlightCountData}
               highlightCount={highlightDate}
@@ -185,7 +185,7 @@ class LineChartWithCounts extends PureComponent {
               xKey={xKey}
               xScale={xScale}
               yExtent={countExtent}
-            />
+            /> */}
           </g>
         </svg>
       </div>
