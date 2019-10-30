@@ -1,5 +1,5 @@
-[![Build Status](https://travis-ci.org/m-lab/signal-searcher.svg?branch=master)](https://travis-ci.org/m-lab/signal-searcher)
-[![Coverage Status](https://coveralls.io/repos/github/m-lab/signal-searcher/badge.svg?branch=master)](https://coveralls.io/github/m-lab/signal-searcher?branch=master)
+[![Build Status](https://travis-ci.org/m-lab/signal-searcher.svg?branch=master)](https://travis-ci.org/m-lab/clinic2019)
+<!-- [![Coverage Status](https://coveralls.io/repos/github/m-lab/signal-searcher/badge.svg?branch=master)](https://coveralls.io/github/m-lab/signal-searcher?branch=master) -->
 
 # Incident_Viewer_Demo
 A demo of the Google M-Lab Incident Viewer created by HMC Clinic.
