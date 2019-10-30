@@ -38,3 +38,12 @@ A UML class diagram of what an incident class object will look like:
   <img src="images/Incident_Class_Diagram.png" alt="Incident_Class_Diagram" width="450"/>
 
 Data for the Incident class will be fed in similarly to how it is fed in the M-Lab/Signal-Searcher repo. Specifically, we plan to draw from the main function in main.go.
+
+## Running Signal-Searcher to Generate Incident CSV file 
+* Download and set up golang
+
+* Have Signal-Searcher repository in ```go/src/github.com/m-lab/signal-searcher``` 
+
+* Make sure ```GOOGLE_APPLICATION_CREDENTIALS``` is set: https://cloud.google.com/docs/authentication/getting-started 
+
+* From the m-lab folder, ```go build .``` and then ```go run ./signal-searcher | sort -nrk 1 > incidentfile.csv``` 1 is the column of the csv file we wish to sort. In our case, we sort by decreasing tests affected, which is the parameter of column 1. To sort in increasing order, change ```-nrk``` to ```-ntk```. 
