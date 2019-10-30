@@ -6,13 +6,13 @@ import (
 )
 
 type Incident interface {
-	goodPeriod() (time.Time, time.Time)
-	badPeriod() (time.Time, time.Time)
-	severity() float64
-	testsAffected() int
-	goodPeriodInfo() string
-	badPeriodInfo() string
-	incidentInfo() string
+	getGoodPeriod() (time.Time, time.Time)
+	getBadPeriod() (time.Time, time.Time)
+	getSeverity() float64
+	getTestsAffected() int
+	getGoodPeriodInfo() string
+	getBadPeriodInfo() string
+	getIncidentInfo() string
 }
 
 type DefaultIncident struct {
@@ -26,37 +26,37 @@ type DefaultIncident struct {
 	numTestsAffected int
 }
 
-func (i *DefaultIncident) goodPeriod() (time.Time, time.Time) {
+func (i *DefaultIncident) getGoodPeriod() (time.Time, time.Time) {
 	return i.goodStartTime, i.goodEndTime
 }
 
-func (i *DefaultIncident) badPeriod() (time.Time, time.Time) {
+func (i *DefaultIncident) getBadPeriod() (time.Time, time.Time) {
 	return i.badStartTime, i.badEndTime
 }
 
-func (i *DefaultIncident) severity() float64 {
+func (i *DefaultIncident) getSeverity() float64 {
 	return i.severityDecimal
 }
 
-func (i *DefaultIncident) testsAffected() int {
+func (i *DefaultIncident) getTestsAffected() int {
 	return i.numTestsAffected
 }
 
-func (i *DefaultIncident) goodPeriodInfo() string {
+func (i *DefaultIncident) getGoodPeriodInfo() string {
 	ds := strconv.FormatFloat(i.avgGoodDS, 'f', 2, 64)
 	s := i.goodStartTime.String()
 	e := i.goodEndTime.String()
 	return "Average download speed: " + ds + " from " + s + " - " + e
 }
 
-func (i *DefaultIncident) badPeriodInfo() string {
+func (i *DefaultIncident) getBadPeriodInfo() string {
 	ds := strconv.FormatFloat(i.avgBadDS, 'f', 2, 64)
 	s := i.badStartTime.String()
 	e := i.badEndTime.String()
 	return "Average download speed: " + ds + " from " + s + " - " + e
 }
 
-func (i *DefaultIncident) incidentInfo() string {
+func (i *DefaultIncident) getIncidentInfo() string {
 	s := strconv.FormatFloat(i.severityDecimal, 'f', 2, 64)
 	ta := strconv.Itoa(i.numTestsAffected)
 	return "Download speed dropped by " + s + " affecting " + ta + "tests"

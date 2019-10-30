@@ -23,7 +23,7 @@ type timeAr struct {
 	end   time.Time
 }
 
-func Test_goodPeriod(t *testing.T) {
+func Test_getGoodPeriod(t *testing.T) {
 	type args struct {
 	}
 	tests := []struct {
@@ -41,16 +41,16 @@ func Test_goodPeriod(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s, e := (&tt.input).goodPeriod()
+			s, e := (&tt.input).getGoodPeriod()
 			got := timeAr{s, e}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("goodPeriod() = %v, want %v", got, tt.want)
+				t.Errorf("getGoodPeriod() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func Test_badPeriod(t *testing.T) {
+func Test_getBadPeriod(t *testing.T) {
 	type args struct {
 	}
 	tests := []struct {
@@ -68,16 +68,16 @@ func Test_badPeriod(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s, e := (&tt.input).badPeriod()
+			s, e := (&tt.input).getBadPeriod()
 			got := timeAr{s, e}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("badPeriod() = %v, want %v", got, tt.want)
+				t.Errorf("getBadPeriod() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func Test_severity(t *testing.T) {
+func Test_getSeverity(t *testing.T) {
 	type args struct {
 	}
 	tests := []struct {
@@ -94,15 +94,15 @@ func Test_severity(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := (&tt.input).severity()
+			got := (&tt.input).getSeverity()
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("severity() = %v, want %v", got, tt.want)
+				t.Errorf("getSeverity() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func Test_testsAffected(t *testing.T) {
+func Test_getTestsAffected(t *testing.T) {
 	type args struct {
 	}
 	tests := []struct {
@@ -119,9 +119,9 @@ func Test_testsAffected(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := (&tt.input).testsAffected()
+			got := (&tt.input).getTestsAffected()
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("testsAffected() = %v, want %v", got, tt.want)
+				t.Errorf("getTestsAffected() = %v, want %v", got, tt.want)
 			}
 		})
 	}
