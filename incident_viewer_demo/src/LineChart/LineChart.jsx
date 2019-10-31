@@ -376,7 +376,8 @@ class LineChart extends PureComponent {
       plotAreaHeight, plotAreaWidth } = this.props;
 
     // ensure we have room for the legend
-    this.g.attr('transform', `translate(${padding.left} ${padding.top})`);
+
+    // this.g.attr('transform', `translate(${padding.left} ${padding.top})`);
     this.mouseListener
       .attr('width', plotAreaWidth)
       .attr('height', plotAreaHeight + 25); // plus some to cover part of the x axis
@@ -391,11 +392,11 @@ class LineChart extends PureComponent {
       });
     }
 
-    this.updateLegend(highlightValues);
+    // this.updateLegend(highlightValues);
     this.updateAxes();
     this.updateAnnotationLines();
     this.updateLines();
-    this.updateHighlightDate(highlightValues);
+    // this.updateHighlightDate(highlightValues);
     this.updateHighlightLine();
   }
 
