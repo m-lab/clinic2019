@@ -9,4 +9,4 @@ script:
 # Run every regular unit test.
 - go test -covermode=count -coverprofile=_coverage.cov -v -coverpkg=./... ./...
 # Submit coverage to Coveralls.io
-# - $GOPATH/bin/goveralls -coverprofile=_coverage.cov -service=travis-ci
+- $GOPATH/bin/goveralls -coverprofile=_coverage.cov -service=travis-ci
