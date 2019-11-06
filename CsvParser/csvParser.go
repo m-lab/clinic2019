@@ -1,46 +1,22 @@
-package CsvParser
+package csvParser
 
 import(
 	"io"
-	"fmt"
 	"time"
   	"log"
 	"os"
 	"strconv"
 	"encoding/csv"
 	"strings"
+	"github.com/m-lab/clinic2019/incident_viewer_demo/incident"
 )
 
-type Incident interface {
-	//getGoodPeriod() (time.Time, time.Time)
-	getBadPeriod() (time.Time, time.Time)
-	getSeverity() float64
-	getTestsAffected() int
-	getSeverityUnits() string
-}
 
-type DefaultIncident struct {
-	//goodStartTime time.Time
-	//goodEndTime   time.Time
-	badStartTime  time.Time
-	badEndTime    time.Time
-	severity      float64
-	testsAffected int
-}
-
-func (i *DefaultIncident) getSeverity() float64 {
-	return i.severity
-}
-
-func (i *DefaultIncident) getTestsAffected() int {
-	return i.testsAffected
-}
-
-func CsvParser(filePath string) [100]DefaultIncident{
+func CsvParser(filePath string) [100]incident.DefaultIncident{
 
 	//just assume that you have 100 rows in the csv and then return an array of 1OO incidents
-	var incidentArray [100]DefaultIncident
-
+	var incidentArray [100]incident.DefaultIncident
+	var rec []string
 	const shortForm = "2006-01-02"
 
 	f, err := os.Open(filePath)
@@ -55,21 +31,18 @@ func CsvParser(filePath string) [100]DefaultIncident{
 
 	reader.Comma = ','
 
-	//this reads the header and probably increments r
-	rec, err := reader.Read();
+	//Uncomment this if the csv file has a header
 
-	if err != nil{
-		log.Fatal(err)
-	}
+	// rec, err = reader.Read();
 
-	for i := 0 ; i < 100; i++{
+	// if err != nil{
+	// 	log.Fatal(err)
+	// }
+
 	
+	for i := 0 ; i < 100; i++{
+		
 		rec, err = reader.Read()
-
-		// fmt.Print(rec)
-		// fmt.Print("about to be weird")
-		// fmt.Print(rec[0])
-
 		if err != nil{
 			if err == io.EOF{
 				break
@@ -77,30 +50,37 @@ func CsvParser(filePath string) [100]DefaultIncident{
 			log.Fatal(err)
 		}
 
-		timeStartString := strings.Split(rec[3], " ");
-		timeStart, _:= time.Parse(shortForm, timeStartString[1])
+		//knowing the structure of the csv file, retrieve some values
+		badTimeStartString := strings.Split(rec[3], " ");
+		timeStart, _:= time.Parse(shortForm, badTimeStartString[1])
 		
-		timeEndString := strings.Split(rec[4], " ")
-		timeEnd, _ := time.Parse(shortForm, timeEndString[1])
+		badTimeEndString := strings.Split(rec[4], " ")
+		timeEnd, _ := time.Parse(shortForm, badTimeEndString[1])
 		
+		goodTimeStart := timeStart.AddDate(-1,0,0)
+		goodTimeEnd := timeStart
+
 		severityString := strings.Split(rec[5], " ")
 		severity, _ := strconv.ParseFloat(severityString[1], 64)
-		//fmt.Print(severity)
-		//fmt.Print(status)
+		
 		testsAffected, _ := strconv.Atoi(rec[0])
-		//fmt.Print(testsAffected)
+	
+		avgGoodDString := strings.Split(rec[6], " ")
+		avgGoodDS, _ := strconv.ParseFloat(avgGoodDString[1], 64)
 
-		defaultIncident := DefaultIncident{ timeStart, timeEnd, severity, testsAffected}
+		avgBadDString :=  strings.Split(rec[7], " ")
+		avgBadDS, _ := strconv.ParseFloat(avgBadDString[1], 64)
 
-		incidentArray[i] = defaultIncident
+		defaultIncident := new(incident.DefaultIncident)
+		
+		defaultIncident.Init(goodTimeStart, goodTimeEnd, timeStart, timeEnd, avgGoodDS,
+		avgBadDS, severity, testsAffected)
+
+		incidentArray[i] = *defaultIncident
 
 	}
 
 	return incidentArray
 }
 
-func main(){
-
-	arrays := CsvParser("newincidents.cv")
-	fmt.Print(arrays[0])
-}
+ 
