@@ -1,9 +1,13 @@
 import React from 'react';
+import Row from 'react-bootstrap/lib/Row';
+import AutoWidth from 'react-auto-width';
 import logo from './mlab-logo.png';
 import './App.css';
 import LineChartWithCounts from './LineChart/LineChartWithCounts.jsx'
 import * as LocationPageActions from './chart_support/actions';
 import * as moment from 'moment';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './chart_support/assets/base.scss';
 
 //////////////////////////////////////////////////////////////////////////
 // Handle all of the discombobulated variables that the chart takes in. //
@@ -28,8 +32,6 @@ var counts = [
   {count: 52652, upload_speed_mbps_median: 4.581, rtt_avg: 41.468, retransmit_avg: 0.017, download_speed_mbps_median: 19.241, date: myMoment },
 ]
 
-// moment( new Date('Oct 01, 2018 00:00:00') ).format("YYYY-MM-DD hh:mm:ss")
-
 var clientIspCounts = [
   {count: 21481, date: myMoment},
   {count: 21502, date: myMoment},
@@ -43,66 +45,74 @@ var clientIspCounts = [
   {count: 16772, date: myMoment},
   {count: 5569, date: myMoment}
 ]
-var clientIspTimeSeriesData = []
-var annotationTimeSeries = []
+
+// Reading and loading JSON files with sample data of an incident
+var clientIspTimeSeriesData = require('./sample_data/client_isp_time_series_data.json');
+var annotationTimeSeries = require('./sample_data/annotation_time_series_data.json');
+
+// Convert series and annotationseries dates to moment objs
+for (var i = 0; i < clientIspTimeSeriesData.extents.date.length; i++) {
+  clientIspTimeSeriesData.extents.date[i] = moment(clientIspTimeSeriesData.extents.date[i]);
+  annotationTimeSeries.extents.date[i] = moment(annotationTimeSeries.extents.date[i]);
+}
+for (var j = 0; j < clientIspTimeSeriesData.results.length; j++) {
+  clientIspTimeSeriesData.results[j].date = moment(clientIspTimeSeriesData.results[j].date);
+  annotationTimeSeries.results[j].date = moment(annotationTimeSeries.results[j].date);
+}
+
 function onHighlightTimeSeriesDate(date) {
-  const { dispatch } = this.props;
+  var dispatch = this.props.dispatch;
   dispatch(LocationPageActions.highlightTimeSeriesDate(date));
 }
-var highlightTimeSeriesDate = {
-  onHighlightTimeSeriesDate(date) {
-    var dispatch = this.props.dispatch;
 
-    dispatch(LocationPageActions.highlightTimeSeriesDate(date));
-  }
-}
+var highlightTimeSeriesDate = null;
+
 function onHighlightTimeSeriesLine(series) {
-  const { dispatch } = this.props;
+  const { dispatch } = this.props.dispatch;
   dispatch(LocationPageActions.highlightTimeSeriesLine(series));
  }
-var highlightTimeSeriesLine = {
-  onHighlightTimeSeriesLine(series) {
-    var dispatch = this.props.dispatch;
-    dispatch(LocationPageActions.highlightTimeSeriesLine(series));
-  } 
-}
+
+var highlightTimeSeriesLine = undefined;
 
 var viewMetric = {
-  formatter: undefined,
-  label: "Download Speed", 
-  unit: "Mbps",
-  datakey: "download_speed_mbps_median"
+  "formatter": undefined,  // function here is a REALLY big one, but I doubt this is causing the issue
+  "label": "Download Speed", 
+  "unit": "Mbps",
+  "datakey": "download_speed_mbps_median"
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Done handling the discombobulated variables that the chart takes in. //
 //////////////////////////////////////////////////////////////////////////
-
 function App() {
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Hello M-Lab Team! Edit <code>src/App.js</code> to change this text.
-        </p>
-          <LineChartWithCounts
-            id={chartId}
-            colors={colors}
-            counts={counts}
-            highlightCounts={clientIspCounts}
-            series={clientIspTimeSeriesData}
-            annotationSeries={annotationTimeSeries}
-            onHighlightDate={onHighlightTimeSeriesDate}
-            highlightDate={highlightTimeSeriesDate}
-            onHighlightLine={onHighlightTimeSeriesLine}
-            highlightLine={highlightTimeSeriesLine}
-            yFormatter={viewMetric.formatter}
-            xKey="date"
-            yAxisLabel={viewMetric.label}
-            yAxisUnit={viewMetric.unit}
-            yKey={viewMetric.dataKey}
-          />
+        <Row>
+          <p>
+            Hello M-Lab Team! Edit <code>src/App.js</code> to change this text.
+          </p>
+          <AutoWidth>
+            <LineChartWithCounts
+              id={chartId}
+              colors={colors}
+              counts={counts}
+              highlightCounts={clientIspCounts}
+              series={clientIspTimeSeriesData}
+              annotationSeries={annotationTimeSeries}
+              onHighlightDate={onHighlightTimeSeriesDate}
+              highlightDate={highlightTimeSeriesDate}
+              onHighlightLine={onHighlightTimeSeriesLine}
+              highlightLine={highlightTimeSeriesLine}
+              yFormatter={viewMetric.formatter}
+              xKey="date"
+              yAxisLabel={viewMetric.label}
+              yAxisUnit={viewMetric.unit}
+              yKey={viewMetric["datakey"]}
+            />
+          </AutoWidth>
+        </Row>
       </header>
     </div>
   );

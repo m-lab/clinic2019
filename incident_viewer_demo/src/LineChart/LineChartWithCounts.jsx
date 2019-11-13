@@ -3,7 +3,6 @@ import d3 from '../chart_support/d3';
 
 import { colorsFor } from '../chart_support/color';
 import LineChart from './LineChart.jsx';
-import CountChart from '../chart_support/CountChart/CountChart.jsx'
 import { multiExtent } from '../chart_support/array';
 import addComputedProps from '../chart_support/addComputedProps';
 import { testThreshold } from '../chart_support/constants';
@@ -131,22 +130,10 @@ class LineChartWithCounts extends PureComponent {
    * @return {React.Component} The rendered container
    */
   render() {
-    const { id, width, xKey, annotationSeries, series, highlightLine, highlightDate,
-      onHighlightDate, counts, padding, xScale, numBins, colors, idKey, countExtent,
-      lineChartHeight, countChartHeight, highlightCounts } = this.props;
+    const { id, width, annotationSeries, series, padding, xScale, colors, lineChartHeight,
+      countChartHeight } = this.props;
 
     const height = lineChartHeight + countChartHeight;
-    const highlightColor = highlightLine ? colors[highlightLine.meta[idKey]] : 'rgba(0, 0, 0, 0.08)';
-
-    // if a line is highlighted, use that, otherwise use the prop highlightCounts if provided
-    // to render the highlighted count bars
-    let highlightCountData;
-    if (highlightLine) {
-      highlightCountData = highlightLine.results;
-    } else {
-      highlightCountData = highlightCounts;
-    }
-
     return (
       <div className="line-chart-with-counts-container">
         <svg
@@ -169,23 +156,6 @@ class LineChartWithCounts extends PureComponent {
               paddingRight={padding.right}
               xScale={xScale}
             />
-          </g>
-          <g transform={`translate(0 ${lineChartHeight})`}>
-            {/* <CountChart
-              data={counts}
-              highlightData={highlightCountData}
-              highlightCount={highlightDate}
-              highlightColor={highlightColor}
-              height={countChartHeight}
-              paddingLeft={padding.left}
-              paddingRight={padding.right}
-              onHighlightCount={onHighlightDate}
-              numBins={numBins}
-              width={width}
-              xKey={xKey}
-              xScale={xScale}
-              yExtent={countExtent}
-            /> */}
           </g>
         </svg>
       </div>

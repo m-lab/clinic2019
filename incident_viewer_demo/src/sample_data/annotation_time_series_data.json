@@ -1,0 +1,363 @@
+{
+    "meta": {
+      "client_country": "United States",
+      "location_key": "naus",
+      "client_continent": "North America",
+      "client_country_code": "US",
+      "client_continent_code": "NA",
+      "type": "country",
+      "id": "naus",
+      "shortLabel": "United States",
+      "label": "United States",
+      "client_location_label": "United States"
+    },
+    "results": [
+      {
+        "count": 188212,
+        "upload_speed_mbps_median": 3.022,
+        "rtt_avg": 71.257,
+        "retransmit_avg": 0.014,
+        "download_speed_mbps_median": 9.977,
+        "date": "2016-01-01T08:00:00.000Z"
+      },
+      {
+        "count": 194527,
+        "upload_speed_mbps_median": 3.437,
+        "rtt_avg": 65.992,
+        "retransmit_avg": 0.013,
+        "download_speed_mbps_median": 12.081,
+        "date": "2016-02-01T08:00:00.000Z"
+      },
+      {
+        "count": 325915,
+        "upload_speed_mbps_median": 4.41,
+        "rtt_avg": 44.408,
+        "retransmit_avg": 0.011,
+        "download_speed_mbps_median": 18.494,
+        "date": "2016-03-01T08:00:00.000Z"
+      },
+      {
+        "count": 368487,
+        "upload_speed_mbps_median": 4.492,
+        "rtt_avg": 43.08,
+        "retransmit_avg": 0.016,
+        "download_speed_mbps_median": 20.525,
+        "date": "2016-04-01T07:00:00.000Z"
+      },
+      {
+        "count": 407499,
+        "upload_speed_mbps_median": 4.638,
+        "rtt_avg": 43.54,
+        "retransmit_avg": 0.015,
+        "download_speed_mbps_median": 21.402,
+        "date": "2016-05-01T07:00:00.000Z"
+      },
+      {
+        "count": 415008,
+        "upload_speed_mbps_median": 4.663,
+        "rtt_avg": 40.368,
+        "retransmit_avg": 0.014,
+        "download_speed_mbps_median": 20.983,
+        "date": "2016-06-01T07:00:00.000Z"
+      },
+      {
+        "count": 1072960,
+        "upload_speed_mbps_median": 3.762,
+        "rtt_avg": 49.615,
+        "retransmit_avg": 0.016,
+        "download_speed_mbps_median": 13.886,
+        "date": "2016-07-01T07:00:00.000Z"
+      },
+      {
+        "count": 2232031,
+        "upload_speed_mbps_median": 3.453,
+        "rtt_avg": 53.91,
+        "retransmit_avg": 0.016,
+        "download_speed_mbps_median": 11.695,
+        "date": "2016-08-01T07:00:00.000Z"
+      },
+      {
+        "count": 2486529,
+        "upload_speed_mbps_median": 3.51,
+        "rtt_avg": 53.768,
+        "retransmit_avg": 0.017,
+        "download_speed_mbps_median": 11,
+        "date": "2016-09-01T07:00:00.000Z"
+      },
+      {
+        "count": 2313661,
+        "upload_speed_mbps_median": 3.698,
+        "rtt_avg": 54.102,
+        "retransmit_avg": 0.017,
+        "download_speed_mbps_median": 11.042,
+        "date": "2016-10-01T07:00:00.000Z"
+      },
+      {
+        "count": 2527360,
+        "upload_speed_mbps_median": 3.893,
+        "rtt_avg": 53.532,
+        "retransmit_avg": 0.016,
+        "download_speed_mbps_median": 12.153,
+        "date": "2016-11-01T07:00:00.000Z"
+      },
+      {
+        "count": 3378199,
+        "upload_speed_mbps_median": 3.94,
+        "rtt_avg": 52.193,
+        "retransmit_avg": 0.016,
+        "download_speed_mbps_median": 12.156,
+        "date": "2016-12-01T08:00:00.000Z"
+      },
+      {
+        "count": 3657686,
+        "upload_speed_mbps_median": 4.033,
+        "rtt_avg": 50.685,
+        "retransmit_avg": 0.015,
+        "download_speed_mbps_median": 12.607,
+        "date": "2017-01-01T08:00:00.000Z"
+      },
+      {
+        "count": 3441803,
+        "upload_speed_mbps_median": 4.171,
+        "rtt_avg": 51.841,
+        "retransmit_avg": 0.014,
+        "download_speed_mbps_median": 13.398,
+        "date": "2017-02-01T08:00:00.000Z"
+      },
+      {
+        "count": 3964604,
+        "upload_speed_mbps_median": 4.123,
+        "rtt_avg": 52.208,
+        "retransmit_avg": 0.015,
+        "download_speed_mbps_median": 13.252,
+        "date": "2017-03-01T08:00:00.000Z"
+      },
+      {
+        "count": 2592013,
+        "upload_speed_mbps_median": 3.714,
+        "rtt_avg": 56.158,
+        "retransmit_avg": 0.017,
+        "download_speed_mbps_median": 11.138,
+        "date": "2017-04-01T07:00:00.000Z"
+      },
+      {
+        "count": 2424660,
+        "upload_speed_mbps_median": 3.388,
+        "rtt_avg": 57.78,
+        "retransmit_avg": 0.018,
+        "download_speed_mbps_median": 9.582,
+        "date": "2017-05-01T07:00:00.000Z"
+      },
+      {
+        "count": 2469600,
+        "upload_speed_mbps_median": 3.38,
+        "rtt_avg": 58.176,
+        "retransmit_avg": 0.018,
+        "download_speed_mbps_median": 9.288,
+        "date": "2017-06-01T07:00:00.000Z"
+      },
+      {
+        "count": 2959075,
+        "upload_speed_mbps_median": 3.607,
+        "rtt_avg": 56.795,
+        "retransmit_avg": 0.018,
+        "download_speed_mbps_median": 9.771,
+        "date": "2017-07-01T07:00:00.000Z"
+      },
+      {
+        "count": 3420793,
+        "upload_speed_mbps_median": 3.733,
+        "rtt_avg": 58.059,
+        "retransmit_avg": 0.018,
+        "download_speed_mbps_median": 9.762,
+        "date": "2017-08-01T07:00:00.000Z"
+      },
+      {
+        "count": 3280909,
+        "upload_speed_mbps_median": 4.073,
+        "rtt_avg": 53.924,
+        "retransmit_avg": 0.017,
+        "download_speed_mbps_median": 11.005,
+        "date": "2017-09-01T07:00:00.000Z"
+      },
+      {
+        "count": 3241162,
+        "upload_speed_mbps_median": 4.236,
+        "rtt_avg": 54.306,
+        "retransmit_avg": 0.017,
+        "download_speed_mbps_median": 12.044,
+        "date": "2017-10-01T07:00:00.000Z"
+      },
+      {
+        "count": 3420031,
+        "upload_speed_mbps_median": 4.376,
+        "rtt_avg": 54.297,
+        "retransmit_avg": 0.017,
+        "download_speed_mbps_median": 12.383,
+        "date": "2017-11-01T07:00:00.000Z"
+      },
+      {
+        "count": 4254789,
+        "upload_speed_mbps_median": 4.343,
+        "rtt_avg": 55.17,
+        "retransmit_avg": 0.018,
+        "download_speed_mbps_median": 11.917,
+        "date": "2017-12-01T08:00:00.000Z"
+      },
+      {
+        "count": 4762907,
+        "upload_speed_mbps_median": 4.556,
+        "rtt_avg": 53.943,
+        "retransmit_avg": 0.016,
+        "download_speed_mbps_median": 13.12,
+        "date": "2018-01-01T08:00:00.000Z"
+      },
+      {
+        "count": 3973994,
+        "upload_speed_mbps_median": 4.588,
+        "rtt_avg": 55.072,
+        "retransmit_avg": 0.018,
+        "download_speed_mbps_median": 14.147,
+        "date": "2018-02-01T08:00:00.000Z"
+      },
+      {
+        "count": 4665613,
+        "upload_speed_mbps_median": 4.587,
+        "rtt_avg": 56.282,
+        "retransmit_avg": 0.017,
+        "download_speed_mbps_median": 14.126,
+        "date": "2018-03-01T08:00:00.000Z"
+      },
+      {
+        "count": 4314883,
+        "upload_speed_mbps_median": 4.707,
+        "rtt_avg": 55.826,
+        "retransmit_avg": 0.017,
+        "download_speed_mbps_median": 14.966,
+        "date": "2018-04-01T07:00:00.000Z"
+      },
+      {
+        "count": 4350466,
+        "upload_speed_mbps_median": 4.739,
+        "rtt_avg": 55.962,
+        "retransmit_avg": 0.018,
+        "download_speed_mbps_median": 15.591,
+        "date": "2018-05-01T07:00:00.000Z"
+      },
+      {
+        "count": 4533307,
+        "upload_speed_mbps_median": 4.753,
+        "rtt_avg": 56.732,
+        "retransmit_avg": 0.017,
+        "download_speed_mbps_median": 15.975,
+        "date": "2018-06-01T07:00:00.000Z"
+      },
+      {
+        "count": 5089839,
+        "upload_speed_mbps_median": 4.82,
+        "rtt_avg": 55.531,
+        "retransmit_avg": 0.016,
+        "download_speed_mbps_median": 16.587,
+        "date": "2018-07-01T07:00:00.000Z"
+      },
+      {
+        "count": 5611182,
+        "upload_speed_mbps_median": 5.239,
+        "rtt_avg": 52.409,
+        "retransmit_avg": 0.015,
+        "download_speed_mbps_median": 17.392,
+        "date": "2018-08-01T07:00:00.000Z"
+      },
+      {
+        "count": 5748188,
+        "upload_speed_mbps_median": 5.513,
+        "rtt_avg": 50.979,
+        "retransmit_avg": 0.015,
+        "download_speed_mbps_median": 17.358,
+        "date": "2018-09-01T07:00:00.000Z"
+      },
+      {
+        "count": 5844375,
+        "upload_speed_mbps_median": 5.632,
+        "rtt_avg": 51.164,
+        "retransmit_avg": 0.015,
+        "download_speed_mbps_median": 17.495,
+        "date": "2018-10-01T07:00:00.000Z"
+      },
+      {
+        "count": 5888852,
+        "upload_speed_mbps_median": 5.698,
+        "rtt_avg": 52.181,
+        "retransmit_avg": 0.015,
+        "download_speed_mbps_median": 17.597,
+        "date": "2018-11-01T07:00:00.000Z"
+      },
+      {
+        "count": 6141749,
+        "upload_speed_mbps_median": 5.417,
+        "rtt_avg": 51.485,
+        "retransmit_avg": 0.015,
+        "download_speed_mbps_median": 17.449,
+        "date": "2018-12-01T08:00:00.000Z"
+      },
+      {
+        "count": 6374422,
+        "upload_speed_mbps_median": 5.975,
+        "rtt_avg": 49.893,
+        "retransmit_avg": 0.014,
+        "download_speed_mbps_median": 18.775,
+        "date": "2019-01-01T08:00:00.000Z"
+      },
+      {
+        "count": 5595734,
+        "upload_speed_mbps_median": 6.243,
+        "rtt_avg": 48.982,
+        "retransmit_avg": 0.014,
+        "download_speed_mbps_median": 19.938,
+        "date": "2019-02-01T08:00:00.000Z"
+      },
+      {
+        "count": 5714204,
+        "upload_speed_mbps_median": 6.676,
+        "rtt_avg": 50.142,
+        "retransmit_avg": 0.014,
+        "download_speed_mbps_median": 21.093,
+        "date": "2019-03-01T08:00:00.000Z"
+      },
+      {
+        "count": 5810387,
+        "upload_speed_mbps_median": 6.655,
+        "rtt_avg": 50.037,
+        "retransmit_avg": 0.014,
+        "download_speed_mbps_median": 20.87,
+        "date": "2019-04-01T07:00:00.000Z"
+      }
+    ],
+    "extents": {
+      "date": [
+        "2016-01-01T08:00:00.000Z",
+        "2019-04-01T07:00:00.000Z"
+      ],
+      "download_speed_mbps_median": [
+        9.288,
+        21.402
+      ],
+      "upload_speed_mbps_median": [
+        3.022,
+        6.676
+      ],
+      "rtt_avg": [
+        40.368,
+        71.257
+      ],
+      "retransmit_avg": [
+        0.011,
+        0.018
+      ],
+      "throughput": [
+        3.022,
+        21.402
+      ]
+    },
+    "transformed": true
+}
