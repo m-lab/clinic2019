@@ -57,9 +57,11 @@ func CsvParser(filePath string) [100]incident.DefaultIncident{
 		badTimeEndString := strings.Split(rec[4], " ")
 		timeEnd, _ := time.Parse(shortForm, badTimeEndString[1])
 		
+		//the good period starts one year prior to the start of the bad period in this demo
 		goodTimeStart := timeStart.AddDate(-1,0,0)
 		goodTimeEnd := timeStart
 
+		//the empty space string accounts for an empty space in the structure of the csv file
 		severityString := strings.Split(rec[5], " ")
 		severity, _ := strconv.ParseFloat(severityString[1], 64)
 		
