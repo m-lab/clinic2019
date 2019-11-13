@@ -89,10 +89,10 @@ function App() {
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <Row>
-          <p>
-            Hello M-Lab Team! Edit <code>src/App.js</code> to change this text.
-          </p>
+        <Row className="Chart-row">
+          {/* <p>
+            Hello M-Lab Team! Edit <code>src/App.js</code> to change this text. dllsdfksjdlfkjlsdflkjdsflkjsdfljsfkljsdfljkfdsjlksdflkjsdfkljsdflkjdfslkjsdflkjfslkslfjk
+          </p> */}
           <AutoWidth>
             <LineChartWithCounts
               id={chartId}

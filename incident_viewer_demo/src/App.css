@@ -17,6 +17,10 @@
   color: rgb(0, 0, 0);
 }
 
+.Chart-row {
+  width: 70%;
+  max-width: 1000px;
+}
 .App-link {
   color: #585858;
 }
