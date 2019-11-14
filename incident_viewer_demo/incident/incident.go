@@ -6,13 +6,25 @@ import (
 )
 
 type Incident interface {
-	getGoodPeriod() (time.Time, time.Time)
-	getBadPeriod() (time.Time, time.Time)
-	getSeverity() float64
-	getTestsAffected() int
-	getGoodPeriodInfo() string
-	getBadPeriodInfo() string
-	getIncidentInfo() string
+	GetGoodPeriod() (time.Time, time.Time)
+	GetBadPeriod() (time.Time, time.Time)
+	GetSeverity() float64
+	GetTestsAffected() int
+	GetGoodPeriodInfo() string
+	GetBadPeriodInfo() string
+	GetIncidentInfo() string
+}
+
+type IncidentData struct {
+	GoodPeriodStart  time.Time `json:"goodPeriodStart"`
+	GoodPeriodEnd    time.Time `json:"goodPeriodEnd"`
+	BadPeriodStart   time.Time `json:"badPeriodStart"`
+	BadPeriodEnd     time.Time `json:"badPeriodEnd"`
+	Severity         float64   `json:"severity"`
+	NumTestsAffected int       `json:"numTestsAffected"`
+	GoodPeriodInfo   string    `json:"goodPeriodInfo"`
+	BadPeriodInfo    string    `json:"badPeriodInfo"`
+	IncidentInfo     string    `json:"incidentInfo"`
 }
 
 type DefaultIncident struct {
@@ -26,13 +38,13 @@ type DefaultIncident struct {
 	numTestsAffected int
 }
 
-func (i *DefaultIncident) Init ( goodTimeStart time.Time, goodTimeEnd time.Time,
-badTimeStart time.Time, 
-badTimeEnd time.Time,
-avgDSGood float64,
-avgDSBad float64,
-severity float64,
-testsAffected int){
+func (i *DefaultIncident) Init(goodTimeStart time.Time, goodTimeEnd time.Time,
+	badTimeStart time.Time,
+	badTimeEnd time.Time,
+	avgDSGood float64,
+	avgDSBad float64,
+	severity float64,
+	testsAffected int) {
 
 	i.goodStartTime = goodTimeStart
 	i.goodEndTime = goodTimeEnd
@@ -44,38 +56,38 @@ testsAffected int){
 	i.numTestsAffected = testsAffected
 }
 
-func (i *DefaultIncident) getGoodPeriod() (time.Time, time.Time) {
+func (i *DefaultIncident) GetGoodPeriod() (time.Time, time.Time) {
 	return i.goodStartTime, i.goodEndTime
 }
 
-func (i *DefaultIncident) getBadPeriod() (time.Time, time.Time) {
+func (i *DefaultIncident) GetBadPeriod() (time.Time, time.Time) {
 	return i.badStartTime, i.badEndTime
 }
 
-func (i *DefaultIncident) getSeverity() float64 {
+func (i *DefaultIncident) GetSeverity() float64 {
 	return i.severityDecimal
 }
 
-func (i *DefaultIncident) getTestsAffected() int {
+func (i *DefaultIncident) GetTestsAffected() int {
 	return i.numTestsAffected
 }
 
-func (i *DefaultIncident) getGoodPeriodInfo() string {
+func (i *DefaultIncident) GetGoodPeriodInfo() string {
 	ds := strconv.FormatFloat(i.avgGoodDS, 'f', 2, 64)
 	s := i.goodStartTime.String()
 	e := i.goodEndTime.String()
 	return "Average download speed: " + ds + " from " + s + " - " + e
 }
 
-func (i *DefaultIncident) getBadPeriodInfo() string {
+func (i *DefaultIncident) GetBadPeriodInfo() string {
 	ds := strconv.FormatFloat(i.avgBadDS, 'f', 2, 64)
 	s := i.badStartTime.String()
 	e := i.badEndTime.String()
 	return "Average download speed: " + ds + " from " + s + " - " + e
 }
 
-func (i *DefaultIncident) getIncidentInfo() string {
+func (i *DefaultIncident) GetIncidentInfo() string {
 	s := strconv.FormatFloat(i.severityDecimal, 'f', 2, 64)
 	ta := strconv.Itoa(i.numTestsAffected)
-	return "Download speed dropped by " + s + " affecting " + ta + "tests"
+	return "Download speed dropped by " + s + " affecting " + ta + " tests"
 }

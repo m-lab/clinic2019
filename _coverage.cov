@@ -1,0 +1,8 @@
+mode: count
+github.com/m-lab/clinic2019/incident_viewer_demo/incident/incident.go:29.63,31.2 1 1
+github.com/m-lab/clinic2019/incident_viewer_demo/incident/incident.go:33.62,35.2 1 1
+github.com/m-lab/clinic2019/incident_viewer_demo/incident/incident.go:37.46,39.2 1 1
+github.com/m-lab/clinic2019/incident_viewer_demo/incident/incident.go:41.47,43.2 1 1
+github.com/m-lab/clinic2019/incident_viewer_demo/incident/incident.go:45.51,50.2 4 0
+github.com/m-lab/clinic2019/incident_viewer_demo/incident/incident.go:52.50,57.2 4 0
+github.com/m-lab/clinic2019/incident_viewer_demo/incident/incident.go:59.49,63.2 3 0

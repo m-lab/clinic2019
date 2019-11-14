@@ -1,18 +1,20 @@
 package csvParser
 
-import(
+import (
+	"encoding/csv"
+	"encoding/json"
+	"fmt"
 	"io"
-	"time"
-  	"log"
+	"log"
 	"os"
 	"strconv"
-	"encoding/csv"
 	"strings"
+	"time"
+
 	"github.com/m-lab/clinic2019/incident_viewer_demo/incident"
 )
 
-
-func CsvParser(filePath string) [100]incident.DefaultIncident{
+func CsvParser(filePath string) [100]incident.DefaultIncident {
 
 	//just assume that you have 100 rows in the csv and then return an array of 1OO incidents
 	var incidentArray [100]incident.DefaultIncident
@@ -21,13 +23,13 @@ func CsvParser(filePath string) [100]incident.DefaultIncident{
 
 	f, err := os.Open(filePath)
 
-	if err != nil{
+	if err != nil {
 		log.Fatalf("Cannot open '%s':%s\n", filePath, err.Error())
 	}
-	
-	defer f.Close();
 
-	reader := csv.NewReader(f);
+	defer f.Close()
+
+	reader := csv.NewReader(f)
 
 	reader.Comma = ','
 
@@ -39,44 +41,43 @@ func CsvParser(filePath string) [100]incident.DefaultIncident{
 	// 	log.Fatal(err)
 	// }
 
-	
-	for i := 0 ; i < 100; i++{
-		
+	for i := 0; i < 100; i++ {
+
 		rec, err = reader.Read()
-		if err != nil{
-			if err == io.EOF{
+		if err != nil {
+			if err == io.EOF {
 				break
 			}
 			log.Fatal(err)
 		}
 
 		//knowing the structure of the csv file, retrieve some values
-		badTimeStartString := strings.Split(rec[3], " ");
-		timeStart, _:= time.Parse(shortForm, badTimeStartString[1])
-		
+		badTimeStartString := strings.Split(rec[3], " ")
+		timeStart, _ := time.Parse(shortForm, badTimeStartString[1])
+
 		badTimeEndString := strings.Split(rec[4], " ")
 		timeEnd, _ := time.Parse(shortForm, badTimeEndString[1])
-		
+
 		//the good period starts one year prior to the start of the bad period in this demo
-		goodTimeStart := timeStart.AddDate(-1,0,0)
+		goodTimeStart := timeStart.AddDate(-1, 0, 0)
 		goodTimeEnd := timeStart
 
 		//the empty space string accounts for an empty space in the structure of the csv file
 		severityString := strings.Split(rec[5], " ")
 		severity, _ := strconv.ParseFloat(severityString[1], 64)
-		
+
 		testsAffected, _ := strconv.Atoi(rec[0])
-	
+
 		avgGoodDString := strings.Split(rec[6], " ")
 		avgGoodDS, _ := strconv.ParseFloat(avgGoodDString[1], 64)
 
-		avgBadDString :=  strings.Split(rec[7], " ")
+		avgBadDString := strings.Split(rec[7], " ")
 		avgBadDS, _ := strconv.ParseFloat(avgBadDString[1], 64)
 
 		defaultIncident := new(incident.DefaultIncident)
-		
+
 		defaultIncident.Init(goodTimeStart, goodTimeEnd, timeStart, timeEnd, avgGoodDS,
-		avgBadDS, severity, testsAffected)
+			avgBadDS, severity, testsAffected)
 
 		incidentArray[i] = *defaultIncident
 
@@ -85,4 +86,45 @@ func CsvParser(filePath string) [100]incident.DefaultIncident{
 	return incidentArray
 }
 
- 
+func convertDefaultIncidentToIncident(arr []incident.DefaultIncident) []incident.Incident {
+	incidentArr := make([]incident.Incident, len(arr), len(arr))
+	for i := range arr {
+		incidentArr[i] = &arr[i]
+	}
+	return incidentArr
+}
+
+func makeJsonObjFile(arr []incident.Incident) *os.File {
+	// numObjects determines how many incidents are stored in the json
+	const numObjects = 1
+	f, err := os.Create("incidents.json")
+	var objs [numObjects]incident.IncidentData
+	if err != nil {
+		fmt.Println(err)
+		return f
+	}
+
+	for i := 0; i < numObjects; i++ {
+		gpStart, gpEnd := arr[i].GetGoodPeriod()
+		bpStart, bpEnd := arr[i].GetBadPeriod()
+		s := arr[i].GetSeverity()
+		ta := arr[i].GetTestsAffected()
+		gpi := arr[i].GetGoodPeriodInfo()
+		bpi := arr[i].GetBadPeriodInfo()
+		ii := arr[i].GetIncidentInfo()
+		inc := incident.IncidentData{gpStart, gpEnd, bpStart, bpEnd, s, ta, gpi, bpi, ii}
+		objs[i] = inc
+	}
+	b, err := json.Marshal(objs)
+	n, err := f.Write(b)
+
+	if err != nil {
+		fmt.Println(n)
+		fmt.Println(err)
+		f.Close()
+		return f
+	}
+
+	fmt.Println("bytes written successfully")
+	return f
+}
