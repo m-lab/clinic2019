@@ -26,6 +26,24 @@ type DefaultIncident struct {
 	numTestsAffected int
 }
 
+func (i *DefaultIncident) Init ( goodTimeStart time.Time, goodTimeEnd time.Time,
+badTimeStart time.Time, 
+badTimeEnd time.Time,
+avgDSGood float64,
+avgDSBad float64,
+severity float64,
+testsAffected int){
+
+	i.goodStartTime = goodTimeStart
+	i.goodEndTime = goodTimeEnd
+	i.badStartTime = badTimeStart
+	i.badEndTime = badTimeEnd
+	i.avgGoodDS = avgDSGood
+	i.avgBadDS = avgDSBad
+	i.severityDecimal = severity
+	i.numTestsAffected = testsAffected
+}
+
 func (i *DefaultIncident) getGoodPeriod() (time.Time, time.Time) {
 	return i.goodStartTime, i.goodEndTime
 }
