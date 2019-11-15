@@ -6,6 +6,7 @@ import LineChart from './LineChart.jsx';
 import { multiExtent } from '../chart_support/array';
 import addComputedProps from '../chart_support/addComputedProps';
 import { testThreshold } from '../chart_support/constants';
+import moment from 'moment';
 
 /**
  * Figure out what is needed for both charts
@@ -133,6 +134,17 @@ class LineChartWithCounts extends PureComponent {
     const { id, width, annotationSeries, series, padding, xScale, colors, lineChartHeight,
       countChartHeight } = this.props;
 
+    // Fake Incident data JSON grabbing + modifying dates
+    // eslint-disable-next-line global-require
+    const fakeIncidentData = require('../sampleIncident.json');
+    // convert dates to moment objects
+    var incident_good_series = fakeIncidentData.good_period;
+    var incident_bad_series = fakeIncidentData.bad_period;
+    incident_good_series.start = moment(incident_good_series.start);
+    incident_good_series.end = moment(incident_good_series.end);
+    incident_bad_series.start = moment(incident_bad_series.start);
+    incident_bad_series.end = moment(incident_bad_series.end);
+
     const height = lineChartHeight + countChartHeight;
     return (
       <div className="line-chart-with-counts-container">
@@ -155,6 +167,9 @@ class LineChartWithCounts extends PureComponent {
               paddingLeft={padding.left}
               paddingRight={padding.right}
               xScale={xScale}
+              hasIncident={true}
+              goodIncidentSeries={incident_good_series}
+              badIncidentSeries={incident_bad_series}
             />
           </g>
         </svg>

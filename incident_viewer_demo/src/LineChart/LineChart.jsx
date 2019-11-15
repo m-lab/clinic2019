@@ -18,6 +18,9 @@ function visProps(props) {
     idKey,
     labelKey,
     series = [],
+    goodIncidentSeries,
+    badIncidentSeries,
+    hasIncident,
     forceZeroMin,
     height,
     paddingLeft = 50,
@@ -142,9 +145,16 @@ function visProps(props) {
     .transitionInitial(false);
 
 
+  const incidentLineGenerator = d3.line()
+  .x((d) => xScale(d.x))
+  .y((d) => yScale(d.y));
+
   return {
     annotationLineChunked,
     annotationSeries,
+    goodIncidentSeries,
+    badIncidentSeries,
+    incidentLineGenerator,
     colors,
     plotAreaHeight,
     padding,
@@ -162,6 +172,8 @@ function visProps(props) {
 class LineChart extends PureComponent {
   static propTypes = {
     annotationLineChunked: React.PropTypes.func,
+    goodIncidentSeries: React.PropTypes.object,
+    badIncidentSeries: React.PropTypes.object,
     annotationSeries: PropTypes.array,
     // Obect mapping series IDs to colors
     colors: PropTypes.object,
@@ -321,6 +333,8 @@ class LineChart extends PureComponent {
     this.annotationLines = this.g.append('g').classed('annotation-lines-group', true);
     this.lines = this.g.append('g').classed('lines-group', true);
     this.circles = this.g.append('g').classed('circles-group', true);
+    this.goodIncidentLine = this.g.append('g').classed('good-incident-line', true);
+    this.badIncidentLine = this.g.append('g').classed('bad-incident-line', true);
 
     // container for showing the x highlighte date indicator
     this.highlightDate = this.g.append('g').attr('class', 'highlight-date');
@@ -388,6 +402,8 @@ class LineChart extends PureComponent {
         return value;
       });
     }
+    
+    this.updateIncident();
 
     this.updateLegend(highlightValues);
     this.updateAxes();
@@ -565,6 +581,45 @@ class LineChart extends PureComponent {
       .attr('y2', d => yScale(d.results[yKey]));
 
     constantBinding.exit().remove();
+  }
+
+  /**
+   * Render the incident "good" and "bad" periods reference lines on the chart.
+   */
+  updateIncident() {
+    const { goodIncidentSeries, badIncidentSeries, incidentLineGenerator } = this.props;
+
+    var goodIncidentSeriesArray = [{x: goodIncidentSeries.start, y: goodIncidentSeries.download_speed_mbps_median}, {x: goodIncidentSeries.end, y: goodIncidentSeries.download_speed_mbps_median} ];
+    var badIncidentSeriesArray = [{x: badIncidentSeries.start, y: badIncidentSeries.download_speed_mbps_median}, {x: badIncidentSeries.end, y: badIncidentSeries.download_speed_mbps_median} ];
+
+    this.goodIncidentLine.selectAll('*').remove();
+    this.badIncidentLine.selectAll('*').remove();
+
+    const goodBinding = this.goodIncidentLine.selectAll('g').data(goodIncidentSeriesArray);
+    const badBinding = this.badIncidentLine.selectAll('g').data(badIncidentSeriesArray);
+
+    // We are still not erasing outdated incident lines...
+
+    // ENTER
+    const goodEntering = goodBinding.enter()
+      .append('path')
+        .attr('d', incidentLineGenerator(goodIncidentSeriesArray));
+    const badEntering = badBinding.enter()
+      .append('path')
+        .attr('d', incidentLineGenerator(badIncidentSeriesArray));
+
+    // ENTER + UPDATE
+    goodBinding.merge(goodEntering)
+      .transition()
+      .call(incidentLineGenerator);
+
+    badBinding.merge(badEntering)
+      .transition()
+      .call(incidentLineGenerator);
+
+    // EXIT
+    goodBinding.exit().remove();
+    badBinding.exit().remove();
   }
 
   /**

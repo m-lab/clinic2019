@@ -23,4 +23,26 @@
     stroke: #aaa;
     stroke-opacity: 0.5;
   }
+
+  .good-incident-line {
+    stroke-width: 3px !important;
+    stroke: #44BD1D;
+  }
+
+  .good-incident-area {
+    fill: rgb(155, 189, 144);
+    stroke-width: 3px !important;
+    stroke: #44BD1D;
+  }
+
+  .bad-incident-line {
+    stroke-width: 3px !important;
+    stroke: orangered;
+  }
+
+  .bad-incident-area {
+    fill: rgb(212, 161, 141);
+    stroke-width: 3px !important;
+    stroke: orangered;
+  }
 }
