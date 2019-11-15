@@ -38,6 +38,28 @@ type DefaultIncident struct {
 	numTestsAffected int
 }
 
+func (i *IncidentData) Init(
+	goodTimeStart time.Time,
+	goodTimeEnd time.Time,
+	badTimeStart time.Time,
+	badTimeEnd time.Time,
+	severity float64,
+	testsAffected int,
+	goodPeriodInfo string,
+	badPeriodInfo string,
+	incidentInfo string) {
+
+	i.GoodPeriodStart = goodTimeStart
+	i.GoodPeriodEnd = goodTimeEnd
+	i.BadPeriodStart = badTimeStart
+	i.BadPeriodEnd = badTimeEnd
+	i.Severity = severity
+	i.NumTestsAffected = testsAffected
+	i.GoodPeriodInfo = goodPeriodInfo
+	i.BadPeriodInfo = badPeriodInfo
+	i.IncidentInfo = incidentInfo
+}
+
 func (i *DefaultIncident) Init(goodTimeStart time.Time, goodTimeEnd time.Time,
 	badTimeStart time.Time,
 	badTimeEnd time.Time,
