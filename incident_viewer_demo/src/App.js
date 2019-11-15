@@ -86,7 +86,7 @@ function App() {
           <AutoWidth>
             <LineChartWithCounts
               id={chartId}
-              colors={colors}
+              // colors={colors}
               counts={counts}
               highlightCounts={clientIspCounts}
               series={clientIspTimeSeriesData}
