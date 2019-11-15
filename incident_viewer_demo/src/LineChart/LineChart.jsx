@@ -262,27 +262,30 @@ class LineChart extends PureComponent {
    * @return {void}
    */
   onMouseMove(mouse) {
-    const { onHighlightDate, series, xScale, xKey } = this.props;
+    const { onHighlightDate, series, xScale , xKey } = this.props;
 
     if (!onHighlightDate) {
       return;
     }
-
     if (mouse === null) {
       // mouse out
-      onHighlightDate(null);
+      this.highlightDate.style('display', 'none');
       return;
     }
-
-    let closest;
-    // moving around, find nearest x value.
-    if (series && series.length) {
-      const [mouseX] = mouse;
-      const checkSeries = series[0];
-      closest = findClosestSorted(checkSeries.results, mouseX, d => xScale(d[xKey]))[xKey];
+    else {
+      this.highlightDate.style('display', 'block');
+      
+      let closest;
+      // moving around, find nearest x value.
+      if (series && series.length) {
+        const [mouseX] = mouse;
+        const checkSeries = series[0];
+        closest = findClosestSorted(checkSeries.results, mouseX, d => xScale(d[xKey]))[xKey];
+      }
+      this.refLine
+      .attr('x1', xScale(closest))
+      .attr('x2', xScale(closest));
     }
-
-    onHighlightDate(closest);
   }
 
   /**
@@ -324,7 +327,7 @@ class LineChart extends PureComponent {
 
     // container for showing the x highlighte date indicator
     this.highlightDate = this.g.append('g').attr('class', 'highlight-date');
-    this.highlightDate.append('line')
+    this.refLine = this.highlightDate.append('line')
       .attr('x1', 0)
       .attr('x2', 0)
       .attr('y1', 0)

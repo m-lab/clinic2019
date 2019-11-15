@@ -4,7 +4,6 @@ import AutoWidth from 'react-auto-width';
 import logo from './mlab-logo.png';
 import './App.css';
 import LineChartWithCounts from './LineChart/LineChartWithCounts.jsx'
-import * as LocationPageActions from './chart_support/actions';
 import * as moment from 'moment';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './chart_support/assets/base.scss';
@@ -60,17 +59,11 @@ for (var j = 0; j < clientIspTimeSeriesData.results.length; j++) {
   annotationTimeSeries.results[j].date = moment(annotationTimeSeries.results[j].date);
 }
 
-function onHighlightTimeSeriesDate(date) {
-  var dispatch = this.props.dispatch;
-  dispatch(LocationPageActions.highlightTimeSeriesDate(date));
-}
+function onHighlightTimeSeriesDate(date) {}
 
 var highlightTimeSeriesDate = null;
 
-function onHighlightTimeSeriesLine(series) {
-  const { dispatch } = this.props.dispatch;
-  dispatch(LocationPageActions.highlightTimeSeriesLine(series));
- }
+function onHighlightTimeSeriesLine(series) {}
 
 var highlightTimeSeriesLine = undefined;
 
@@ -90,9 +83,6 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <Row className="Chart-row">
-          {/* <p>
-            Hello M-Lab Team! Edit <code>src/App.js</code> to change this text. dllsdfksjdlfkjlsdflkjdsflkjsdfljsfkljsdfljkfdsjlksdflkjsdfkljsdflkjdfslkjsdflkjfslkslfjk
-          </p> */}
           <AutoWidth>
             <LineChartWithCounts
               id={chartId}
