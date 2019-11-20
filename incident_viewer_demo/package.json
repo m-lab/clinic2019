@@ -2,10 +2,6 @@
   "name": "incident_viewer_demo",
   "version": "0.1.0",
   "private": true,
-  "engines": {
-    "node": "12.12.0",
-    "npm": "6.13.0"
-  },
   "dependencies": {
     "binary-search": "^1.3.2",
     "bootstrap": "^3.4.1",
