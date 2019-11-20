@@ -347,17 +347,20 @@ class LineChart extends PureComponent {
       .attr('y1', 0)
       .attr('y2', plotAreaHeight + 3)
       .attr('class', 'highlight-ref-line');
+
+
     // add in a rect to fill out the area beneath the hovered on X date
-    this.highlightDate.append('rect')
-      .attr('x', -45)
-      .attr('width', 90)
-      .attr('y', 0) // should be set to plotAreaHeight
-      .attr('height', 20)
-      .style('fill', '#fff');
-    this.highlightDate.append('text')
-      .attr('class', 'highlight-x')
-      .attr('dy', 17)
-      .attr('text-anchor', 'middle');
+    // BELOW CODE IS FOR X AXIS ANNOTATION BELOW HOVER LINE
+    // this.highlightDate.append('rect')
+    //   .attr('x', -45)
+    //   .attr('width', 90)
+    //   .attr('y', 0) // should be set to plotAreaHeight
+    //   .attr('height', 20)
+    //   .style('fill', '#fff');
+    // this.highlightDate.append('text')
+    //   .attr('class', 'highlight-x')
+    //   .attr('dy', 17)
+    //   .attr('text-anchor', 'middle');
 
     // container for showing the highlighted line
     this.highlightLine = this.g.append('g').attr('class', 'highlight-line');
@@ -405,6 +408,8 @@ class LineChart extends PureComponent {
         return value;
       });
     }
+    console.log(annotationSeries)
+    console.log(highlightValues)
     
     this.updateIncident();
 
