@@ -149,6 +149,8 @@ function visProps(props) {
   .x((d) => xScale(d.x))
   .y((d) => yScale(d.y));
 
+
+
   return {
     annotationLineChunked,
     annotationSeries,
@@ -338,6 +340,8 @@ class LineChart extends PureComponent {
     this.circles = this.g.append('g').classed('circles-group', true);
     this.goodIncidentLine = this.g.append('g').classed('good-incident-line', true);
     this.badIncidentLine = this.g.append('g').classed('bad-incident-line', true);
+    this.incidentArrowLine = this.g.append('g').classed('incident-arrow-line', true);
+    this.incidentArrowTri = this.g.append('g').classed('incident-arrow-tri', true);
 
     // container for showing the x highlighte date indicator
     this.highlightDate = this.g.append('g').attr('class', 'highlight-date');
@@ -597,16 +601,16 @@ class LineChart extends PureComponent {
   updateIncident() {
     const { goodIncidentSeries, badIncidentSeries, incidentLineGenerator } = this.props;
 
-    var goodIncidentSeriesArray = [{x: goodIncidentSeries.start, y: goodIncidentSeries.download_speed_mbps_median}, {x: goodIncidentSeries.end, y: goodIncidentSeries.download_speed_mbps_median} ];
-    var badIncidentSeriesArray = [{x: badIncidentSeries.start, y: badIncidentSeries.download_speed_mbps_median}, {x: badIncidentSeries.end, y: badIncidentSeries.download_speed_mbps_median} ];
-
+    const goodIncidentSeriesArray = [{x: goodIncidentSeries.start, y: goodIncidentSeries.download_speed_mbps_median}, {x: goodIncidentSeries.end, y: goodIncidentSeries.download_speed_mbps_median} ];
+    const badIncidentSeriesArray = [{x: badIncidentSeries.start, y: badIncidentSeries.download_speed_mbps_median}, {x: badIncidentSeries.end, y: badIncidentSeries.download_speed_mbps_median} ];
+    
     this.goodIncidentLine.selectAll('*').remove();
     this.badIncidentLine.selectAll('*').remove();
 
+    this.updateIncidentArrow();
+
     const goodBinding = this.goodIncidentLine.selectAll('g').data(goodIncidentSeriesArray);
     const badBinding = this.badIncidentLine.selectAll('g').data(badIncidentSeriesArray);
-
-    // We are still not erasing outdated incident lines...
 
     // ENTER
     const goodEntering = goodBinding.enter()
@@ -615,6 +619,7 @@ class LineChart extends PureComponent {
     const badEntering = badBinding.enter()
       .append('path')
         .attr('d', incidentLineGenerator(badIncidentSeriesArray));
+    
 
     // ENTER + UPDATE
     goodBinding.merge(goodEntering)
@@ -628,6 +633,45 @@ class LineChart extends PureComponent {
     // EXIT
     goodBinding.exit().remove();
     badBinding.exit().remove();
+  }
+
+  updateIncidentArrow() {
+    const { goodIncidentSeries, badIncidentSeries, incidentLineGenerator, xScale, yScale } = this.props;
+
+    const incidentArrowX = goodIncidentSeries.end;
+    const triWidth = 20;
+    const triHeight = 15;
+    
+    const incidentArrowLineArray = [{x: incidentArrowX, y: goodIncidentSeries.download_speed_mbps_median}, {x: incidentArrowX, y: badIncidentSeries.download_speed_mbps_median}];
+    
+    
+    const incidentArrowTriArray = [
+        {x: xScale(incidentArrowX), y: yScale(badIncidentSeries.download_speed_mbps_median)}, 
+        {x: xScale(incidentArrowX) + triWidth/2, y: yScale(badIncidentSeries.download_speed_mbps_median) - triHeight}, 
+        {x: xScale(incidentArrowX) - triWidth/2, y: yScale(badIncidentSeries.download_speed_mbps_median) - triHeight}
+      ];
+
+    this.incidentArrowLine.selectAll('*').remove();
+    this.incidentArrowTri.selectAll('*').remove();
+
+    //TRIANGLE
+    this.incidentArrowTri.append('polygon')
+      .classed('incident-arrow-tri', true)
+      .data([incidentArrowTriArray])
+      .attr('points', function(d) { 
+        return d.map(function(d) {
+            return [d.x,d.y].join(",");
+        }).join(" ");
+      });
+
+    //LINE
+    this.incidentArrowLine.append('line')
+      .classed('incident-arrow-line', true)
+      .attr('x1', xScale(incidentArrowLineArray[0].x))
+      .attr('x2', xScale(incidentArrowLineArray[1].x))
+      .attr('y1', yScale(incidentArrowLineArray[0].y))
+      .attr('y2', yScale(incidentArrowLineArray[1].y)-triHeight/2);
+
   }
 
   /**
