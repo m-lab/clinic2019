@@ -8,6 +8,7 @@ import addComputedProps from '../chart_support/addComputedProps';
 import { testThreshold } from '../chart_support/constants';
 
 import './LineChart.scss';
+import moment from 'moment';
 
 /**
  * Figure out what is needed to render the chart
@@ -276,7 +277,8 @@ class LineChart extends PureComponent {
    * @return {void}
    */
   onMouseMove(mouse) {
-    const { onHighlightDate, series, xScale , xKey } = this.props;
+    // TODO: make in alphabetical order
+    const { plotAreaHeight, goodIncidentSeries, badIncidentSeries, onHighlightDate, series, xScale , xKey, yScale, yKey } = this.props;
 
     if (!onHighlightDate) {
       return;
@@ -290,15 +292,61 @@ class LineChart extends PureComponent {
       this.highlightDate.style('display', 'block');
       
       let closest;
+      const [mouseX, mouseY] = mouse;
       // moving around, find nearest x value.
       if (series && series.length) {
-        const [mouseX] = mouse;
         const checkSeries = series[0];
         closest = findClosestSorted(checkSeries.results, mouseX, d => xScale(d[xKey]))[xKey];
       }
+
       this.refLine
-      .attr('x1', xScale(closest))
-      .attr('x2', xScale(closest));
+        .attr('x1', xScale(closest))
+        .attr('x2', xScale(closest));
+
+      const highlightedDate = moment(closest);
+      const goodYmax = yScale(goodIncidentSeries.download_speed_mbps_median);
+      const badYmax = yScale(badIncidentSeries.download_speed_mbps_median);
+      this.infoHoverBox.selectAll('*').remove();
+
+      // TODO: Make dates inclusive
+      // TODO: Change values to use the correct JSON attributes
+
+      // Draw the hover state for the good period information
+      if (highlightedDate.isBefore(goodIncidentSeries.end) && highlightedDate.isAfter(goodIncidentSeries.start) && mouseY > goodYmax) {
+        
+        this.infoHoverBox.append('rect')
+        .attr('x', xScale(goodIncidentSeries.start))
+        .attr('y', goodYmax)
+        .attr('width', xScale(goodIncidentSeries.end) - xScale(goodIncidentSeries.start))
+        .attr('height', plotAreaHeight-goodYmax)
+        .attr('stroke', 'green')
+        .attr('fill', 'green')
+        .style("fill-opacity", .2);
+      }
+
+      // Draw the hover state for the bad period information
+      if (highlightedDate.isBefore(badIncidentSeries.end) && highlightedDate.isAfter(badIncidentSeries.start) && mouseY > badYmax) {
+        this.infoHoverBox.append('rect')
+        .attr('x', xScale(badIncidentSeries.start))
+        .attr('y', badYmax)
+        .attr('width', xScale(badIncidentSeries.end) - xScale(badIncidentSeries.start))
+        .attr('height', plotAreaHeight-badYmax)
+        .attr('stroke', 'red')
+        .attr('fill', 'red')
+        .style("fill-opacity", .2);
+      }
+
+      // Draw the hover state for the incident information
+      if (highlightedDate.isBefore(badIncidentSeries.end) && highlightedDate.isAfter(badIncidentSeries.start) && mouseY < badYmax && mouseY > goodYmax) {
+        this.infoHoverBox.append('rect')
+        .attr('x', xScale(badIncidentSeries.start))
+        .attr('y', goodYmax)
+        .attr('width', xScale(badIncidentSeries.end) - xScale(badIncidentSeries.start))
+        .attr('height', badYmax-goodYmax)
+        .attr('stroke', 'yellow')
+        .attr('fill', 'yellow')
+        .style("fill-opacity", .2);
+      }
     }
   }
 
@@ -351,6 +399,7 @@ class LineChart extends PureComponent {
       .attr('y1', 0)
       .attr('y2', plotAreaHeight + 3)
       .attr('class', 'highlight-ref-line');
+    this.infoHoverBox = this.highlightDate.append('g')
 
 
     // add in a rect to fill out the area beneath the hovered on X date
