@@ -23,6 +23,8 @@
     stroke: #aaa;
     stroke-opacity: 0.5;
   }
+  
+  // Incident Styles
 
   .incident-arrow-line {
     stroke-width: 5px !important;
@@ -43,6 +45,7 @@
     fill: rgb(155, 189, 144);
     stroke-width: 3px !important;
     stroke: #44BD1D;
+    fill-opacity: .2;
   }
 
   .bad-incident-line {
@@ -51,8 +54,16 @@
   }
 
   .bad-incident-area {
-    fill: rgb(212, 161, 141);
+    fill: #DE8531;
     stroke-width: 3px !important;
     stroke: orangered;
+    fill-opacity: .2;
+  }
+
+  .incident-area {
+    fill: #B32900;
+    stroke-width: 3px !important;
+    stroke: red;
+    fill-opacity: .2;
   }
 }

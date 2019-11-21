@@ -145,12 +145,9 @@ function visProps(props) {
     .chunkDefinitions(standardLineChunkedDefinitions('#aaa'))
     .transitionInitial(false);
 
-
   const incidentLineGenerator = d3.line()
   .x((d) => xScale(d.x))
   .y((d) => yScale(d.y));
-
-
 
   return {
     annotationLineChunked,
@@ -315,37 +312,31 @@ class LineChart extends PureComponent {
       if (highlightedDate.isBefore(goodIncidentSeries.end) && highlightedDate.isAfter(goodIncidentSeries.start) && mouseY > goodYmax) {
         
         this.infoHoverBox.append('rect')
+        .classed("good-incident-area", true)
         .attr('x', xScale(goodIncidentSeries.start))
         .attr('y', goodYmax)
         .attr('width', xScale(goodIncidentSeries.end) - xScale(goodIncidentSeries.start))
         .attr('height', plotAreaHeight-goodYmax)
-        .attr('stroke', 'green')
-        .attr('fill', 'green')
-        .style("fill-opacity", .2);
       }
 
       // Draw the hover state for the bad period information
       if (highlightedDate.isBefore(badIncidentSeries.end) && highlightedDate.isAfter(badIncidentSeries.start) && mouseY > badYmax) {
         this.infoHoverBox.append('rect')
+        .classed("bad-incident-area", true)
         .attr('x', xScale(badIncidentSeries.start))
         .attr('y', badYmax)
         .attr('width', xScale(badIncidentSeries.end) - xScale(badIncidentSeries.start))
         .attr('height', plotAreaHeight-badYmax)
-        .attr('stroke', 'red')
-        .attr('fill', 'red')
-        .style("fill-opacity", .2);
       }
 
       // Draw the hover state for the incident information
       if (highlightedDate.isBefore(badIncidentSeries.end) && highlightedDate.isAfter(badIncidentSeries.start) && mouseY < badYmax && mouseY > goodYmax) {
         this.infoHoverBox.append('rect')
+        .classed("incident-area", true)
         .attr('x', xScale(badIncidentSeries.start))
         .attr('y', goodYmax)
         .attr('width', xScale(badIncidentSeries.end) - xScale(badIncidentSeries.start))
         .attr('height', badYmax-goodYmax)
-        .attr('stroke', 'yellow')
-        .attr('fill', 'yellow')
-        .style("fill-opacity", .2);
       }
     }
   }

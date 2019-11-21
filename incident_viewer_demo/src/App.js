@@ -13,7 +13,7 @@ import './chart_support/assets/base.scss';
 //////////////////////////////////////////////////////////////////////////
 
 var chartId = "providers-time-series"
-var colors = {nauswaseattle_AS13367x: "rgb(106, 34, 92)", nauswaseattle_AS11398x: "rgb(69, 160, 58)", nauswaseattle_AS21928: "rgb(125, 66, 25)"}
+var colors = {naus_AS11486x: "rgb(125, 25, 125)", nauswaseattle_AS11398x: "rgb(69, 160, 58)", nauswaseattle_AS21928: "rgb(125, 66, 25)"}
 
 var myMoment = moment({year: 2018, month: 10, day: 1}).format("YYYY-MM-DD hh:mm:ss")
 
@@ -86,7 +86,7 @@ function App() {
           <AutoWidth>
             <LineChartWithCounts
               id={chartId}
-              // colors={colors}
+              colors={colors}
               counts={counts}
               highlightCounts={clientIspCounts}
               series={clientIspTimeSeriesData}
