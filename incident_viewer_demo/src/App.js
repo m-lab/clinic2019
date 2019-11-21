@@ -67,6 +67,8 @@ function onHighlightTimeSeriesLine(series) {}
 
 var highlightTimeSeriesLine = undefined;
 
+var hasIncident = true;
+
 var viewMetric = {
   "formatter": undefined,  // function here is a REALLY big one, but I doubt this is causing the issue
   "label": "Download Speed", 
@@ -82,10 +84,12 @@ function App() {
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
+        {/* <btn onClick={hasIncident = !hasIncident}>Click me</btn>  */}
         <Row className="Chart-row">
           <AutoWidth>
             <LineChartWithCounts
               id={chartId}
+              hasIncident={hasIncident}
               colors={colors}
               counts={counts}
               highlightCounts={clientIspCounts}

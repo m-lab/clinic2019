@@ -9,6 +9,7 @@ import { testThreshold } from '../chart_support/constants';
 
 import './LineChart.scss';
 import moment from 'moment';
+import { timingSafeEqual } from 'crypto';
 
 /**
  * Figure out what is needed to render the chart
@@ -282,7 +283,7 @@ class LineChart extends PureComponent {
    */
   onMouseMove(mouse) {
     // TODO: make in alphabetical order
-    const { plotAreaHeight, goodIncidentSeries, badIncidentSeries, onHighlightDate, series, xScale , xKey, yScale, yKey } = this.props;
+    const { plotAreaHeight, goodIncidentSeries, badIncidentSeries, onHighlightDate, series, xScale , xKey, yScale, hasIncident } = this.props;
     
     const goodDescription1 = "Average Download Speed: 50 mb/s"
     const goodDescription2 = "August 2015 - July 2016"
@@ -315,69 +316,86 @@ class LineChart extends PureComponent {
       const badYmax = yScale(badIncidentSeries.download_speed_mbps_median);
       this.infoHoverBox.selectAll('*').remove();
 
-      // TODO: Change values to use the correct JSON attributes
-      const width = xScale(goodIncidentSeries.end) - xScale(goodIncidentSeries.start);
-      const rectFitsText = width > 180;
-      const verticalTextShifter = 0.45; // NOTE: This needs to be tuned based on font size and number of lines :(
+      if (hasIncident) {
+        // TODO: Change values to use the correct JSON attributes
+        const width = xScale(goodIncidentSeries.end) - xScale(goodIncidentSeries.start);
+        const rectFitsText = width > 180;
+        const verticalTextShifter = 0.45; // NOTE: This needs to be tuned based on font size and number of lines :(
 
-      // Draw the hover state for the good period information
-      if (highlightedDate.isBefore(goodIncidentSeries.end) && highlightedDate.isSameOrAfter(goodIncidentSeries.start) && mouseY > goodYmax) {
-        this.infoHoverBox.append('rect')
-        .classed("good-incident-area", true)
-        .attr('x', xScale(goodIncidentSeries.start))
-        .attr('y', goodYmax)
-        .attr('width', width)
-        .attr('height', plotAreaHeight-goodYmax);
+        // Draw the hover state for the good period information
+        if (highlightedDate.isBefore(goodIncidentSeries.end) && highlightedDate.isSameOrAfter(goodIncidentSeries.start) && mouseY > goodYmax) {
+          this.infoHoverBox.append('rect')
+          .classed("good-incident-area", true)
+          .attr('x', xScale(goodIncidentSeries.start))
+          .attr('y', goodYmax)
+          .attr('width', width)
+          .attr('height', plotAreaHeight-goodYmax);
 
-        if (rectFitsText) {
-          this.infoHoverBox.append('text')
-          .classed('good-hover-text', true)
-          .attr('x', xScale(goodIncidentSeries.start) + 0.5*width)
-          .attr('y', goodYmax + verticalTextShifter*(plotAreaHeight-goodYmax))
-          .append('svg:tspan')
-          .attr('x', xScale(goodIncidentSeries.start) + 20)
-          .attr('dy', 0)
-          .text(goodDescription1)
-          .append('svg:tspan')
-          .attr('x', xScale(goodIncidentSeries.start) + 20)
-          .attr('dy', 20)
-          .text(goodDescription2)
+          if (rectFitsText) {
+            this.infoHoverBox.append('text')
+            .classed('good-hover-text', true)
+            .attr('x', xScale(goodIncidentSeries.start) + 0.5*width)
+            .attr('y', goodYmax + verticalTextShifter*(plotAreaHeight-goodYmax))
+            .append('svg:tspan')
+            .attr('x', xScale(goodIncidentSeries.start) + 20)
+            .attr('dy', 0)
+            .text(goodDescription1)
+            .append('svg:tspan')
+            .attr('x', xScale(goodIncidentSeries.start) + 20)
+            .attr('dy', 20)
+            .text(goodDescription2)
+          }
         }
-      }
 
-      // Draw the hover state for the bad period information
-      if (highlightedDate.isSameOrBefore(badIncidentSeries.end) && highlightedDate.isSameOrAfter(badIncidentSeries.start) && mouseY > badYmax) {
-        this.infoHoverBox.append('rect')
-        .classed("bad-incident-area", true)
-        .attr('x', xScale(badIncidentSeries.start))
-        .attr('y', badYmax)
-        .attr('width', width)
-        .attr('height', plotAreaHeight-badYmax)
-        
-        if (rectFitsText) {
-          this.infoHoverBox.append('text')
-          .classed('bad-hover-text', true)
-          .attr('x', xScale(badIncidentSeries.start) + 0.5*width)
-          .attr('y', badYmax + verticalTextShifter*(plotAreaHeight-badYmax))
-          .append('svg:tspan')
-          .attr('x', xScale(badIncidentSeries.start) + 20)
-          .attr('dy', 0)
-          .text(goodDescription1)
-          .append('svg:tspan')
-          .attr('x', xScale(badIncidentSeries.start) + 20)
-          .attr('dy', 20)
-          .text(goodDescription2)
+        // Draw the hover state for the bad period information
+        if (highlightedDate.isSameOrBefore(badIncidentSeries.end) && highlightedDate.isSameOrAfter(badIncidentSeries.start) && mouseY > badYmax) {
+          this.infoHoverBox.append('rect')
+          .classed("bad-incident-area", true)
+          .attr('x', xScale(badIncidentSeries.start))
+          .attr('y', badYmax)
+          .attr('width', width)
+          .attr('height', plotAreaHeight-badYmax)
+          
+          if (rectFitsText) {
+            this.infoHoverBox.append('text')
+            .classed('bad-hover-text', true)
+            .attr('x', xScale(badIncidentSeries.start) + 0.5*width)
+            .attr('y', badYmax + verticalTextShifter*(plotAreaHeight-badYmax))
+            .append('svg:tspan')
+            .attr('x', xScale(badIncidentSeries.start) + 20)
+            .attr('dy', 0)
+            .text(goodDescription1)
+            .append('svg:tspan')
+            .attr('x', xScale(badIncidentSeries.start) + 20)
+            .attr('dy', 20)
+            .text(goodDescription2)
+          }
         }
-      }
 
-      // Draw the hover state for the incident information
-      if (highlightedDate.isSameOrBefore(badIncidentSeries.end) && highlightedDate.isSameOrAfter(badIncidentSeries.start) && mouseY < badYmax && mouseY > goodYmax) {
-        this.infoHoverBox.append('rect')
-        .classed("incident-area", true)
-        .attr('x', xScale(badIncidentSeries.start))
-        .attr('y', goodYmax)
-        .attr('width', xScale(badIncidentSeries.end) - xScale(badIncidentSeries.start))
-        .attr('height', badYmax-goodYmax)
+        // Draw the hover state for the incident information
+        if (highlightedDate.isSameOrBefore(badIncidentSeries.end) && highlightedDate.isSameOrAfter(badIncidentSeries.start) && mouseY < badYmax && mouseY > goodYmax) {
+          this.infoHoverBox.append('rect')
+          .classed("incident-area", true)
+          .attr('x', xScale(badIncidentSeries.start))
+          .attr('y', goodYmax)
+          .attr('width', xScale(badIncidentSeries.end) - xScale(badIncidentSeries.start))
+          .attr('height', badYmax-goodYmax)
+
+          if (rectFitsText) {
+            this.infoHoverBox.append('text')
+            .classed('incident-hover-text', true)
+            .attr('x', xScale(badIncidentSeries.start) + 0.5*width)
+            .attr('y', goodYmax + verticalTextShifter*(plotAreaHeight-goodYmax - badYmax/2))
+            .append('svg:tspan')
+            .attr('x', xScale(badIncidentSeries.start) + 20)
+            .attr('dy', 0)
+            .text(goodDescription1)
+            .append('svg:tspan')
+            .attr('x', xScale(badIncidentSeries.start) + 20)
+            .attr('dy', 20)
+            .text(goodDescription2)
+          }
+        }
       }
     }
   }
@@ -479,7 +497,7 @@ class LineChart extends PureComponent {
    */
   update() {
     const { highlightDate, series = [], annotationSeries = [], xKey, padding,
-      plotAreaHeight, plotAreaWidth } = this.props;
+      plotAreaHeight, plotAreaWidth, hasIncident} = this.props;
 
     // ensure we have room for the legend
     this.g.attr('transform', `translate(${padding.left} ${padding.top})`);
@@ -496,8 +514,10 @@ class LineChart extends PureComponent {
         return value;
       });
     }
-    
-    this.updateIncident();
+
+    if (hasIncident) {
+      this.updateIncident();
+    }
 
     this.updateLegend(highlightValues);
     this.updateAxes();
