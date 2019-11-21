@@ -317,9 +317,11 @@ class LineChart extends PureComponent {
 
       // TODO: Change values to use the correct JSON attributes
       const width = xScale(goodIncidentSeries.end) - xScale(goodIncidentSeries.start);
+      const rectFitsText = width < 500;
+      const verticalTextShifter = 0.45; // NOTE: This needs to be tuned based on font size and number of lines :(
 
       // Draw the hover state for the good period information
-      if (highlightedDate.isSameOrBefore(goodIncidentSeries.end) && highlightedDate.isSameOrAfter(goodIncidentSeries.start) && mouseY > goodYmax) {
+      if (highlightedDate.isBefore(goodIncidentSeries.end) && highlightedDate.isSameOrAfter(goodIncidentSeries.start) && mouseY > goodYmax) {
         this.infoHoverBox.append('rect')
         .classed("good-incident-area", true)
         .attr('x', xScale(goodIncidentSeries.start))
@@ -327,17 +329,20 @@ class LineChart extends PureComponent {
         .attr('width', width)
         .attr('height', plotAreaHeight-goodYmax);
 
-        // Write text for good period
-        this.infoHoverBox.append('text')
-          .classed('hover-box-text', true)
+        if (rectFitsText) {
+          this.infoHoverBox.append('text')
+          .classed('good-hover-text', true)
           .attr('x', xScale(goodIncidentSeries.start) + 0.5*width)
-          .attr('y', goodYmax + 0.5*(plotAreaHeight-goodYmax))
+          .attr('y', goodYmax + verticalTextShifter*(plotAreaHeight-goodYmax))
           .append('svg:tspan')
+          .attr('x', xScale(goodIncidentSeries.start) + 20)
           .attr('dy', 0)
           .text(goodDescription1)
           .append('svg:tspan')
+          .attr('x', xScale(goodIncidentSeries.start) + 20)
           .attr('dy', 20)
           .text(goodDescription2)
+        }
       }
 
       // Draw the hover state for the bad period information
@@ -348,6 +353,21 @@ class LineChart extends PureComponent {
         .attr('y', badYmax)
         .attr('width', width)
         .attr('height', plotAreaHeight-badYmax)
+        
+        if (rectFitsText) {
+          this.infoHoverBox.append('text')
+          .classed('bad-hover-text', true)
+          .attr('x', xScale(badIncidentSeries.start) + 0.5*width)
+          .attr('y', badYmax + verticalTextShifter*(plotAreaHeight-badYmax))
+          .append('svg:tspan')
+          .attr('x', xScale(badIncidentSeries.start) + 20)
+          .attr('dy', 0)
+          .text(goodDescription1)
+          .append('svg:tspan')
+          .attr('x', xScale(badIncidentSeries.start) + 20)
+          .attr('dy', 20)
+          .text(goodDescription2)
+        }
       }
 
       // Draw the hover state for the incident information

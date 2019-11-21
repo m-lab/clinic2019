@@ -24,61 +24,81 @@
     stroke-opacity: 0.5;
   }
   
+  // Incident Styles Variables
+  $good-color: #44BD1D;
+  $bad-color: orangered;
+  $incident-color: red;
+
   // Incident Styles
 
   .incident-arrow-line {
     stroke-width: 5px !important;
-    stroke: red;
+    stroke: $incident-color;
   }
 
   .incident-arrow-tri {
     stroke-width: 1px !important;
-    fill: red;
+    fill: $incident-color;
   }
 
   .good-incident-line {
     stroke-width: 3px !important;
-    stroke: #44BD1D;
+    stroke: $good-color;
   }
 
   .good-incident-area {
     fill: rgb(155, 189, 144);
     stroke-width: 3px !important;
-    stroke: #44BD1D;
+    stroke: $good-color;
     fill-opacity: .5;
   }
 
   .bad-incident-line {
     stroke-width: 3px !important;
-    stroke: orangered;
+    stroke: $bad-color;
   }
 
   .bad-incident-area {
     fill: #DE8531;
     stroke-width: 3px !important;
-    stroke: orangered;
+    stroke: $bad-color;
     fill-opacity: .5;
   }
 
   .incident-area {
-    fill: #B32900;
+    fill: $incident-color;
     stroke-width: 3px !important;
-    stroke: red;
-    fill-opacity: .5;
+    stroke: $incident-color;
+    fill-opacity: .3;
   }
 
   .good-incident-shading {
-    fill: rgb(155, 189, 144);
+    fill: $good-color;
     fill-opacity: .5;
   }
 
   .bad-incident-shading {
-    fill: rgb(228, 139, 87);
+    fill: $bad-color;
     fill-opacity: .5;
   }
 
-  .hover-box-text {
-    font-size: 15px;
-    text-anchor: middle;
+  @mixin hover-text {
+    font-size: 12px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+  }
+
+  .incident-hover-text {
+    @include hover-text;
+    color: $incident-color;
+  }
+
+  .good-hover-text {
+    @include hover-text;
+    color: $good-color;
+  }
+
+  .bad-hover-text {
+    @include hover-text;
+    color: $bad-color;
   }
 }
