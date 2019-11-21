@@ -41,7 +41,7 @@ func Test_getGoodPeriod(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s, e := (&tt.input).getGoodPeriod()
+			s, e := (&tt.input).GetGoodPeriod()
 			got := timeAr{s, e}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("getGoodPeriod() = %v, want %v", got, tt.want)
@@ -68,7 +68,7 @@ func Test_getBadPeriod(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s, e := (&tt.input).getBadPeriod()
+			s, e := (&tt.input).GetBadPeriod()
 			got := timeAr{s, e}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("getBadPeriod() = %v, want %v", got, tt.want)
@@ -94,7 +94,7 @@ func Test_getSeverity(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := (&tt.input).getSeverity()
+			got := (&tt.input).GetSeverity()
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("getSeverity() = %v, want %v", got, tt.want)
 			}
@@ -119,7 +119,7 @@ func Test_getTestsAffected(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := (&tt.input).getTestsAffected()
+			got := (&tt.input).GetTestsAffected()
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("getTestsAffected() = %v, want %v", got, tt.want)
 			}
