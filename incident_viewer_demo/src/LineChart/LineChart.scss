@@ -45,7 +45,7 @@
     fill: rgb(155, 189, 144);
     stroke-width: 3px !important;
     stroke: #44BD1D;
-    fill-opacity: .2;
+    fill-opacity: .5;
   }
 
   .bad-incident-line {
@@ -57,13 +57,23 @@
     fill: #DE8531;
     stroke-width: 3px !important;
     stroke: orangered;
-    fill-opacity: .2;
+    fill-opacity: .5;
   }
 
   .incident-area {
     fill: #B32900;
     stroke-width: 3px !important;
     stroke: red;
-    fill-opacity: .2;
+    fill-opacity: .5;
+  }
+
+  .good-incident-shading {
+    fill: rgb(155, 189, 144);
+    fill-opacity: .5;
+  }
+
+  .bad-incident-shading {
+    fill: rgb(228, 139, 87);
+    fill-opacity: .5;
   }
 }

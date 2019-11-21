@@ -149,12 +149,19 @@ function visProps(props) {
   .x((d) => xScale(d.x))
   .y((d) => yScale(d.y));
 
+  const incidentShadingGenerator = d3.area()
+    .curve(d3.curveMonotoneX)
+    .x((d) => xScale(d.x))
+    .y0((d) => yScale(d.y0))
+    .y1((d) => yScale(d.y1));
+
   return {
     annotationLineChunked,
     annotationSeries,
     goodIncidentSeries,
     badIncidentSeries,
     incidentLineGenerator,
+    incidentShadingGenerator,
     colors,
     plotAreaHeight,
     padding,
@@ -380,6 +387,9 @@ class LineChart extends PureComponent {
     this.badIncidentLine = this.g.append('g').classed('bad-incident-line', true);
     this.incidentArrowLine = this.g.append('g').classed('incident-arrow-line', true);
     this.incidentArrowTri = this.g.append('g').classed('incident-arrow-tri', true);
+    this.goodIncidentShading = this.g.append('g').classed('good-incident-shading', true);
+    this.badIncidentShading = this.g.append('g').classed('bad-incident-shading', true);
+    
 
     // container for showing the x highlighte date indicator
     this.highlightDate = this.g.append('g').attr('class', 'highlight-date');
@@ -451,8 +461,6 @@ class LineChart extends PureComponent {
         return value;
       });
     }
-    console.log(annotationSeries)
-    console.log(highlightValues)
     
     this.updateIncident();
 
@@ -647,35 +655,60 @@ class LineChart extends PureComponent {
     this.badIncidentLine.selectAll('*').remove();
 
     this.updateIncidentArrow();
+    this.updateIncidentShading();
 
-    const goodBinding = this.goodIncidentLine.selectAll('g').data(goodIncidentSeriesArray);
-    const badBinding = this.badIncidentLine.selectAll('g').data(badIncidentSeriesArray);
-
-    // ENTER
-    const goodEntering = goodBinding.enter()
-      .append('path')
-        .attr('d', incidentLineGenerator(goodIncidentSeriesArray));
-    const badEntering = badBinding.enter()
-      .append('path')
-        .attr('d', incidentLineGenerator(badIncidentSeriesArray));
+    // LINES
+    this.goodIncidentLine.append('path')
+      .classed('good-incident-line', true)
+      .attr('d', incidentLineGenerator(goodIncidentSeriesArray))
     
+    this.badIncidentLine.append('path')
+      .classed('bad-incident-line', true)
+      .attr('d', incidentLineGenerator(badIncidentSeriesArray))
+  }
 
-    // ENTER + UPDATE
-    goodBinding.merge(goodEntering)
-      .transition()
-      .call(incidentLineGenerator);
+  updateIncidentShading() {
+    const { goodIncidentSeries, badIncidentSeries, incidentShadingGenerator, series } = this.props;
+    
+    var goodIncidentShadingArray = [];
+    var badIncidentShadingArray = [];
 
-    badBinding.merge(badEntering)
-      .transition()
-      .call(incidentLineGenerator);
+    series[0].results
+      .filter(entry => (entry.date.isSameOrAfter(goodIncidentSeries.start) && entry.date.isSameOrBefore(goodIncidentSeries.end)))
+      .map(entry => (
+        goodIncidentShadingArray.push(
+          { x: entry.date, 
+            y0: goodIncidentSeries.download_speed_mbps_median, 
+            y1: entry.download_speed_mbps_median
+          }
+        )
+      ));
+    
+    series[0].results
+      .filter(entry => (entry.date.isSameOrAfter(badIncidentSeries.start) && entry.date.isSameOrBefore(badIncidentSeries.end)))
+      .map(entry => (
+        badIncidentShadingArray.push(
+          { x: entry.date, 
+            y0: badIncidentSeries.download_speed_mbps_median, 
+            y1: entry.download_speed_mbps_median
+          }
+        )
+      ));
+    
+    this.goodIncidentShading.selectAll('*').remove();
+    this.badIncidentShading.selectAll('*').remove();
 
-    // EXIT
-    goodBinding.exit().remove();
-    badBinding.exit().remove();
+    this.goodIncidentShading.append('path')
+      .attr('d', incidentShadingGenerator(goodIncidentShadingArray));
+
+    this.badIncidentShading.append('path')
+      .attr('d', incidentShadingGenerator(badIncidentShadingArray));
+    
+  
   }
 
   updateIncidentArrow() {
-    const { goodIncidentSeries, badIncidentSeries, incidentLineGenerator, xScale, yScale } = this.props;
+    const { goodIncidentSeries, badIncidentSeries, xScale, yScale } = this.props;
 
     const incidentArrowX = goodIncidentSeries.end;
     const triWidth = 20;
@@ -710,7 +743,6 @@ class LineChart extends PureComponent {
       .attr('x2', xScale(incidentArrowLineArray[1].x))
       .attr('y1', yScale(incidentArrowLineArray[0].y))
       .attr('y2', yScale(incidentArrowLineArray[1].y)-triHeight/2);
-
   }
 
   /**
