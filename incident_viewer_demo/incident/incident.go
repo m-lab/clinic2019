@@ -48,6 +48,7 @@ type DefaultIncident struct {
 //**************************************//
 //    		CONSTRUCTORS
 //**************************************//
+
 func (i *IncidentData) Init(
 	goodTimeStart time.Time,
 	goodTimeEnd time.Time,
@@ -95,6 +96,7 @@ func (i *DefaultIncident) Init(goodTimeStart time.Time, goodTimeEnd time.Time,
 //**************************************//
 //    		GETTER METHODS
 //**************************************//
+
 func (i *DefaultIncident) GetGoodPeriod() (time.Time, time.Time) {
 	return i.goodStartTime, i.goodEndTime
 }

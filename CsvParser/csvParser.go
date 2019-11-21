@@ -3,7 +3,6 @@ package csvParser
 import (
 	"encoding/csv"
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -100,7 +99,7 @@ func makeJsonObjFile(arr []incident.Incident) *os.File {
 	f, err := os.Create("incidents.json")
 	var objs [numObjects]incident.IncidentData
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 		return f
 	}
 
@@ -121,8 +120,8 @@ func makeJsonObjFile(arr []incident.Incident) *os.File {
 	n, err := f.Write(bytes)
 
 	if err != nil {
-		fmt.Println(n)
-		fmt.Println(err)
+		log.Fatal(n)
+		log.Fatal(err)
 		f.Close()
 		return f
 	}
