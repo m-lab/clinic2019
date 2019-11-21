@@ -283,6 +283,9 @@ class LineChart extends PureComponent {
   onMouseMove(mouse) {
     // TODO: make in alphabetical order
     const { plotAreaHeight, goodIncidentSeries, badIncidentSeries, onHighlightDate, series, xScale , xKey, yScale, yKey } = this.props;
+    
+    const goodDescription1 = "Average Download Speed: 50 mb/s"
+    const goodDescription2 = "August 2015 - July 2016"
 
     if (!onHighlightDate) {
       return;
@@ -313,16 +316,28 @@ class LineChart extends PureComponent {
       this.infoHoverBox.selectAll('*').remove();
 
       // TODO: Change values to use the correct JSON attributes
+      const width = xScale(goodIncidentSeries.end) - xScale(goodIncidentSeries.start);
 
       // Draw the hover state for the good period information
       if (highlightedDate.isSameOrBefore(goodIncidentSeries.end) && highlightedDate.isSameOrAfter(goodIncidentSeries.start) && mouseY > goodYmax) {
-        
         this.infoHoverBox.append('rect')
         .classed("good-incident-area", true)
         .attr('x', xScale(goodIncidentSeries.start))
         .attr('y', goodYmax)
-        .attr('width', xScale(goodIncidentSeries.end) - xScale(goodIncidentSeries.start))
-        .attr('height', plotAreaHeight-goodYmax)
+        .attr('width', width)
+        .attr('height', plotAreaHeight-goodYmax);
+
+        // Write text for good period
+        this.infoHoverBox.append('text')
+          .classed('hover-box-text', true)
+          .attr('x', xScale(goodIncidentSeries.start) + 0.5*width)
+          .attr('y', goodYmax + 0.5*(plotAreaHeight-goodYmax))
+          .append('svg:tspan')
+          .attr('dy', 0)
+          .text(goodDescription1)
+          .append('svg:tspan')
+          .attr('dy', 20)
+          .text(goodDescription2)
       }
 
       // Draw the hover state for the bad period information
@@ -331,7 +346,7 @@ class LineChart extends PureComponent {
         .classed("bad-incident-area", true)
         .attr('x', xScale(badIncidentSeries.start))
         .attr('y', badYmax)
-        .attr('width', xScale(badIncidentSeries.end) - xScale(badIncidentSeries.start))
+        .attr('width', width)
         .attr('height', plotAreaHeight-badYmax)
       }
 
