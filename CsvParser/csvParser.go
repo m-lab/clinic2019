@@ -107,16 +107,18 @@ func makeJsonObjFile(arr []incident.Incident) *os.File {
 	for i := 0; i < numObjects; i++ {
 		gpStart, gpEnd := arr[i].GetGoodPeriod()
 		bpStart, bpEnd := arr[i].GetBadPeriod()
-		s := arr[i].GetSeverity()
-		ta := arr[i].GetTestsAffected()
-		gpi := arr[i].GetGoodPeriodInfo()
-		bpi := arr[i].GetBadPeriodInfo()
-		ii := arr[i].GetIncidentInfo()
-		inc := incident.IncidentData{gpStart, gpEnd, bpStart, bpEnd, s, ta, gpi, bpi, ii}
+		gMetric := arr[i].GetGoodMetric()
+		bMetric := arr[i].GetBadMetric()
+		severity := arr[i].GetSeverity()
+		testsAffected := arr[i].GetTestsAffected()
+		gpInfo := arr[i].GetGoodPeriodInfo()
+		bpInfo := arr[i].GetBadPeriodInfo()
+		iInfo := arr[i].GetIncidentInfo()
+		inc := incident.IncidentData{gpStart, gpEnd, bpStart, bpEnd, gMetric, bMetric, severity, testsAffected, gpInfo, bpInfo, iInfo}
 		objs[i] = inc
 	}
-	b, err := json.Marshal(objs)
-	n, err := f.Write(b)
+	bytes, err := json.Marshal(objs)
+	n, err := f.Write(bytes)
 
 	if err != nil {
 		fmt.Println(n)

@@ -5,9 +5,12 @@ import (
 	"time"
 )
 
+//* All incident types must implement the Incident interface *//
 type Incident interface {
 	GetGoodPeriod() (time.Time, time.Time)
 	GetBadPeriod() (time.Time, time.Time)
+	GetGoodMetric() float64
+	GetBadMetric() float64
 	GetSeverity() float64
 	GetTestsAffected() int
 	GetGoodPeriodInfo() string
@@ -15,11 +18,14 @@ type Incident interface {
 	GetIncidentInfo() string
 }
 
+//* This is the incident format for the JSON file *//
 type IncidentData struct {
 	GoodPeriodStart  time.Time `json:"goodPeriodStart"`
 	GoodPeriodEnd    time.Time `json:"goodPeriodEnd"`
 	BadPeriodStart   time.Time `json:"badPeriodStart"`
 	BadPeriodEnd     time.Time `json:"badPeriodEnd"`
+	GoodPeriodMetric float64   `json:"goodPeriodMetric"`
+	BadPeriodMetric  float64   `json:"badPeriodMetric"`
 	Severity         float64   `json:"severity"`
 	NumTestsAffected int       `json:"numTestsAffected"`
 	GoodPeriodInfo   string    `json:"goodPeriodInfo"`
@@ -27,6 +33,7 @@ type IncidentData struct {
 	IncidentInfo     string    `json:"incidentInfo"`
 }
 
+//* An incident for a 30% or more drop in download speed over a period of a year or longer *//
 type DefaultIncident struct {
 	goodStartTime    time.Time
 	goodEndTime      time.Time
@@ -38,11 +45,16 @@ type DefaultIncident struct {
 	numTestsAffected int
 }
 
+//**************************************//
+//    		CONSTRUCTORS    			//
+//**************************************//
 func (i *IncidentData) Init(
 	goodTimeStart time.Time,
 	goodTimeEnd time.Time,
 	badTimeStart time.Time,
 	badTimeEnd time.Time,
+	goodMetric float64,
+	badMetric float64,
 	severity float64,
 	testsAffected int,
 	goodPeriodInfo string,
@@ -52,6 +64,8 @@ func (i *IncidentData) Init(
 	i.GoodPeriodStart = goodTimeStart
 	i.GoodPeriodEnd = goodTimeEnd
 	i.BadPeriodStart = badTimeStart
+	i.GoodPeriodMetric = goodMetric
+	i.BadPeriodMetric = badMetric
 	i.BadPeriodEnd = badTimeEnd
 	i.Severity = severity
 	i.NumTestsAffected = testsAffected
@@ -78,12 +92,23 @@ func (i *DefaultIncident) Init(goodTimeStart time.Time, goodTimeEnd time.Time,
 	i.numTestsAffected = testsAffected
 }
 
+//**************************************//
+//    		GETTER METHODS    			//
+//**************************************//
 func (i *DefaultIncident) GetGoodPeriod() (time.Time, time.Time) {
 	return i.goodStartTime, i.goodEndTime
 }
 
 func (i *DefaultIncident) GetBadPeriod() (time.Time, time.Time) {
 	return i.badStartTime, i.badEndTime
+}
+
+func (i *DefaultIncident) GetGoodMetric() float64 {
+	return i.avgGoodDS
+}
+
+func (i *DefaultIncident) GetBadMetric() float64 {
+	return i.avgBadDS
 }
 
 func (i *DefaultIncident) GetSeverity() float64 {
