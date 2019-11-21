@@ -317,7 +317,7 @@ class LineChart extends PureComponent {
 
       // TODO: Change values to use the correct JSON attributes
       const width = xScale(goodIncidentSeries.end) - xScale(goodIncidentSeries.start);
-      const rectFitsText = width < 500;
+      const rectFitsText = width > 180;
       const verticalTextShifter = 0.45; // NOTE: This needs to be tuned based on font size and number of lines :(
 
       // Draw the hover state for the good period information
