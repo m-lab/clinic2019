@@ -127,6 +127,5 @@ func makeJsonObjFile(arr []incident.Incident) *os.File {
 		return f
 	}
 
-	fmt.Println("bytes written successfully")
 	return f
 }
