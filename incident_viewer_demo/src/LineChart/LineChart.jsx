@@ -305,11 +305,10 @@ class LineChart extends PureComponent {
       const badYmax = yScale(badIncidentSeries.download_speed_mbps_median);
       this.infoHoverBox.selectAll('*').remove();
 
-      // TODO: Make dates inclusive
       // TODO: Change values to use the correct JSON attributes
 
       // Draw the hover state for the good period information
-      if (highlightedDate.isBefore(goodIncidentSeries.end) && highlightedDate.isAfter(goodIncidentSeries.start) && mouseY > goodYmax) {
+      if (highlightedDate.isSameOrBefore(goodIncidentSeries.end) && highlightedDate.isSameOrAfter(goodIncidentSeries.start) && mouseY > goodYmax) {
         
         this.infoHoverBox.append('rect')
         .classed("good-incident-area", true)
@@ -320,7 +319,7 @@ class LineChart extends PureComponent {
       }
 
       // Draw the hover state for the bad period information
-      if (highlightedDate.isBefore(badIncidentSeries.end) && highlightedDate.isAfter(badIncidentSeries.start) && mouseY > badYmax) {
+      if (highlightedDate.isSameOrBefore(badIncidentSeries.end) && highlightedDate.isSameOrAfter(badIncidentSeries.start) && mouseY > badYmax) {
         this.infoHoverBox.append('rect')
         .classed("bad-incident-area", true)
         .attr('x', xScale(badIncidentSeries.start))
@@ -330,7 +329,7 @@ class LineChart extends PureComponent {
       }
 
       // Draw the hover state for the incident information
-      if (highlightedDate.isBefore(badIncidentSeries.end) && highlightedDate.isAfter(badIncidentSeries.start) && mouseY < badYmax && mouseY > goodYmax) {
+      if (highlightedDate.isSameOrBefore(badIncidentSeries.end) && highlightedDate.isSameOrAfter(badIncidentSeries.start) && mouseY < badYmax && mouseY > goodYmax) {
         this.infoHoverBox.append('rect')
         .classed("incident-area", true)
         .attr('x', xScale(badIncidentSeries.start))
