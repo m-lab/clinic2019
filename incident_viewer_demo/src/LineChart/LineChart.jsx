@@ -19,8 +19,10 @@ function visProps(props) {
     idKey,
     labelKey,
     series = [],
-    goodIncidentSeries,
-    badIncidentSeries,
+    incident,
+    // goodIncidentSeries,
+    // badIncidentSeries,
+    hasIncident,
     forceZeroMin,
     height,
     paddingLeft = 50,
@@ -157,8 +159,9 @@ function visProps(props) {
   return {
     annotationLineChunked,
     annotationSeries,
-    goodIncidentSeries,
-    badIncidentSeries,
+    incident,
+    // goodIncidentSeries,
+    // badIncidentSeries,
     incidentLineGenerator,
     incidentShadingGenerator,
     colors,
@@ -178,8 +181,9 @@ function visProps(props) {
 class LineChart extends PureComponent {
   static propTypes = {
     annotationLineChunked: React.PropTypes.func,
-    goodIncidentSeries: React.PropTypes.object,
-    badIncidentSeries: React.PropTypes.object,
+    incident: React.PropTypes.object,
+    // goodIncidentSeries: React.PropTypes.object,
+    // badIncidentSeries: React.PropTypes.object,
     annotationSeries: PropTypes.array,
     // Obect mapping series IDs to colors
     colors: PropTypes.object,
@@ -280,10 +284,13 @@ class LineChart extends PureComponent {
    * @return {void}
    */
   onMouseMove(mouse) {
-    const { plotAreaHeight, goodIncidentSeries, badIncidentSeries, onHighlightDate, series, xScale , xKey, yScale, hasIncident } = this.props;
+    // TODO: these are the changes from MASTER and we need to remove them
+    // const { plotAreaHeight, goodIncidentSeries, badIncidentSeries, onHighlightDate, series, xScale , xKey, yScale, hasIncident } = this.props;
     
-    const goodDescription1 = "Average Download Speed: 50 mb/s"
-    const goodDescription2 = "August 2015 - July 2016"
+    // const goodDescription1 = "Average Download Speed: 50 mb/s"
+    // const goodDescription2 = "August 2015 - July 2016"
+    // TODO: make in alphabetical order
+    const { plotAreaHeight, incident, onHighlightDate, series, xScale , xKey, yScale, yKey } = this.props;
 
     if (!onHighlightDate) {
       return;
@@ -309,10 +316,11 @@ class LineChart extends PureComponent {
         .attr('x2', xScale(closest));
 
       const highlightedDate = moment(closest);
-      const goodYmax = yScale(goodIncidentSeries.download_speed_mbps_median);
-      const badYmax = yScale(badIncidentSeries.download_speed_mbps_median);
+      const goodYmax = yScale(incident.goodPeriodMetric);
+      const badYmax = yScale(incident.badPeriodMetric);
       this.infoHoverBox.selectAll('*').remove();
 
+      // CHANGE
       if (hasIncident) {
         const width = xScale(goodIncidentSeries.end) - xScale(goodIncidentSeries.start);
         const rectFitsText = width > 180; // NOTE: This also must be manually tuned. It hides hover text in the case 
@@ -393,6 +401,38 @@ class LineChart extends PureComponent {
             .text(goodDescription2)
           }
         }
+      // TODO: delete reference code before
+
+      // Draw the hover state for the good period information
+      // if (highlightedDate.isSameOrBefore(incident.goodPeriodEnd) && highlightedDate.isSameOrAfter(incident.goodPeriodStart) && mouseY > goodYmax) {
+        
+      //   this.infoHoverBox.append('rect')
+      //   .classed("good-incident-area", true)
+      //   .attr('x', xScale(incident.goodPeriodStart))
+      //   .attr('y', goodYmax)
+      //   .attr('width', xScale(incident.goodPeriodEnd) - xScale(incident.goodPeriodStart))
+      //   .attr('height', plotAreaHeight-goodYmax)
+      // }
+
+      // // Draw the hover state for the bad period information
+      // if (highlightedDate.isSameOrBefore(incident.badPeriodEnd) && highlightedDate.isSameOrAfter(incident.badPeriodStart) && mouseY > badYmax) {
+      //   this.infoHoverBox.append('rect')
+      //   .classed("bad-incident-area", true)
+      //   .attr('x', xScale(incident.badPeriodStart))
+      //   .attr('y', badYmax)
+      //   .attr('width', xScale(incident.badPeriodEnd) - xScale(incident.badPeriodStart))
+      //   .attr('height', plotAreaHeight-badYmax)
+      // }
+
+      // // Draw the hover state for the incident information
+      // if (highlightedDate.isSameOrBefore(incident.badPeriodEnd) && highlightedDate.isSameOrAfter(incident.badPeriodStart) && mouseY < badYmax && mouseY > goodYmax) {
+      //   this.infoHoverBox.append('rect')
+      //   .classed("incident-area", true)
+      //   .attr('x', xScale(incident.badPeriodStart))
+      //   .attr('y', goodYmax)
+      //   .attr('width', xScale(incident.badPeriodEnd) - xScale(incident.badPeriodStart))
+      //   .attr('height', badYmax-goodYmax)
+      // }
       }
     }
   }
@@ -695,8 +735,11 @@ class LineChart extends PureComponent {
    * Render the incident "good" and "bad" periods reference lines on the chart.
    */
   updateIncident() {
-    const { goodIncidentSeries, badIncidentSeries, incidentLineGenerator, hasIncident } = this.props;
+    const { incident, incidentLineGenerator, hasIncident } = this.props;
 
+    const goodIncidentSeriesArray = [{x: incident.goodPeriodStart, y: incident.goodPeriodMetric}, {x: incident.goodPeriodEnd, y: incident.goodPeriodMetric} ];
+    const badIncidentSeriesArray = [{x: incident.badPeriodStart, y: incident.badPeriodMetric}, {x: incident.badPeriodEnd, y: incident.badPeriodMetric} ];
+    
     this.goodIncidentLine.selectAll('*').remove();
     this.badIncidentLine.selectAll('*').remove();
 
@@ -704,8 +747,8 @@ class LineChart extends PureComponent {
     this.updateIncidentShading();
 
     if (hasIncident) {
-      const goodIncidentSeriesArray = [{x: goodIncidentSeries.start, y: goodIncidentSeries.download_speed_mbps_median}, {x: goodIncidentSeries.end, y: goodIncidentSeries.download_speed_mbps_median} ];
-      const badIncidentSeriesArray = [{x: badIncidentSeries.start, y: badIncidentSeries.download_speed_mbps_median}, {x: badIncidentSeries.end, y: badIncidentSeries.download_speed_mbps_median} ];
+      // const goodIncidentSeriesArray = [{x: goodIncidentSeries.start, y: goodIncidentSeries.download_speed_mbps_median}, {x: goodIncidentSeries.end, y: goodIncidentSeries.download_speed_mbps_median} ];
+      // const badIncidentSeriesArray = [{x: badIncidentSeries.start, y: badIncidentSeries.download_speed_mbps_median}, {x: badIncidentSeries.end, y: badIncidentSeries.download_speed_mbps_median} ];
     
 
       // LINES
@@ -769,24 +812,24 @@ class LineChart extends PureComponent {
    * bad period data that is passed in from props. 
    */
   updateIncidentArrow() {
-    const { goodIncidentSeries, badIncidentSeries, xScale, yScale, hasIncident } = this.props;
+    const { incident, xScale, yScale, hasIncident } = this.props;
 
     this.incidentArrowLine.selectAll('*').remove();
     this.incidentArrowTri.selectAll('*').remove();
 
     if (hasIncident) {
-      const incidentArrowX = goodIncidentSeries.end;
+      const incidentArrowX = incident.goodPeriodEnd;
       const triWidth = 20;
       const triHeight = 15;
       
-      const incidentArrowLineArray = [{x: incidentArrowX, y: goodIncidentSeries.download_speed_mbps_median}, {x: incidentArrowX, y: badIncidentSeries.download_speed_mbps_median}];
+      const incidentArrowLineArray = [{x: incidentArrowX, y: incident.goodPeriodMetric}, {x: incidentArrowX, y: incident.badPeriodMetric}];
       
       
       const incidentArrowTriArray = [
-          {x: xScale(incidentArrowX), y: yScale(badIncidentSeries.download_speed_mbps_median)}, 
-          {x: xScale(incidentArrowX) + triWidth/2, y: yScale(badIncidentSeries.download_speed_mbps_median) - triHeight}, 
-          {x: xScale(incidentArrowX) - triWidth/2, y: yScale(badIncidentSeries.download_speed_mbps_median) - triHeight}
-        ];
+        {x: xScale(incidentArrowX), y: yScale(incident.badPeriodMetric)}, 
+        {x: xScale(incidentArrowX) + triWidth/2, y: yScale(incident.badPeriodEnd) - triHeight}, 
+        {x: xScale(incidentArrowX) - triWidth/2, y: yScale(incident.badPeriodMetric) - triHeight}
+      ];
 
       
 
