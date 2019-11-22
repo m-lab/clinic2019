@@ -729,7 +729,7 @@ class LineChart extends PureComponent {
     var badIncidentShadingArray = [];
 
     series[0].results
-      .filter(entry => (entry.date.isSameOrAfter(goodIncidentSeries.start) && entry.date.isSameOrBefore(goodIncidentSeries.end)))
+      .filter(entry => (entry.date.isSameOrAfter(goodIncidentSeries.start.subtract(1, 'days')) && entry.date.isSameOrBefore(goodIncidentSeries.end.add(1, 'days'))))
       .map(entry => (
         goodIncidentShadingArray.push(
           { x: entry.date, 
@@ -740,7 +740,7 @@ class LineChart extends PureComponent {
       ));
     
     series[0].results
-      .filter(entry => (entry.date.isSameOrAfter(badIncidentSeries.start) && entry.date.isSameOrBefore(badIncidentSeries.end)))
+      .filter(entry => (entry.date.isSameOrAfter(badIncidentSeries.start.subtract(1, 'days')) && entry.date.isSameOrBefore(badIncidentSeries.end.add(1, 'days'))))
       .map(entry => (
         badIncidentShadingArray.push(
           { x: entry.date, 
