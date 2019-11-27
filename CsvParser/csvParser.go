@@ -85,7 +85,8 @@ func CsvParser(filePath string) [100]incident.DefaultIncident {
 	return incidentArray
 }
 
-func convertDefaultIncidentToIncident(arr []incident.DefaultIncident) []incident.Incident {
+//* This function takes in an array of 100 default incidents because that is what is provided by the csvParser above *//
+func convertDefaultIncidentToIncident(arr [100]incident.DefaultIncident) []incident.Incident {
 	incidentArr := make([]incident.Incident, len(arr), len(arr))
 	for i := range arr {
 		incidentArr[i] = &arr[i]

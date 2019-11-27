@@ -135,12 +135,15 @@ class LineChartWithCounts extends PureComponent {
       countChartHeight } = this.props;
 
     // eslint-disable-next-line global-require
-    const incidentData = require('../incidents.json');
+    const incident = require('../incidents.json');
+    const incidentData = incident[0]
     // convert dates to moment objects
     incidentData.goodPeriodStart = moment(incidentData.goodPeriodStart);
     incidentData.goodPeriodEnd = moment(incidentData.goodPeriodEnd);
     incidentData.badPeriodStart = moment(incidentData.badPeriodStart);
     incidentData.badPeriodEnd = moment(incidentData.badPeriodEnd);
+
+    console.log("incident Data", incidentData)
 
     const height = lineChartHeight + countChartHeight;
     return (
