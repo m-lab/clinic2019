@@ -104,17 +104,11 @@ func Test_CsvParserFourthEntry(t *testing.T) {
 }
 
 func Test_MakeJsonObjFile(t *testing.T) {
-	testIncident := new(incident.DefaultIncident)
-	testIncident.Init(time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC).AddDate(-1, 0, 0),
-		time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC),
-		time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC),
-		time.Date(2018, time.April, 1, 0, 0, 0, 0, time.UTC),
-		7.862733,
-		5.334354,
-		0.321565, 68089)
 
 	testIncidentArr := make([]incident.Incident, 1, 1)
-	testIncidentArr[0] = testIncident
+	incidents := CsvParser("incidentfile.csv")
+	testIncident := convertDefaultIncidentToIncident(incidents)
+	testIncidentArr[0] = testIncident[0]
 
 	tests := []struct {
 		name  string
