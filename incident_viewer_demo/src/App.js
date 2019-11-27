@@ -67,8 +67,6 @@ function onHighlightTimeSeriesLine(series) {}
 
 var highlightTimeSeriesLine = undefined;
 
-var hasIncident = true;
-
 var viewMetric = {
   "formatter": undefined,  // function here is a REALLY big one, but I doubt this is causing the issue
   "label": "Download Speed", 
@@ -79,37 +77,51 @@ var viewMetric = {
 //////////////////////////////////////////////////////////////////////////
 // Done handling the discombobulated variables that the chart takes in. //
 //////////////////////////////////////////////////////////////////////////
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        {/* <btn onClick={hasIncident = !hasIncident}>Click me</btn>  */}
-        <Row className="Chart-row">
-          <AutoWidth>
-            <LineChartWithCounts
-              id={chartId}
-              hasIncident={hasIncident}
-              colors={colors}
-              counts={counts}
-              highlightCounts={clientIspCounts}
-              series={clientIspTimeSeriesData}
-              annotationSeries={annotationTimeSeries}
-              onHighlightDate={onHighlightTimeSeriesDate}
-              highlightDate={highlightTimeSeriesDate}
-              onHighlightLine={onHighlightTimeSeriesLine}
-              highlightLine={highlightTimeSeriesLine}
-              yFormatter={viewMetric.formatter}
-              xKey="date"
-              yAxisLabel={viewMetric.label}
-              yAxisUnit={viewMetric.unit}
-              yKey={viewMetric["datakey"]}
-            />
-          </AutoWidth>
-        </Row>
-      </header>
-    </div>
-  );
-}
+class App extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      hasIncident: false,
+    }
+  }
+  
 
+  toggleIncident() {
+    alert(this.state.hasIncident);
+    this.setState({ hasIncident: !this.state.hasIncident });
+  }
+
+  render() {
+    return (
+      <div className="App">
+        <header className="App-header">
+          <img src={logo} className="App-logo" alt="logo" />
+          <button onClick={this.toggleIncident.bind(this)}>Toggle Incident</button> 
+          <Row className="Chart-row">
+            <AutoWidth>
+              <LineChartWithCounts
+                id={chartId}
+                hasIncident={this.state.hasIncident}
+                colors={colors}
+                counts={counts}
+                highlightCounts={clientIspCounts}
+                series={clientIspTimeSeriesData}
+                annotationSeries={annotationTimeSeries}
+                onHighlightDate={onHighlightTimeSeriesDate}
+                highlightDate={highlightTimeSeriesDate}
+                onHighlightLine={onHighlightTimeSeriesLine}
+                highlightLine={highlightTimeSeriesLine}
+                yFormatter={viewMetric.formatter}
+                xKey="date"
+                yAxisLabel={viewMetric.label}
+                yAxisUnit={viewMetric.unit}
+                yKey={viewMetric["datakey"]}
+              />
+            </AutoWidth>
+          </Row>
+        </header>
+      </div>
+    );
+  }
+}
 export default App;
