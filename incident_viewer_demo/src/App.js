@@ -1,7 +1,7 @@
 import React from 'react';
 import Row from 'react-bootstrap/lib/Row';
 import AutoWidth from 'react-auto-width';
-import logo from './mlab-logo.png';
+import logo from './demo-logo-center.png';
 import './App.css';
 import LineChartWithCounts from './LineChart/LineChartWithCounts.jsx'
 import * as moment from 'moment';
