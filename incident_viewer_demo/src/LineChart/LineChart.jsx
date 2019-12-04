@@ -22,7 +22,6 @@ function visProps(props) {
     series = [],
     goodIncidentSeries,
     badIncidentSeries,
-    hasIncident,
     forceZeroMin,
     height,
     paddingLeft = 50,
@@ -282,7 +281,6 @@ class LineChart extends PureComponent {
    * @return {void}
    */
   onMouseMove(mouse) {
-    // TODO: make in alphabetical order
     const { plotAreaHeight, goodIncidentSeries, badIncidentSeries, onHighlightDate, series, xScale , xKey, yScale, hasIncident } = this.props;
     
     const goodDescription1 = "Average Download Speed: 50 mb/s"
@@ -317,9 +315,9 @@ class LineChart extends PureComponent {
       this.infoHoverBox.selectAll('*').remove();
 
       if (hasIncident) {
-        // TODO: Change values to use the correct JSON attributes
         const width = xScale(goodIncidentSeries.end) - xScale(goodIncidentSeries.start);
-        const rectFitsText = width > 180;
+        const rectFitsText = width > 180; // NOTE: This also must be manually tuned. It hides hover text in the case 
+                                          // that the area is too small for the text to fit.
         const verticalTextShifter = 0.45; // NOTE: This needs to be tuned based on font size and number of lines :(
 
         // Draw the hover state for the good period information
@@ -497,7 +495,7 @@ class LineChart extends PureComponent {
    */
   update() {
     const { highlightDate, series = [], annotationSeries = [], xKey, padding,
-      plotAreaHeight, plotAreaWidth, hasIncident} = this.props;
+      plotAreaHeight, plotAreaWidth} = this.props;
 
     // ensure we have room for the legend
     this.g.attr('transform', `translate(${padding.left} ${padding.top})`);
@@ -515,10 +513,7 @@ class LineChart extends PureComponent {
       });
     }
 
-    if (hasIncident) {
-      this.updateIncident();
-    }
-
+    this.updateIncident();
     this.updateLegend(highlightValues);
     this.updateAxes();
     this.updateAnnotationLines();
@@ -701,103 +696,117 @@ class LineChart extends PureComponent {
    * Render the incident "good" and "bad" periods reference lines on the chart.
    */
   updateIncident() {
-    const { goodIncidentSeries, badIncidentSeries, incidentLineGenerator } = this.props;
+    const { goodIncidentSeries, badIncidentSeries, incidentLineGenerator, hasIncident } = this.props;
 
-    const goodIncidentSeriesArray = [{x: goodIncidentSeries.start, y: goodIncidentSeries.download_speed_mbps_median}, {x: goodIncidentSeries.end, y: goodIncidentSeries.download_speed_mbps_median} ];
-    const badIncidentSeriesArray = [{x: badIncidentSeries.start, y: badIncidentSeries.download_speed_mbps_median}, {x: badIncidentSeries.end, y: badIncidentSeries.download_speed_mbps_median} ];
-    
     this.goodIncidentLine.selectAll('*').remove();
     this.badIncidentLine.selectAll('*').remove();
 
     this.updateIncidentArrow();
     this.updateIncidentShading();
 
-    // LINES
-    this.goodIncidentLine.append('path')
+    if (hasIncident) {
+      const goodIncidentSeriesArray = [{x: goodIncidentSeries.start, y: goodIncidentSeries.download_speed_mbps_median}, {x: goodIncidentSeries.end, y: goodIncidentSeries.download_speed_mbps_median} ];
+      const badIncidentSeriesArray = [{x: badIncidentSeries.start, y: badIncidentSeries.download_speed_mbps_median}, {x: badIncidentSeries.end, y: badIncidentSeries.download_speed_mbps_median} ];
+    
+
+      // LINES
+      this.goodIncidentLine.append('path')
       .classed('good-incident-line', true)
       .attr('d', incidentLineGenerator(goodIncidentSeriesArray))
     
     this.badIncidentLine.append('path')
       .classed('bad-incident-line', true)
       .attr('d', incidentLineGenerator(badIncidentSeriesArray))
+    }
   }
 
   updateIncidentShading() {
-    const { goodIncidentSeries, badIncidentSeries, incidentShadingGenerator, series } = this.props;
-    
-    var goodIncidentShadingArray = [];
-    var badIncidentShadingArray = [];
-
-    series[0].results
-      .filter(entry => (entry.date.isSameOrAfter(goodIncidentSeries.start.clone().subtract(1, 'months')) && entry.date.isSameOrBefore(goodIncidentSeries.end.clone().add(1, 'months'))))
-      .map(entry => (
-        goodIncidentShadingArray.push(
-          { x: entry.date, 
-            y0: goodIncidentSeries.download_speed_mbps_median, 
-            y1: entry.download_speed_mbps_median
-          }
-        )
-      ));
-    
-    series[0].results
-      .filter(entry => (entry.date.isSameOrAfter(badIncidentSeries.start.clone().subtract(1, 'months')) && entry.date.isSameOrBefore(badIncidentSeries.end.clone().add(1, 'months'))))
-      .map(entry => (
-        badIncidentShadingArray.push(
-          { x: entry.date, 
-            y0: badIncidentSeries.download_speed_mbps_median, 
-            y1: entry.download_speed_mbps_median
-          }
-        )
-      ));
+    const { goodIncidentSeries, badIncidentSeries, incidentShadingGenerator, series, hasIncident } = this.props;
     
     this.goodIncidentShading.selectAll('*').remove();
     this.badIncidentShading.selectAll('*').remove();
 
-    this.goodIncidentShading.append('path')
-      .attr('d', incidentShadingGenerator(goodIncidentShadingArray));
+    if (hasIncident) {
+      var goodIncidentShadingArray = [];
+      var badIncidentShadingArray = [];
 
-    this.badIncidentShading.append('path')
-      .attr('d', incidentShadingGenerator(badIncidentShadingArray));
-    
-  
+      series[0].results
+        .filter(entry => (entry.date.isSameOrAfter(goodIncidentSeries.start.clone()) && entry.date.isSameOrBefore(goodIncidentSeries.end.clone())))
+        .map(entry => (
+          goodIncidentShadingArray.push(
+            { x: entry.date, 
+              y0: goodIncidentSeries.download_speed_mbps_median, 
+              y1: entry.download_speed_mbps_median
+            }
+          )
+        ));
+      
+      series[0].results
+        .filter(entry => (entry.date.isSameOrAfter(badIncidentSeries.start.clone()) && entry.date.isSameOrBefore(badIncidentSeries.end.clone())))
+        .map(entry => (
+          badIncidentShadingArray.push(
+            { x: entry.date, 
+              y0: badIncidentSeries.download_speed_mbps_median, 
+              y1: entry.download_speed_mbps_median
+            }
+          )
+        ));
+
+      this.goodIncidentShading.append('path')
+        .attr('d', incidentShadingGenerator(goodIncidentShadingArray));
+
+      this.badIncidentShading.append('path')
+        .attr('d', incidentShadingGenerator(badIncidentShadingArray));
+    }
   }
 
+  /**
+   * Draws the downwards pointing red arrow betewen the good and pad periods.
+   * The arrow is drawn using a line and a triangle, positioned on the good and
+   * bad period data that is passed in from props. 
+   * 
+   * @return {void}
+   */
   updateIncidentArrow() {
-    const { goodIncidentSeries, badIncidentSeries, xScale, yScale } = this.props;
-
-    const incidentArrowX = goodIncidentSeries.end;
-    const triWidth = 20;
-    const triHeight = 15;
-    
-    const incidentArrowLineArray = [{x: incidentArrowX, y: goodIncidentSeries.download_speed_mbps_median}, {x: incidentArrowX, y: badIncidentSeries.download_speed_mbps_median}];
-    
-    
-    const incidentArrowTriArray = [
-        {x: xScale(incidentArrowX), y: yScale(badIncidentSeries.download_speed_mbps_median)}, 
-        {x: xScale(incidentArrowX) + triWidth/2, y: yScale(badIncidentSeries.download_speed_mbps_median) - triHeight}, 
-        {x: xScale(incidentArrowX) - triWidth/2, y: yScale(badIncidentSeries.download_speed_mbps_median) - triHeight}
-      ];
+    const { goodIncidentSeries, badIncidentSeries, xScale, yScale, hasIncident } = this.props;
 
     this.incidentArrowLine.selectAll('*').remove();
     this.incidentArrowTri.selectAll('*').remove();
 
-    //TRIANGLE
-    this.incidentArrowTri.append('polygon')
-      .classed('incident-arrow-tri', true)
-      .data([incidentArrowTriArray])
-      .attr('points', function(d) { 
-        return d.map(function(d) {
-            return [d.x,d.y].join(",");
-        }).join(" ");
-      });
+    if (hasIncident) {
+      const incidentArrowX = goodIncidentSeries.end;
+      const triWidth = 20;
+      const triHeight = 15;
+      
+      const incidentArrowLineArray = [{x: incidentArrowX, y: goodIncidentSeries.download_speed_mbps_median}, {x: incidentArrowX, y: badIncidentSeries.download_speed_mbps_median}];
+      
+      
+      const incidentArrowTriArray = [
+          {x: xScale(incidentArrowX), y: yScale(badIncidentSeries.download_speed_mbps_median)}, 
+          {x: xScale(incidentArrowX) + triWidth/2, y: yScale(badIncidentSeries.download_speed_mbps_median) - triHeight}, 
+          {x: xScale(incidentArrowX) - triWidth/2, y: yScale(badIncidentSeries.download_speed_mbps_median) - triHeight}
+        ];
 
-    //LINE
-    this.incidentArrowLine.append('line')
-      .classed('incident-arrow-line', true)
-      .attr('x1', xScale(incidentArrowLineArray[0].x))
-      .attr('x2', xScale(incidentArrowLineArray[1].x))
-      .attr('y1', yScale(incidentArrowLineArray[0].y))
-      .attr('y2', yScale(incidentArrowLineArray[1].y)-triHeight/2);
+      
+
+      //TRIANGLE
+      this.incidentArrowTri.append('polygon')
+        .classed('incident-arrow-tri', true)
+        .data([incidentArrowTriArray])
+        .attr('points', function(d) { 
+          return d.map(function(d) {
+              return [d.x,d.y].join(",");
+          }).join(" ");
+        });
+
+      //LINE
+      this.incidentArrowLine.append('line')
+        .classed('incident-arrow-line', true)
+        .attr('x1', xScale(incidentArrowLineArray[0].x))
+        .attr('x2', xScale(incidentArrowLineArray[1].x))
+        .attr('y1', yScale(incidentArrowLineArray[0].y))
+        .attr('y2', yScale(incidentArrowLineArray[1].y)-triHeight/2);
+    }
   }
 
   /**
