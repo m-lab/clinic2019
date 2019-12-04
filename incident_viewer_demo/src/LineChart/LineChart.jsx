@@ -9,7 +9,6 @@ import { testThreshold } from '../chart_support/constants';
 
 import './LineChart.scss';
 import moment from 'moment';
-import { timingSafeEqual } from 'crypto';
 
 /**
  * Figure out what is needed to render the chart
@@ -760,12 +759,10 @@ class LineChart extends PureComponent {
     }
   }
 
-  /**
+  /*
    * Draws the downwards pointing red arrow betewen the good and pad periods.
    * The arrow is drawn using a line and a triangle, positioned on the good and
    * bad period data that is passed in from props. 
-   * 
-   * @return {void}
    */
   updateIncidentArrow() {
     const { goodIncidentSeries, badIncidentSeries, xScale, yScale, hasIncident } = this.props;
