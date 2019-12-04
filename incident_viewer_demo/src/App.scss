@@ -1,13 +1,17 @@
+
+// Color Variables
+$background: #FFFFFF;
+
 .App {
   text-align: center;
 }
 
 .App-logo {
-  height: 20vmin;
+  height: 40vmin;
 }
 
 .App-header {
-  background-color: #d2dde4;
+  background-color: $background;
   min-height: 100vh;
   display: flex;
   flex-direction: column;

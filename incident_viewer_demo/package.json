@@ -6,6 +6,7 @@
     "binary-search": "^1.3.2",
     "bootstrap": "^3.4.1",
     "bootstrap-sass": "^3.3.7",
+    "d3-area-chunked": "^1.0.1",
     "d3-array": "^1.0.1",
     "d3-axis": "^1.0.3",
     "d3-collection": "^1.0.1",

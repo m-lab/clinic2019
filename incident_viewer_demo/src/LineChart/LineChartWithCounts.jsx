@@ -132,7 +132,7 @@ class LineChartWithCounts extends PureComponent {
    */
   render() {
     const { id, width, annotationSeries, series, padding, xScale, colors, lineChartHeight,
-      countChartHeight } = this.props;
+      countChartHeight, hasIncident } = this.props;
 
     // Fake Incident data JSON grabbing + modifying dates
     // eslint-disable-next-line global-require
@@ -167,7 +167,7 @@ class LineChartWithCounts extends PureComponent {
               paddingLeft={padding.left}
               paddingRight={padding.right}
               xScale={xScale}
-              hasIncident={true}
+              hasIncident={hasIncident}
               goodIncidentSeries={incident_good_series}
               badIncidentSeries={incident_bad_series}
             />
