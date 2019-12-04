@@ -719,6 +719,9 @@ class LineChart extends PureComponent {
     }
   }
 
+  /**
+   * Render the shading that surrounds the incident lines and is bounded by the plotted line.
+   */
   updateIncidentShading() {
     const { goodIncidentSeries, badIncidentSeries, incidentShadingGenerator, series, hasIncident } = this.props;
     
@@ -729,6 +732,8 @@ class LineChart extends PureComponent {
       var goodIncidentShadingArray = [];
       var badIncidentShadingArray = [];
 
+      // Take the series data, filter it for only in the good and bad ranges, then map those dates to their download speeds.
+      // Use resulting download speeds to bound shaded regions.
       series[0].results
         .filter(entry => (entry.date.isSameOrAfter(goodIncidentSeries.start.clone()) && entry.date.isSameOrBefore(goodIncidentSeries.end.clone())))
         .map(entry => (
@@ -739,7 +744,6 @@ class LineChart extends PureComponent {
             }
           )
         ));
-      
       series[0].results
         .filter(entry => (entry.date.isSameOrAfter(badIncidentSeries.start.clone()) && entry.date.isSameOrBefore(badIncidentSeries.end.clone())))
         .map(entry => (
@@ -759,8 +763,8 @@ class LineChart extends PureComponent {
     }
   }
 
-  /*
-   * Draws the downwards pointing red arrow betewen the good and pad periods.
+  /**
+   * Draws the downwards pointing red arrow betewen the good and bad periods.
    * The arrow is drawn using a line and a triangle, positioned on the good and
    * bad period data that is passed in from props. 
    */
