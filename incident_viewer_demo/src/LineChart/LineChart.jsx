@@ -160,8 +160,6 @@ function visProps(props) {
     annotationLineChunked,
     annotationSeries,
     incident,
-    // goodIncidentSeries,
-    // badIncidentSeries,
     incidentLineGenerator,
     incidentShadingGenerator,
     colors,
@@ -702,9 +700,6 @@ class LineChart extends PureComponent {
   updateIncident() {
     const { incident, incidentLineGenerator, hasIncident } = this.props;
 
-    const goodIncidentSeriesArray = [{x: incident.goodPeriodStart, y: incident.goodPeriodMetric}, {x: incident.goodPeriodEnd, y: incident.goodPeriodMetric} ];
-    const badIncidentSeriesArray = [{x: incident.badPeriodStart, y: incident.badPeriodMetric}, {x: incident.badPeriodEnd, y: incident.badPeriodMetric} ];
-    
     this.goodIncidentLine.selectAll('*').remove();
     this.badIncidentLine.selectAll('*').remove();
 
@@ -712,9 +707,8 @@ class LineChart extends PureComponent {
     this.updateIncidentShading();
 
     if (hasIncident) {
-      // const goodIncidentSeriesArray = [{x: goodIncidentSeries.start, y: goodIncidentSeries.download_speed_mbps_median}, {x: goodIncidentSeries.end, y: goodIncidentSeries.download_speed_mbps_median} ];
-      // const badIncidentSeriesArray = [{x: badIncidentSeries.start, y: badIncidentSeries.download_speed_mbps_median}, {x: badIncidentSeries.end, y: badIncidentSeries.download_speed_mbps_median} ];
-    
+      const goodIncidentSeriesArray = [{x: incident.goodPeriodStart, y: incident.goodPeriodMetric}, {x: incident.goodPeriodEnd, y: incident.goodPeriodMetric} ];
+      const badIncidentSeriesArray = [{x: incident.badPeriodStart, y: incident.badPeriodMetric}, {x: incident.badPeriodEnd, y: incident.badPeriodMetric} ];
 
       // LINES
       this.goodIncidentLine.append('path')
@@ -792,7 +786,7 @@ class LineChart extends PureComponent {
       
       const incidentArrowTriArray = [
         {x: xScale(incidentArrowX), y: yScale(incident.badPeriodMetric)}, 
-        {x: xScale(incidentArrowX) + triWidth/2, y: yScale(incident.badPeriodEnd) - triHeight}, 
+        {x: xScale(incidentArrowX) + triWidth/2, y: yScale(incident.badPeriodMetric) - triHeight}, 
         {x: xScale(incidentArrowX) - triWidth/2, y: yScale(incident.badPeriodMetric) - triHeight}
       ];
 
