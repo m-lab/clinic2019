@@ -274,7 +274,7 @@ class LineChart extends PureComponent {
     const { plotAreaHeight, incident, hasIncident, onHighlightDate, series, xScale , xKey, yScale, yKey } = this.props;
     const goodDescription = incident.goodPeriodInfo
     const badDescription = incident.badPeriodInfo
-    const incidentDescription1 = incident.incidentInfo
+    const incidentDescription = incident.incidentInfo
 
     if (!onHighlightDate) {
       return;
@@ -309,7 +309,12 @@ class LineChart extends PureComponent {
         const badWidth = xScale(incident.badPeriodEnd) - xScale(incident.badPeriodStart);
         const rectFitsText = (goodWidth > 180) && (badWidth > 180); // NOTE: This also must be manually tuned. It hides hover text in the case 
                                           // that the area is too small for the text to fit.
-        const verticalTextShifter = 0.45; // NOTE: This needs to be tuned based on font size and number of lines :(
+        
+        // const width = xScale(goodIncidentSeries.end) - xScale(goodIncidentSeries.start);
+        // const goodHeight = plotAreaHeight-goodYmax
+        // const badHeight = plotAreaHeight-badYmax
+        // const incidentHeight = Math.abs(badYmax - goodYmax)
+        // const rectFitsText = width > 180; // NOTE: This also must be manually tuned. It hides hover text in the case 
 
         // Draw the hover state for the good period information
         if (highlightedDate.isBefore(incident.goodPeriodEnd) && highlightedDate.isSameOrAfter(incident.goodPeriodStart) && mouseY > goodYmax) {
@@ -320,25 +325,12 @@ class LineChart extends PureComponent {
           .attr('width', goodWidth)
           .attr('height', plotAreaHeight-goodYmax);
 
-          // if (rectFitsText) {
-          //   this.infoHoverBox.append('text')
-          //   .classed('good-hover-text', true)
-          //   .attr('x', xScale(goodIncidentSeries.start) + 0.5*width)
-          //   .attr('y', goodYmax + verticalTextShifter*(plotAreaHeight-goodYmax))
-          //   .append('svg:tspan')
-          //   .attr('x', xScale(goodIncidentSeries.start) + 20)
-          //   .attr('dy', 0)
-          //   .text(goodDescription1)
-          //   .append('svg:tspan')
-          //   .attr('x', xScale(goodIncidentSeries.start) + 20)
-          //   .attr('dy', 20)
-          //   .text(goodDescription2)
-          // }
           if (rectFitsText) {
             this.infoHoverBox.append('text')
             .classed('good-hover-text', true)
-            .attr('x', xScale(incident.goodPeriodStart) + goodWidth/2)
-            .attr('y', goodYmax + height/2)
+            .attr('x', xScale(goodIncidentSeries.start) + goodWidth/2)
+            .attr('y', goodYmax + goodHeight/2)
+            .attr("alignment-baseline", "central")
             .attr("text-anchor", "middle")
             .text(goodDescription)
           }
@@ -353,18 +345,29 @@ class LineChart extends PureComponent {
           .attr('width', badWidth)
           .attr('height', plotAreaHeight-badYmax)
           
+          /// Leaving this here in case we choose to go back to multi-line hover text!
+          // if (rectFitsText) {
+          //   this.infoHoverBox.append('text')
+          //   .classed('bad-hover-text', true)
+          //   .attr('x', xScale(badIncidentSeries.start) + 0.5*width)
+          //   .attr('y', badYmax + verticalTextShifter*(plotAreaHeight-badYmax))
+          //   .append('svg:tspan')
+          //   .attr('x', xScale(badIncidentSeries.start) + 20)
+          //   .attr('dy', 0)
+          //   .text(goodDescription1)
+          //   .append('svg:tspan')
+          //   .attr('x', xScale(badIncidentSeries.start) + 20)
+          //   .attr('dy', 20)
+          //   .text(goodDescription2)
+          // }
           if (rectFitsText) {
             this.infoHoverBox.append('text')
-            .classed('bad-hover-text', true)
-            .attr('x', xScale(incident.badPeriodStart) + 0.5*badWidth)
-            .attr('y', badYmax + verticalTextShifter*(plotAreaHeight-badYmax))
-            .append('svg:tspan')
-            .attr('x', xScale(incident.badPeriodStart) + 20)
-            .attr('dy', 0)
+            .classed('bad-hover-text', true)            
+            .attr('y', badYmax + badHeight/2)
+            .attr("text-anchor", "middle")
+            .attr("alignment-baseline", "central")
+            .attr('x', xScale(incident.badPeriodStart) + width/2)
             .text(badDescription)
-            .append('svg:tspan')
-            .attr('x', xScale(incident.badPeriodStart) + 20)
-            .attr('dy', 20)
           }
         }
 
@@ -377,18 +380,29 @@ class LineChart extends PureComponent {
           .attr('width', badWidth)
           .attr('height', badYmax-goodYmax)
 
+          /// Leaving this here in case we choose to go back to multi-line hover text!
+          // if (rectFitsText) {
+          //   this.infoHoverBox.append('text')
+          //   .classed('incident-hover-text', true)
+          //   .attr('x', xScale(badIncidentSeries.start) + 0.5*width)
+          //   .attr('y', goodYmax + verticalTextShifter*(plotAreaHeight-goodYmax - badYmax/2))
+          //   .append('svg:tspan')
+          //   .attr('x', xScale(badIncidentSeries.start) + 20)
+          //   .attr('dy', 0)
+          //   .text(goodDescription1)
+          //   .append('svg:tspan')
+          //   .attr('x', xScale(badIncidentSeries.start) + 20)
+          //   .attr('dy', 20)
+          //   .text(goodDescription2)
+          // }
           if (rectFitsText) {
             this.infoHoverBox.append('text')
-            .classed('incident-hover-text', true)
-            .attr('x', xScale(incident.badPeriodStart) + 0.5*badWidth)
-            .attr('y', goodYmax + verticalTextShifter*(plotAreaHeight-goodYmax - badYmax/2))
-            .append('svg:tspan')
-            .attr('x', xScale(incident.badPeriodStart) + 20)
-            .attr('dy', 0)
-            .text(incidentDescription1)
-            .append('svg:tspan')
-            .attr('x', xScale(incident.badPeriodStart) + 20)
-            .attr('dy', 20)
+            .classed('incident-hover-text', true)            
+            .attr('y', badYmax - incidentHeight/2)
+            .attr("text-anchor", "middle")
+            .attr("alignment-baseline", "central")
+            .attr('x', xScale(incident.badPeriodStart) + badWidth/2)
+            .text(incidentDescription)
           }
         }
       }
