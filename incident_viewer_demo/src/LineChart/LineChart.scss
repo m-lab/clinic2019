@@ -26,7 +26,9 @@
   
   // Incident Styles Variables
   $good-color: #44BD1D;
+  $good-light-color: rgb(160, 208, 144);
   $bad-color: orangered;
+  $bad-light-color: rgb(236, 171, 122);
   $incident-color: red;
 
   // Incident Styles
@@ -104,9 +106,32 @@
     fill-opacity: .5;
   }
 
-  .bad-incident-shading {
-    fill: $bad-color;
+  @mixin good-incident-shading {
     fill-opacity: .5;
+  }
+
+  .good-incident-shading-bold {
+    @include good-incident-shading;
+    fill: $good-color;
+  }
+
+  .good-incident-shading-light {
+    @include good-incident-shading;
+    fill: $good-light-color;
+  }
+
+  @mixin bad-incident-shading {
+    fill-opacity: .5;
+  }
+
+  .bad-incident-shading-bold {
+    @include bad-incident-shading;
+    fill: $bad-color;
+  }
+
+  .bad-incident-shading-light {
+    @include bad-incident-shading;
+    fill: $bad-light-color;
   }
 
   @mixin hover-text {

@@ -438,8 +438,8 @@ class LineChart extends PureComponent {
     this.badIncidentLine = this.g.append('g').classed('bad-incident-line', true);
     this.incidentArrowLine = this.g.append('g').classed('incident-arrow-line', true);
     this.incidentArrowTri = this.g.append('g').classed('incident-arrow-tri', true);
-    this.goodIncidentShading = this.g.append('g').classed('good-incident-shading', true);
-    this.badIncidentShading = this.g.append('g').classed('bad-incident-shading', true);
+    this.goodIncidentShading = this.g.append('g');
+    this.badIncidentShading = this.g.append('g');
     
 
     // container for showing the x highlighte date indicator
@@ -724,7 +724,7 @@ class LineChart extends PureComponent {
    * Render the shading that surrounds the incident lines and is bounded by the plotted line.
    */
   updateIncidentShading() {
-    const { goodIncidentSeries, badIncidentSeries, incidentShadingGenerator, series, hasIncident, showShading } = this.props;
+    const { goodIncidentSeries, badIncidentSeries, incidentShadingGenerator, series, hasIncident, showShading, originalColors } = this.props;
     
     this.goodIncidentShading.selectAll('*').remove();
     this.badIncidentShading.selectAll('*').remove();
@@ -756,6 +756,12 @@ class LineChart extends PureComponent {
           )
         ));
 
+      // Update shading colors
+      const shadingColor = originalColors? '-bold' : '-light';
+      this.goodIncidentShading.attr('class', 'good-incident-shading' + shadingColor);
+      this.badIncidentShading.attr('class', 'bad-incident-shading' + shadingColor);
+
+      // Add data to shading
       this.goodIncidentShading.append('path')
         .attr('d', incidentShadingGenerator(goodIncidentShadingArray));
 

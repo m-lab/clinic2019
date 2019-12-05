@@ -55,12 +55,14 @@ class App extends React.Component {
       hasIncident: false,
       showShading: true,
       hoverBorder: false,
+      originalColors: true,
     }
 
     // bind handlers
     this.toggleIncident = this.toggleIncident.bind(this);
     this.toggleShading = this.toggleShading.bind(this);
     this.toggleHoverBorder = this.toggleHoverBorder.bind(this);
+    this.toggleGraphShadingColors = this.toggleGraphShadingColors.bind(this);
   }
   
   // Functions for toggling states and rendering the graph
@@ -74,6 +76,10 @@ class App extends React.Component {
 
   toggleHoverBorder() {
     this.setState({ hoverBorder: !this.state.hoverBorder });
+  }
+
+  toggleGraphShadingColors() {
+    this.setState({ originalColors: !this.state.originalColors });
   }
 
   render() {
@@ -90,6 +96,7 @@ class App extends React.Component {
                 hasIncident={this.state.hasIncident}
                 showShading={this.state.showShading}
                 hoverBorder={this.state.hoverBorder}
+                originalColors={this.state.originalColors}
                 colors={colors}
                 series={clientIspTimeSeriesData}
                 annotationSeries={annotationTimeSeries}
@@ -108,6 +115,9 @@ class App extends React.Component {
           <Row className={toggleButtonClassName}>
             <button className="Small-Btn" onClick={this.toggleShading}>Toggle Shading</button>
             <button className="Small-Btn" onClick={this.toggleHoverBorder}>Toggle Hover Border</button>
+            {this.state.showShading &&
+              <button className="Small-Btn" onClick={this.toggleGraphShadingColors}>Toggle Graph Shading Colors</button>
+            }
           </Row>
         </header>
       </div>
