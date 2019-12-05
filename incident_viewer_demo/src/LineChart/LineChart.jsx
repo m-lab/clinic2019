@@ -287,6 +287,8 @@ class LineChart extends PureComponent {
     // TODO: make in alphabetical order
     const { plotAreaHeight, incident, hasIncident, onHighlightDate, series, xScale , xKey, yScale, yKey } = this.props;
     const goodDescription1 = incident.goodPeriodInfo
+    const badDescription1 = incident.badPeriodInfo
+    const incidentDescription1 = incident.incidentInfo
 
     if (!onHighlightDate) {
       return;
@@ -364,7 +366,7 @@ class LineChart extends PureComponent {
             .append('svg:tspan')
             .attr('x', xScale(incident.badPeriodStart) + 20)
             .attr('dy', 0)
-            .text(goodDescription1)
+            .text(badDescription1)
             .append('svg:tspan')
             .attr('x', xScale(incident.badPeriodStart) + 20)
             .attr('dy', 20)
@@ -389,7 +391,7 @@ class LineChart extends PureComponent {
             .append('svg:tspan')
             .attr('x', xScale(incident.badPeriodStart) + 20)
             .attr('dy', 0)
-            .text(goodDescription1)
+            .text(incidentDescription1)
             .append('svg:tspan')
             .attr('x', xScale(incident.badPeriodStart) + 20)
             .attr('dy', 20)
@@ -453,20 +455,6 @@ class LineChart extends PureComponent {
       .attr('y2', plotAreaHeight + 3)
       .attr('class', 'highlight-ref-line');
     this.infoHoverBox = this.highlightDate.append('g')
-
-
-    // add in a rect to fill out the area beneath the hovered on X date
-    // BELOW CODE IS FOR X AXIS ANNOTATION BELOW HOVER LINE
-    // this.highlightDate.append('rect')
-    //   .attr('x', -45)
-    //   .attr('width', 90)
-    //   .attr('y', 0) // should be set to plotAreaHeight
-    //   .attr('height', 20)
-    //   .style('fill', '#fff');
-    // this.highlightDate.append('text')
-    //   .attr('class', 'highlight-x')
-    //   .attr('dy', 17)
-    //   .attr('text-anchor', 'middle');
 
     // container for showing the highlighted line
     this.highlightLine = this.g.append('g').attr('class', 'highlight-line');
@@ -789,8 +777,6 @@ class LineChart extends PureComponent {
         {x: xScale(incidentArrowX) + triWidth/2, y: yScale(incident.badPeriodMetric) - triHeight}, 
         {x: xScale(incidentArrowX) - triWidth/2, y: yScale(incident.badPeriodMetric) - triHeight}
       ];
-
-      
 
       //TRIANGLE
       this.incidentArrowTri.append('polygon')
