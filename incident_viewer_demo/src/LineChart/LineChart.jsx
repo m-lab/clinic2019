@@ -280,7 +280,7 @@ class LineChart extends PureComponent {
    * @return {void}
    */
   onMouseMove(mouse) {
-    const { plotAreaHeight, goodIncidentSeries, badIncidentSeries, onHighlightDate, series, xScale , xKey, yScale, hasIncident } = this.props;
+    const { plotAreaHeight, goodIncidentSeries, badIncidentSeries, onHighlightDate, series, xScale , xKey, yScale, hasIncident, hoverBorder } = this.props;
     
     const goodDescription1 = "Average Download Speed: 50 mb/s"
     const goodDescription2 = "August 2015 - July 2016"
@@ -318,11 +318,12 @@ class LineChart extends PureComponent {
         const rectFitsText = width > 180; // NOTE: This also must be manually tuned. It hides hover text in the case 
                                           // that the area is too small for the text to fit.
         const verticalTextShifter = 0.45; // NOTE: This needs to be tuned based on font size and number of lines :(
+        const borderStyle = hoverBorder ? '-with-border' : '-no-border';
 
         // Draw the hover state for the good period information
         if (highlightedDate.isBefore(goodIncidentSeries.end) && highlightedDate.isSameOrAfter(goodIncidentSeries.start) && mouseY > goodYmax) {
           this.infoHoverBox.append('rect')
-          .classed("good-incident-area", true)
+          .classed("good-incident-area" + borderStyle, true)
           .attr('x', xScale(goodIncidentSeries.start))
           .attr('y', goodYmax)
           .attr('width', width)
@@ -347,7 +348,7 @@ class LineChart extends PureComponent {
         // Draw the hover state for the bad period information
         if (highlightedDate.isSameOrBefore(badIncidentSeries.end) && highlightedDate.isSameOrAfter(badIncidentSeries.start) && mouseY > badYmax) {
           this.infoHoverBox.append('rect')
-          .classed("bad-incident-area", true)
+          .classed("bad-incident-area" + borderStyle, true)
           .attr('x', xScale(badIncidentSeries.start))
           .attr('y', badYmax)
           .attr('width', width)
@@ -372,7 +373,7 @@ class LineChart extends PureComponent {
         // Draw the hover state for the incident information
         if (highlightedDate.isSameOrBefore(badIncidentSeries.end) && highlightedDate.isSameOrAfter(badIncidentSeries.start) && mouseY < badYmax && mouseY > goodYmax) {
           this.infoHoverBox.append('rect')
-          .classed("incident-area", true)
+          .classed("incident-area" + borderStyle, true)
           .attr('x', xScale(badIncidentSeries.start))
           .attr('y', goodYmax)
           .attr('width', xScale(badIncidentSeries.end) - xScale(badIncidentSeries.start))
@@ -723,12 +724,12 @@ class LineChart extends PureComponent {
    * Render the shading that surrounds the incident lines and is bounded by the plotted line.
    */
   updateIncidentShading() {
-    const { goodIncidentSeries, badIncidentSeries, incidentShadingGenerator, series, hasIncident } = this.props;
+    const { goodIncidentSeries, badIncidentSeries, incidentShadingGenerator, series, hasIncident, showShading } = this.props;
     
     this.goodIncidentShading.selectAll('*').remove();
     this.badIncidentShading.selectAll('*').remove();
 
-    if (hasIncident) {
+    if (hasIncident && showShading) {
       var goodIncidentShadingArray = [];
       var badIncidentShadingArray = [];
 

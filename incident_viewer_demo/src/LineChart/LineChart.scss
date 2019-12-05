@@ -46,11 +46,20 @@
     stroke: $good-color;
   }
 
-  .good-incident-area {
+  @mixin good-incident-area {
     fill: rgb(155, 189, 144);
-    stroke-width: 3px !important;
     stroke: $good-color;
     fill-opacity: .5;
+  }
+
+  .good-incident-area-no-border {
+    @include good-incident-area;
+    stroke-width: 0px !important;
+  }
+
+  .good-incident-area-with-border {
+    @include good-incident-area;
+    stroke-width: 3px !important;
   }
 
   .bad-incident-line {
@@ -58,18 +67,36 @@
     stroke: $bad-color;
   }
 
-  .bad-incident-area {
+  @mixin bad-incident-area {
     fill: #DE8531;
-    stroke-width: 3px !important;
     stroke: $bad-color;
     fill-opacity: .5;
   }
 
-  .incident-area {
-    fill: $incident-color;
+  .bad-incident-area-no-border {
+    @include bad-incident-area;
+    stroke-width: 0px !important;
+  }
+
+  .bad-incident-area-with-border {
+    @include bad-incident-area;
     stroke-width: 3px !important;
+  }
+
+  @mixin incident-area {
+    fill: $incident-color;
     stroke: $incident-color;
     fill-opacity: .3;
+  }
+
+  .incident-area-no-border {
+    @include incident-area;
+    stroke-width: 0px !important;
+  }
+
+  .incident-area-with-border {
+    @include incident-area;
+    stroke-width: 3px !important;
   }
 
   .good-incident-shading {

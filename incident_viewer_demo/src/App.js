@@ -53,27 +53,43 @@ class App extends React.Component {
     super(props)
     this.state = {
       hasIncident: false,
+      showShading: true,
+      hoverBorder: false,
     }
 
     // bind handlers
     this.toggleIncident = this.toggleIncident.bind(this);
+    this.toggleShading = this.toggleShading.bind(this);
+    this.toggleHoverBorder = this.toggleHoverBorder.bind(this);
   }
   
+  // Functions for toggling states and rendering the graph
   toggleIncident() {
     this.setState({ hasIncident: !this.state.hasIncident });
   }
 
+  toggleShading() {
+    this.setState({ showShading: !this.state.showShading });
+  }
+
+  toggleHoverBorder() {
+    this.setState({ hoverBorder: !this.state.hoverBorder });
+  }
+
   render() {
+    const toggleButtonClassName = this.state.hasIncident ? "" : "Hidden-Row";
     return (
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <button onClick={this.toggleIncident}>Toggle Incident Viewer</button> 
+          <button className="Large-Btn" onClick={this.toggleIncident}>Toggle Incident Viewer</button>
           <Row className="Chart-row">
             <AutoWidth>
               <LineChartWithCounts
                 id={chartId}
                 hasIncident={this.state.hasIncident}
+                showShading={this.state.showShading}
+                hoverBorder={this.state.hoverBorder}
                 colors={colors}
                 series={clientIspTimeSeriesData}
                 annotationSeries={annotationTimeSeries}
@@ -88,6 +104,10 @@ class App extends React.Component {
                 yKey={viewMetric["datakey"]}
               />
             </AutoWidth>
+          </Row>
+          <Row className={toggleButtonClassName}>
+            <button className="Small-Btn" onClick={this.toggleShading}>Toggle Shading</button>
+            <button className="Small-Btn" onClick={this.toggleHoverBorder}>Toggle Hover Border</button>
           </Row>
         </header>
       </div>

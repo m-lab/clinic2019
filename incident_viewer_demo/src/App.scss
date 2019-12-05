@@ -2,6 +2,10 @@
 // Color Variables
 $background: #FFFFFF;
 
+img {
+  max-height: 220px;
+}
+
 .App {
   text-align: center;
 }
@@ -27,4 +31,17 @@ $background: #FFFFFF;
 }
 .App-link {
   color: #585858;
+}
+
+.Hidden-Row {
+  visibility: hidden;
+}
+
+.Small-Btn {
+  font-size: 16px;
+  margin: 10px;
+}
+
+.Large-Btn {
+  font-size: 24px;
 }
