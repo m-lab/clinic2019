@@ -320,18 +320,27 @@ class LineChart extends PureComponent {
           .attr('width', goodWidth)
           .attr('height', plotAreaHeight-goodYmax);
 
+          // if (rectFitsText) {
+          //   this.infoHoverBox.append('text')
+          //   .classed('good-hover-text', true)
+          //   .attr('x', xScale(goodIncidentSeries.start) + 0.5*width)
+          //   .attr('y', goodYmax + verticalTextShifter*(plotAreaHeight-goodYmax))
+          //   .append('svg:tspan')
+          //   .attr('x', xScale(goodIncidentSeries.start) + 20)
+          //   .attr('dy', 0)
+          //   .text(goodDescription1)
+          //   .append('svg:tspan')
+          //   .attr('x', xScale(goodIncidentSeries.start) + 20)
+          //   .attr('dy', 20)
+          //   .text(goodDescription2)
+          // }
           if (rectFitsText) {
             this.infoHoverBox.append('text')
             .classed('good-hover-text', true)
-            .attr('x', xScale(incident.goodPeriodStart) + 0.5*goodWidth)
-            .attr('y', goodYmax + verticalTextShifter*(plotAreaHeight-goodYmax))
-            .append('svg:tspan')
-            .attr('x', xScale(incident.goodPeriodStart) + 20)
-            .attr('dy', 0)
+            .attr('x', xScale(incident.goodPeriodStart) + goodWidth/2)
+            .attr('y', goodYmax + height/2)
+            .attr("text-anchor", "middle")
             .text(goodDescription)
-            .append('svg:tspan')
-            .attr('x', xScale(incident.goodPeriodStart) + 20)
-            .attr('dy', 20)
           }
         }
 
