@@ -284,13 +284,11 @@ class LineChart extends PureComponent {
    * @return {void}
    */
   onMouseMove(mouse) {
-    // TODO: these are the changes from MASTER and we need to remove them
-    // const { plotAreaHeight, goodIncidentSeries, badIncidentSeries, onHighlightDate, series, xScale , xKey, yScale, hasIncident } = this.props;
-    
     // const goodDescription1 = "Average Download Speed: 50 mb/s"
     // const goodDescription2 = "August 2015 - July 2016"
     // TODO: make in alphabetical order
-    const { plotAreaHeight, incident, onHighlightDate, series, xScale , xKey, yScale, yKey } = this.props;
+    const { plotAreaHeight, incident, hasIncident, onHighlightDate, series, xScale , xKey, yScale, yKey } = this.props;
+    const goodDescription1 = incident.goodPeriodInfo
 
     if (!onHighlightDate) {
       return;
@@ -320,18 +318,17 @@ class LineChart extends PureComponent {
       const badYmax = yScale(incident.badPeriodMetric);
       this.infoHoverBox.selectAll('*').remove();
 
-      // CHANGE
       if (hasIncident) {
-        const width = xScale(goodIncidentSeries.end) - xScale(goodIncidentSeries.start);
+        const width = xScale(incident.goodPeriodEnd) - xScale(incident.goodPeriodStart);
         const rectFitsText = width > 180; // NOTE: This also must be manually tuned. It hides hover text in the case 
                                           // that the area is too small for the text to fit.
         const verticalTextShifter = 0.45; // NOTE: This needs to be tuned based on font size and number of lines :(
 
         // Draw the hover state for the good period information
-        if (highlightedDate.isBefore(goodIncidentSeries.end) && highlightedDate.isSameOrAfter(goodIncidentSeries.start) && mouseY > goodYmax) {
+        if (highlightedDate.isBefore(incident.goodPeriodEnd) && highlightedDate.isSameOrAfter(incident.goodPeriodStart) && mouseY > goodYmax) {
           this.infoHoverBox.append('rect')
           .classed("good-incident-area", true)
-          .attr('x', xScale(goodIncidentSeries.start))
+          .attr('x', xScale(incident.goodPeriodStart))
           .attr('y', goodYmax)
           .attr('width', width)
           .attr('height', plotAreaHeight-goodYmax);
@@ -339,24 +336,24 @@ class LineChart extends PureComponent {
           if (rectFitsText) {
             this.infoHoverBox.append('text')
             .classed('good-hover-text', true)
-            .attr('x', xScale(goodIncidentSeries.start) + 0.5*width)
+            .attr('x', xScale(incident.goodPeriodStart) + 0.5*width)
             .attr('y', goodYmax + verticalTextShifter*(plotAreaHeight-goodYmax))
             .append('svg:tspan')
-            .attr('x', xScale(goodIncidentSeries.start) + 20)
+            .attr('x', xScale(incident.goodPeriodStart) + 20)
             .attr('dy', 0)
             .text(goodDescription1)
             .append('svg:tspan')
-            .attr('x', xScale(goodIncidentSeries.start) + 20)
+            .attr('x', xScale(incident.goodPeriodStart) + 20)
             .attr('dy', 20)
-            .text(goodDescription2)
+            // .text(goodDescription2)
           }
         }
 
         // Draw the hover state for the bad period information
-        if (highlightedDate.isSameOrBefore(badIncidentSeries.end) && highlightedDate.isSameOrAfter(badIncidentSeries.start) && mouseY > badYmax) {
+        if (highlightedDate.isSameOrBefore(incident.badPeriodEnd) && highlightedDate.isSameOrAfter(incident.badPeriodStart) && mouseY > badYmax) {
           this.infoHoverBox.append('rect')
           .classed("bad-incident-area", true)
-          .attr('x', xScale(badIncidentSeries.start))
+          .attr('x', xScale(incident.badPeriodStart))
           .attr('y', badYmax)
           .attr('width', width)
           .attr('height', plotAreaHeight-badYmax)
@@ -364,75 +361,43 @@ class LineChart extends PureComponent {
           if (rectFitsText) {
             this.infoHoverBox.append('text')
             .classed('bad-hover-text', true)
-            .attr('x', xScale(badIncidentSeries.start) + 0.5*width)
+            .attr('x', xScale(incident.badPeriodStart) + 0.5*width)
             .attr('y', badYmax + verticalTextShifter*(plotAreaHeight-badYmax))
             .append('svg:tspan')
-            .attr('x', xScale(badIncidentSeries.start) + 20)
+            .attr('x', xScale(incident.badPeriodStart) + 20)
             .attr('dy', 0)
             .text(goodDescription1)
             .append('svg:tspan')
-            .attr('x', xScale(badIncidentSeries.start) + 20)
+            .attr('x', xScale(incident.badPeriodStart) + 20)
             .attr('dy', 20)
-            .text(goodDescription2)
+            // .text(goodDescription2)
           }
         }
 
         // Draw the hover state for the incident information
-        if (highlightedDate.isSameOrBefore(badIncidentSeries.end) && highlightedDate.isSameOrAfter(badIncidentSeries.start) && mouseY < badYmax && mouseY > goodYmax) {
+        if (highlightedDate.isSameOrBefore(incident.badPeriodEnd) && highlightedDate.isSameOrAfter(incident.badPeriodStart) && mouseY < badYmax && mouseY > goodYmax) {
           this.infoHoverBox.append('rect')
           .classed("incident-area", true)
-          .attr('x', xScale(badIncidentSeries.start))
+          .attr('x', xScale(incident.badPeriodStart))
           .attr('y', goodYmax)
-          .attr('width', xScale(badIncidentSeries.end) - xScale(badIncidentSeries.start))
+          .attr('width', xScale(incident.badPeriodEnd) - xScale(incident.badPeriodStart))
           .attr('height', badYmax-goodYmax)
 
           if (rectFitsText) {
             this.infoHoverBox.append('text')
             .classed('incident-hover-text', true)
-            .attr('x', xScale(badIncidentSeries.start) + 0.5*width)
+            .attr('x', xScale(incident.badPeriodStart) + 0.5*width)
             .attr('y', goodYmax + verticalTextShifter*(plotAreaHeight-goodYmax - badYmax/2))
             .append('svg:tspan')
-            .attr('x', xScale(badIncidentSeries.start) + 20)
+            .attr('x', xScale(incident.badPeriodStart) + 20)
             .attr('dy', 0)
             .text(goodDescription1)
             .append('svg:tspan')
-            .attr('x', xScale(badIncidentSeries.start) + 20)
+            .attr('x', xScale(incident.badPeriodStart) + 20)
             .attr('dy', 20)
-            .text(goodDescription2)
+            // .text(goodDescription2)
           }
         }
-      // TODO: delete reference code before
-
-      // Draw the hover state for the good period information
-      // if (highlightedDate.isSameOrBefore(incident.goodPeriodEnd) && highlightedDate.isSameOrAfter(incident.goodPeriodStart) && mouseY > goodYmax) {
-        
-      //   this.infoHoverBox.append('rect')
-      //   .classed("good-incident-area", true)
-      //   .attr('x', xScale(incident.goodPeriodStart))
-      //   .attr('y', goodYmax)
-      //   .attr('width', xScale(incident.goodPeriodEnd) - xScale(incident.goodPeriodStart))
-      //   .attr('height', plotAreaHeight-goodYmax)
-      // }
-
-      // // Draw the hover state for the bad period information
-      // if (highlightedDate.isSameOrBefore(incident.badPeriodEnd) && highlightedDate.isSameOrAfter(incident.badPeriodStart) && mouseY > badYmax) {
-      //   this.infoHoverBox.append('rect')
-      //   .classed("bad-incident-area", true)
-      //   .attr('x', xScale(incident.badPeriodStart))
-      //   .attr('y', badYmax)
-      //   .attr('width', xScale(incident.badPeriodEnd) - xScale(incident.badPeriodStart))
-      //   .attr('height', plotAreaHeight-badYmax)
-      // }
-
-      // // Draw the hover state for the incident information
-      // if (highlightedDate.isSameOrBefore(incident.badPeriodEnd) && highlightedDate.isSameOrAfter(incident.badPeriodStart) && mouseY < badYmax && mouseY > goodYmax) {
-      //   this.infoHoverBox.append('rect')
-      //   .classed("incident-area", true)
-      //   .attr('x', xScale(incident.badPeriodStart))
-      //   .attr('y', goodYmax)
-      //   .attr('width', xScale(incident.badPeriodEnd) - xScale(incident.badPeriodStart))
-      //   .attr('height', badYmax-goodYmax)
-      // }
       }
     }
   }
@@ -766,7 +731,7 @@ class LineChart extends PureComponent {
    * Render the shading that surrounds the incident lines and is bounded by the plotted line.
    */
   updateIncidentShading() {
-    const { goodIncidentSeries, badIncidentSeries, incidentShadingGenerator, series, hasIncident } = this.props;
+    const { incident, incidentShadingGenerator, series, hasIncident } = this.props;
     
     this.goodIncidentShading.selectAll('*').remove();
     this.badIncidentShading.selectAll('*').remove();
@@ -778,21 +743,21 @@ class LineChart extends PureComponent {
       // Take the series data, filter it for only in the good and bad ranges, then map those dates to their download speeds.
       // Use resulting download speeds to bound shaded regions.
       series[0].results
-        .filter(entry => (entry.date.isSameOrAfter(goodIncidentSeries.start.clone()) && entry.date.isSameOrBefore(goodIncidentSeries.end.clone())))
+        .filter(entry => (entry.date.isSameOrAfter(incident.goodPeriodStart.clone()) && entry.date.isSameOrBefore(incident.goodPeriodEnd.clone())))
         .map(entry => (
           goodIncidentShadingArray.push(
             { x: entry.date, 
-              y0: goodIncidentSeries.download_speed_mbps_median, 
+              y0: incident.goodPeriodMetric, 
               y1: entry.download_speed_mbps_median
             }
           )
         ));
       series[0].results
-        .filter(entry => (entry.date.isSameOrAfter(badIncidentSeries.start.clone()) && entry.date.isSameOrBefore(badIncidentSeries.end.clone())))
+        .filter(entry => (entry.date.isSameOrAfter(incident.badPeriodStart.clone()) && entry.date.isSameOrBefore(incident.badPeriodEnd.clone())))
         .map(entry => (
           badIncidentShadingArray.push(
             { x: entry.date, 
-              y0: badIncidentSeries.download_speed_mbps_median, 
+              y0: incident.badPeriodMetric, 
               y1: entry.download_speed_mbps_median
             }
           )
