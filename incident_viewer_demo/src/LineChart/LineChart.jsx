@@ -315,6 +315,7 @@ class LineChart extends PureComponent {
 
       if (hasIncident) {
         const width = xScale(goodIncidentSeries.end) - xScale(goodIncidentSeries.start);
+        const height = plotAreaHeight-goodYmax
         const rectFitsText = width > 180; // NOTE: This also must be manually tuned. It hides hover text in the case 
                                           // that the area is too small for the text to fit.
         const verticalTextShifter = 0.45; // NOTE: This needs to be tuned based on font size and number of lines :(
@@ -328,19 +329,27 @@ class LineChart extends PureComponent {
           .attr('width', width)
           .attr('height', plotAreaHeight-goodYmax);
 
+          // if (rectFitsText) {
+          //   this.infoHoverBox.append('text')
+          //   .classed('good-hover-text', true)
+          //   .attr('x', xScale(goodIncidentSeries.start) + 0.5*width)
+          //   .attr('y', goodYmax + verticalTextShifter*(plotAreaHeight-goodYmax))
+          //   .append('svg:tspan')
+          //   .attr('x', xScale(goodIncidentSeries.start) + 20)
+          //   .attr('dy', 0)
+          //   .text(goodDescription1)
+          //   .append('svg:tspan')
+          //   .attr('x', xScale(goodIncidentSeries.start) + 20)
+          //   .attr('dy', 20)
+          //   .text(goodDescription2)
+          // }
           if (rectFitsText) {
             this.infoHoverBox.append('text')
             .classed('good-hover-text', true)
-            .attr('x', xScale(goodIncidentSeries.start) + 0.5*width)
-            .attr('y', goodYmax + verticalTextShifter*(plotAreaHeight-goodYmax))
-            .append('svg:tspan')
-            .attr('x', xScale(goodIncidentSeries.start) + 20)
-            .attr('dy', 0)
-            .text(goodDescription1)
-            .append('svg:tspan')
-            .attr('x', xScale(goodIncidentSeries.start) + 20)
-            .attr('dy', 20)
-            .text(goodDescription2)
+            .attr('x', xScale(goodIncidentSeries.start) + width/2)
+            .attr('y', goodYmax + height/2)
+            .attr("text-anchor", "middle")
+            .html("Average Download Speed: 50 mb/s <br> August 2015 - July 2016")
           }
         }
 

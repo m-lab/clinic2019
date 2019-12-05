@@ -84,7 +84,8 @@
 
   @mixin hover-text {
     font-size: 11px;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-weight: 350;
+    font-family: Roboto,Helvetica Neue,Helvetica,Arial,sans-serif;
   }
 
   .incident-hover-text {
