@@ -123,20 +123,16 @@ func (i *DefaultIncident) GetTestsAffected() int {
 
 func (i *DefaultIncident) GetGoodPeriodInfo() string {
 	ds := strconv.FormatFloat(i.avgGoodDS, 'f', 2, 64)
-	s := i.goodStartTime.String()
-	e := i.goodEndTime.String()
-	return "Average download speed: " + ds + " from " + s + " - " + e
+	return "Average download speed: " + ds + " mb/s"
 }
 
 func (i *DefaultIncident) GetBadPeriodInfo() string {
 	ds := strconv.FormatFloat(i.avgBadDS, 'f', 2, 64)
-	s := i.badStartTime.String()
-	e := i.badEndTime.String()
-	return "Average download speed: " + ds + " from " + s + " - " + e
+	return "Average download speed: " + ds + " mb/s"
 }
 
 func (i *DefaultIncident) GetIncidentInfo() string {
-	s := strconv.FormatFloat(i.severityDecimal, 'f', 2, 64)
+	s := strconv.FormatFloat(i.severityDecimal*100, 'f', 2, 64)
 	ta := strconv.Itoa(i.numTestsAffected)
-	return "Download speed dropped by " + s + " affecting " + ta + " tests"
+	return "Download speed dropped by " + s + "% affecting " + ta + " tests"
 }
