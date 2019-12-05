@@ -20,8 +20,6 @@ function visProps(props) {
     labelKey,
     series = [],
     incident,
-    // goodIncidentSeries,
-    // badIncidentSeries,
     hasIncident,
     forceZeroMin,
     height,
@@ -282,9 +280,6 @@ class LineChart extends PureComponent {
    * @return {void}
    */
   onMouseMove(mouse) {
-    // const goodDescription1 = "Average Download Speed: 50 mb/s"
-    // const goodDescription2 = "August 2015 - July 2016"
-    // TODO: make in alphabetical order
     const { plotAreaHeight, incident, hasIncident, onHighlightDate, series, xScale , xKey, yScale, yKey } = this.props;
     const goodDescription1 = incident.goodPeriodInfo
     const badDescription1 = incident.badPeriodInfo
@@ -395,7 +390,6 @@ class LineChart extends PureComponent {
             .append('svg:tspan')
             .attr('x', xScale(incident.badPeriodStart) + 20)
             .attr('dy', 20)
-            // .text(goodDescription2)
           }
         }
       }
