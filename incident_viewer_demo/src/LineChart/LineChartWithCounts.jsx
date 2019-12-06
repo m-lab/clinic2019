@@ -134,16 +134,16 @@ class LineChartWithCounts extends PureComponent {
     const { id, width, annotationSeries, series, padding, xScale, colors, lineChartHeight,
       countChartHeight, hasIncident } = this.props;
 
-    // Fake Incident data JSON grabbing + modifying dates
     // eslint-disable-next-line global-require
-    const fakeIncidentData = require('../sampleIncident.json');
+    const incident = require('../incidents.json');
+    const incidentData = incident[0]
     // convert dates to moment objects
-    var incident_good_series = fakeIncidentData.good_period;
-    var incident_bad_series = fakeIncidentData.bad_period;
-    incident_good_series.start = moment(incident_good_series.start);
-    incident_good_series.end = moment(incident_good_series.end);
-    incident_bad_series.start = moment(incident_bad_series.start);
-    incident_bad_series.end = moment(incident_bad_series.end);
+    incidentData.goodPeriodStart = moment(incidentData.goodPeriodStart);
+    incidentData.goodPeriodEnd = moment(incidentData.goodPeriodEnd);
+    incidentData.badPeriodStart = moment(incidentData.badPeriodStart);
+    incidentData.badPeriodEnd = moment(incidentData.badPeriodEnd);
+
+    console.log("incident Data", incidentData)
 
     const height = lineChartHeight + countChartHeight;
     return (
@@ -168,8 +168,7 @@ class LineChartWithCounts extends PureComponent {
               paddingRight={padding.right}
               xScale={xScale}
               hasIncident={hasIncident}
-              goodIncidentSeries={incident_good_series}
-              badIncidentSeries={incident_bad_series}
+              incident={incidentData}
             />
           </g>
         </svg>

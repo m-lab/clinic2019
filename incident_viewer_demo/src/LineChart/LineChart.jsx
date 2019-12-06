@@ -19,8 +19,8 @@ function visProps(props) {
     idKey,
     labelKey,
     series = [],
-    goodIncidentSeries,
-    badIncidentSeries,
+    incident,
+    hasIncident,
     forceZeroMin,
     height,
     paddingLeft = 50,
@@ -148,19 +148,11 @@ function visProps(props) {
   .x((d) => xScale(d.x))
   .y((d) => yScale(d.y));
 
-  const incidentShadingGenerator = d3.area()
-    .curve(d3.curveMonotoneX)
-    .x((d) => xScale(d.x))
-    .y0((d) => yScale(d.y0))
-    .y1((d) => yScale(d.y1));
-
   return {
     annotationLineChunked,
     annotationSeries,
-    goodIncidentSeries,
-    badIncidentSeries,
+    incident,
     incidentLineGenerator,
-    incidentShadingGenerator,
     colors,
     plotAreaHeight,
     padding,
@@ -178,8 +170,7 @@ function visProps(props) {
 class LineChart extends PureComponent {
   static propTypes = {
     annotationLineChunked: React.PropTypes.func,
-    goodIncidentSeries: React.PropTypes.object,
-    badIncidentSeries: React.PropTypes.object,
+    incident: React.PropTypes.object,
     annotationSeries: PropTypes.array,
     // Obect mapping series IDs to colors
     colors: PropTypes.object,
@@ -280,10 +271,10 @@ class LineChart extends PureComponent {
    * @return {void}
    */
   onMouseMove(mouse) {
-    const { plotAreaHeight, goodIncidentSeries, badIncidentSeries, onHighlightDate, series, xScale , xKey, yScale, hasIncident } = this.props;
-    
-    const goodDescription1 = "Average Download Speed: 50 mb/s"
-    const goodDescription2 = "August 2015 - July 2016"
+    const { plotAreaHeight, incident, hasIncident, onHighlightDate, series, xScale , xKey, yScale, yKey } = this.props;
+    const goodDescription = incident.goodPeriodInfo
+    const badDescription = incident.badPeriodInfo
+    const incidentDescription1 = incident.incidentInfo
 
     if (!onHighlightDate) {
       return;
@@ -309,88 +300,86 @@ class LineChart extends PureComponent {
         .attr('x2', xScale(closest));
 
       const highlightedDate = moment(closest);
-      const goodYmax = yScale(goodIncidentSeries.download_speed_mbps_median);
-      const badYmax = yScale(badIncidentSeries.download_speed_mbps_median);
+      const goodYmax = yScale(incident.goodPeriodMetric);
+      const badYmax = yScale(incident.badPeriodMetric);
       this.infoHoverBox.selectAll('*').remove();
 
       if (hasIncident) {
-        const width = xScale(goodIncidentSeries.end) - xScale(goodIncidentSeries.start);
-        const rectFitsText = width > 180; // NOTE: This also must be manually tuned. It hides hover text in the case 
+        const goodWidth = xScale(incident.goodPeriodEnd) - xScale(incident.goodPeriodStart);
+        const badWidth = xScale(incident.badPeriodEnd) - xScale(incident.badPeriodStart);
+        const rectFitsText = (goodWidth > 180) && (badWidth > 180); // NOTE: This also must be manually tuned. It hides hover text in the case 
                                           // that the area is too small for the text to fit.
         const verticalTextShifter = 0.45; // NOTE: This needs to be tuned based on font size and number of lines :(
 
         // Draw the hover state for the good period information
-        if (highlightedDate.isBefore(goodIncidentSeries.end) && highlightedDate.isSameOrAfter(goodIncidentSeries.start) && mouseY > goodYmax) {
+        if (highlightedDate.isBefore(incident.goodPeriodEnd) && highlightedDate.isSameOrAfter(incident.goodPeriodStart) && mouseY > goodYmax) {
           this.infoHoverBox.append('rect')
           .classed("good-incident-area", true)
-          .attr('x', xScale(goodIncidentSeries.start))
+          .attr('x', xScale(incident.goodPeriodStart))
           .attr('y', goodYmax)
-          .attr('width', width)
+          .attr('width', goodWidth)
           .attr('height', plotAreaHeight-goodYmax);
 
           if (rectFitsText) {
             this.infoHoverBox.append('text')
             .classed('good-hover-text', true)
-            .attr('x', xScale(goodIncidentSeries.start) + 0.5*width)
+            .attr('x', xScale(incident.goodPeriodStart) + 0.5*goodWidth)
             .attr('y', goodYmax + verticalTextShifter*(plotAreaHeight-goodYmax))
             .append('svg:tspan')
-            .attr('x', xScale(goodIncidentSeries.start) + 20)
+            .attr('x', xScale(incident.goodPeriodStart) + 20)
             .attr('dy', 0)
-            .text(goodDescription1)
+            .text(goodDescription)
             .append('svg:tspan')
-            .attr('x', xScale(goodIncidentSeries.start) + 20)
+            .attr('x', xScale(incident.goodPeriodStart) + 20)
             .attr('dy', 20)
-            .text(goodDescription2)
           }
         }
 
         // Draw the hover state for the bad period information
-        if (highlightedDate.isSameOrBefore(badIncidentSeries.end) && highlightedDate.isSameOrAfter(badIncidentSeries.start) && mouseY > badYmax) {
+        if (highlightedDate.isSameOrBefore(incident.badPeriodEnd) && highlightedDate.isSameOrAfter(incident.badPeriodStart) && mouseY > badYmax) {
           this.infoHoverBox.append('rect')
           .classed("bad-incident-area", true)
-          .attr('x', xScale(badIncidentSeries.start))
+          .attr('x', xScale(incident.badPeriodStart))
           .attr('y', badYmax)
-          .attr('width', width)
+          .attr('width', badWidth)
           .attr('height', plotAreaHeight-badYmax)
           
           if (rectFitsText) {
             this.infoHoverBox.append('text')
             .classed('bad-hover-text', true)
-            .attr('x', xScale(badIncidentSeries.start) + 0.5*width)
+            .attr('x', xScale(incident.badPeriodStart) + 0.5*badWidth)
             .attr('y', badYmax + verticalTextShifter*(plotAreaHeight-badYmax))
             .append('svg:tspan')
-            .attr('x', xScale(badIncidentSeries.start) + 20)
+            .attr('x', xScale(incident.badPeriodStart) + 20)
             .attr('dy', 0)
-            .text(goodDescription1)
+            .text(badDescription)
             .append('svg:tspan')
-            .attr('x', xScale(badIncidentSeries.start) + 20)
+            .attr('x', xScale(incident.badPeriodStart) + 20)
             .attr('dy', 20)
-            .text(goodDescription2)
           }
         }
 
         // Draw the hover state for the incident information
-        if (highlightedDate.isSameOrBefore(badIncidentSeries.end) && highlightedDate.isSameOrAfter(badIncidentSeries.start) && mouseY < badYmax && mouseY > goodYmax) {
+        if (highlightedDate.isSameOrBefore(incident.badPeriodEnd) && highlightedDate.isSameOrAfter(incident.badPeriodStart) && mouseY < badYmax && mouseY > goodYmax) {
           this.infoHoverBox.append('rect')
           .classed("incident-area", true)
-          .attr('x', xScale(badIncidentSeries.start))
+          .attr('x', xScale(incident.badPeriodStart))
           .attr('y', goodYmax)
-          .attr('width', xScale(badIncidentSeries.end) - xScale(badIncidentSeries.start))
+          .attr('width', badWidth)
           .attr('height', badYmax-goodYmax)
 
           if (rectFitsText) {
             this.infoHoverBox.append('text')
             .classed('incident-hover-text', true)
-            .attr('x', xScale(badIncidentSeries.start) + 0.5*width)
+            .attr('x', xScale(incident.badPeriodStart) + 0.5*badWidth)
             .attr('y', goodYmax + verticalTextShifter*(plotAreaHeight-goodYmax - badYmax/2))
             .append('svg:tspan')
-            .attr('x', xScale(badIncidentSeries.start) + 20)
+            .attr('x', xScale(incident.badPeriodStart) + 20)
             .attr('dy', 0)
-            .text(goodDescription1)
+            .text(incidentDescription1)
             .append('svg:tspan')
-            .attr('x', xScale(badIncidentSeries.start) + 20)
+            .attr('x', xScale(incident.badPeriodStart) + 20)
             .attr('dy', 20)
-            .text(goodDescription2)
           }
         }
       }
@@ -437,8 +426,6 @@ class LineChart extends PureComponent {
     this.badIncidentLine = this.g.append('g').classed('bad-incident-line', true);
     this.incidentArrowLine = this.g.append('g').classed('incident-arrow-line', true);
     this.incidentArrowTri = this.g.append('g').classed('incident-arrow-tri', true);
-    this.goodIncidentShading = this.g.append('g').classed('good-incident-shading', true);
-    this.badIncidentShading = this.g.append('g').classed('bad-incident-shading', true);
     
 
     // container for showing the x highlighte date indicator
@@ -450,20 +437,6 @@ class LineChart extends PureComponent {
       .attr('y2', plotAreaHeight + 3)
       .attr('class', 'highlight-ref-line');
     this.infoHoverBox = this.highlightDate.append('g')
-
-
-    // add in a rect to fill out the area beneath the hovered on X date
-    // BELOW CODE IS FOR X AXIS ANNOTATION BELOW HOVER LINE
-    // this.highlightDate.append('rect')
-    //   .attr('x', -45)
-    //   .attr('width', 90)
-    //   .attr('y', 0) // should be set to plotAreaHeight
-    //   .attr('height', 20)
-    //   .style('fill', '#fff');
-    // this.highlightDate.append('text')
-    //   .attr('class', 'highlight-x')
-    //   .attr('dy', 17)
-    //   .attr('text-anchor', 'middle');
 
     // container for showing the highlighted line
     this.highlightLine = this.g.append('g').attr('class', 'highlight-line');
@@ -695,18 +668,16 @@ class LineChart extends PureComponent {
    * Render the incident "good" and "bad" periods reference lines on the chart.
    */
   updateIncident() {
-    const { goodIncidentSeries, badIncidentSeries, incidentLineGenerator, hasIncident } = this.props;
+    const { incident, incidentLineGenerator, hasIncident } = this.props;
 
     this.goodIncidentLine.selectAll('*').remove();
     this.badIncidentLine.selectAll('*').remove();
 
     this.updateIncidentArrow();
-    this.updateIncidentShading();
 
     if (hasIncident) {
-      const goodIncidentSeriesArray = [{x: goodIncidentSeries.start, y: goodIncidentSeries.download_speed_mbps_median}, {x: goodIncidentSeries.end, y: goodIncidentSeries.download_speed_mbps_median} ];
-      const badIncidentSeriesArray = [{x: badIncidentSeries.start, y: badIncidentSeries.download_speed_mbps_median}, {x: badIncidentSeries.end, y: badIncidentSeries.download_speed_mbps_median} ];
-    
+      const goodIncidentSeriesArray = [{x: incident.goodPeriodStart, y: incident.goodPeriodMetric}, {x: incident.goodPeriodEnd, y: incident.goodPeriodMetric} ];
+      const badIncidentSeriesArray = [{x: incident.badPeriodStart, y: incident.badPeriodMetric}, {x: incident.badPeriodEnd, y: incident.badPeriodMetric} ];
 
       // LINES
       this.goodIncidentLine.append('path')
@@ -720,75 +691,29 @@ class LineChart extends PureComponent {
   }
 
   /**
-   * Render the shading that surrounds the incident lines and is bounded by the plotted line.
-   */
-  updateIncidentShading() {
-    const { goodIncidentSeries, badIncidentSeries, incidentShadingGenerator, series, hasIncident } = this.props;
-    
-    this.goodIncidentShading.selectAll('*').remove();
-    this.badIncidentShading.selectAll('*').remove();
-
-    if (hasIncident) {
-      var goodIncidentShadingArray = [];
-      var badIncidentShadingArray = [];
-
-      // Take the series data, filter it for only in the good and bad ranges, then map those dates to their download speeds.
-      // Use resulting download speeds to bound shaded regions.
-      series[0].results
-        .filter(entry => (entry.date.isSameOrAfter(goodIncidentSeries.start.clone()) && entry.date.isSameOrBefore(goodIncidentSeries.end.clone())))
-        .map(entry => (
-          goodIncidentShadingArray.push(
-            { x: entry.date, 
-              y0: goodIncidentSeries.download_speed_mbps_median, 
-              y1: entry.download_speed_mbps_median
-            }
-          )
-        ));
-      series[0].results
-        .filter(entry => (entry.date.isSameOrAfter(badIncidentSeries.start.clone()) && entry.date.isSameOrBefore(badIncidentSeries.end.clone())))
-        .map(entry => (
-          badIncidentShadingArray.push(
-            { x: entry.date, 
-              y0: badIncidentSeries.download_speed_mbps_median, 
-              y1: entry.download_speed_mbps_median
-            }
-          )
-        ));
-
-      this.goodIncidentShading.append('path')
-        .attr('d', incidentShadingGenerator(goodIncidentShadingArray));
-
-      this.badIncidentShading.append('path')
-        .attr('d', incidentShadingGenerator(badIncidentShadingArray));
-    }
-  }
-
-  /**
    * Draws the downwards pointing red arrow betewen the good and bad periods.
    * The arrow is drawn using a line and a triangle, positioned on the good and
    * bad period data that is passed in from props. 
    */
   updateIncidentArrow() {
-    const { goodIncidentSeries, badIncidentSeries, xScale, yScale, hasIncident } = this.props;
+    const { incident, xScale, yScale, hasIncident } = this.props;
 
     this.incidentArrowLine.selectAll('*').remove();
     this.incidentArrowTri.selectAll('*').remove();
 
     if (hasIncident) {
-      const incidentArrowX = goodIncidentSeries.end;
+      const incidentArrowX = incident.goodPeriodEnd;
       const triWidth = 20;
       const triHeight = 15;
       
-      const incidentArrowLineArray = [{x: incidentArrowX, y: goodIncidentSeries.download_speed_mbps_median}, {x: incidentArrowX, y: badIncidentSeries.download_speed_mbps_median}];
+      const incidentArrowLineArray = [{x: incidentArrowX, y: incident.goodPeriodMetric}, {x: incidentArrowX, y: incident.badPeriodMetric}];
       
       
       const incidentArrowTriArray = [
-          {x: xScale(incidentArrowX), y: yScale(badIncidentSeries.download_speed_mbps_median)}, 
-          {x: xScale(incidentArrowX) + triWidth/2, y: yScale(badIncidentSeries.download_speed_mbps_median) - triHeight}, 
-          {x: xScale(incidentArrowX) - triWidth/2, y: yScale(badIncidentSeries.download_speed_mbps_median) - triHeight}
-        ];
-
-      
+        {x: xScale(incidentArrowX), y: yScale(incident.badPeriodMetric)}, 
+        {x: xScale(incidentArrowX) + triWidth/2, y: yScale(incident.badPeriodMetric) - triHeight}, 
+        {x: xScale(incidentArrowX) - triWidth/2, y: yScale(incident.badPeriodMetric) - triHeight}
+      ];
 
       //TRIANGLE
       this.incidentArrowTri.append('polygon')
