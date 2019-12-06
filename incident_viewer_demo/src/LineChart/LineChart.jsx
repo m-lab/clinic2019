@@ -148,18 +148,11 @@ function visProps(props) {
   .x((d) => xScale(d.x))
   .y((d) => yScale(d.y));
 
-  const incidentShadingGenerator = d3.area()
-    .curve(d3.curveMonotoneX)
-    .x((d) => xScale(d.x))
-    .y0((d) => yScale(d.y0))
-    .y1((d) => yScale(d.y1));
-
   return {
     annotationLineChunked,
     annotationSeries,
     incident,
     incidentLineGenerator,
-    incidentShadingGenerator,
     colors,
     plotAreaHeight,
     padding,
@@ -281,8 +274,8 @@ class LineChart extends PureComponent {
    */
   onMouseMove(mouse) {
     const { plotAreaHeight, incident, hasIncident, onHighlightDate, series, xScale , xKey, yScale, yKey } = this.props;
-    const goodDescription1 = incident.goodPeriodInfo
-    const badDescription1 = incident.badPeriodInfo
+    const goodDescription = incident.goodPeriodInfo
+    const badDescription = incident.badPeriodInfo
     const incidentDescription1 = incident.incidentInfo
 
     if (!onHighlightDate) {
@@ -336,11 +329,10 @@ class LineChart extends PureComponent {
             .append('svg:tspan')
             .attr('x', xScale(incident.goodPeriodStart) + 20)
             .attr('dy', 0)
-            .text(goodDescription1)
+            .text(goodDescription)
             .append('svg:tspan')
             .attr('x', xScale(incident.goodPeriodStart) + 20)
             .attr('dy', 20)
-            // .text(goodDescription2)
           }
         }
 
@@ -361,11 +353,10 @@ class LineChart extends PureComponent {
             .append('svg:tspan')
             .attr('x', xScale(incident.badPeriodStart) + 20)
             .attr('dy', 0)
-            .text(badDescription1)
+            .text(badDescription)
             .append('svg:tspan')
             .attr('x', xScale(incident.badPeriodStart) + 20)
             .attr('dy', 20)
-            // .text(goodDescription2)
           }
         }
 
@@ -436,8 +427,6 @@ class LineChart extends PureComponent {
     this.badIncidentLine = this.g.append('g').classed('bad-incident-line', true);
     this.incidentArrowLine = this.g.append('g').classed('incident-arrow-line', true);
     this.incidentArrowTri = this.g.append('g').classed('incident-arrow-tri', true);
-    this.goodIncidentShading = this.g.append('g').classed('good-incident-shading', true);
-    this.badIncidentShading = this.g.append('g').classed('bad-incident-shading', true);
     
 
     // container for showing the x highlighte date indicator
@@ -686,7 +675,6 @@ class LineChart extends PureComponent {
     this.badIncidentLine.selectAll('*').remove();
 
     this.updateIncidentArrow();
-    this.updateIncidentShading();
 
     if (hasIncident) {
       const goodIncidentSeriesArray = [{x: incident.goodPeriodStart, y: incident.goodPeriodMetric}, {x: incident.goodPeriodEnd, y: incident.goodPeriodMetric} ];
@@ -700,50 +688,6 @@ class LineChart extends PureComponent {
     this.badIncidentLine.append('path')
       .classed('bad-incident-line', true)
       .attr('d', incidentLineGenerator(badIncidentSeriesArray))
-    }
-  }
-
-  /**
-   * Render the shading that surrounds the incident lines and is bounded by the plotted line.
-   */
-  updateIncidentShading() {
-    const { incident, incidentShadingGenerator, series, hasIncident } = this.props;
-    
-    this.goodIncidentShading.selectAll('*').remove();
-    this.badIncidentShading.selectAll('*').remove();
-
-    if (hasIncident) {
-      var goodIncidentShadingArray = [];
-      var badIncidentShadingArray = [];
-
-      // Take the series data, filter it for only in the good and bad ranges, then map those dates to their download speeds.
-      // Use resulting download speeds to bound shaded regions.
-      series[0].results
-        .filter(entry => (entry.date.isSameOrAfter(incident.goodPeriodStart.clone()) && entry.date.isSameOrBefore(incident.goodPeriodEnd.clone())))
-        .map(entry => (
-          goodIncidentShadingArray.push(
-            { x: entry.date, 
-              y0: incident.goodPeriodMetric, 
-              y1: entry.download_speed_mbps_median
-            }
-          )
-        ));
-      series[0].results
-        .filter(entry => (entry.date.isSameOrAfter(incident.badPeriodStart.clone()) && entry.date.isSameOrBefore(incident.badPeriodEnd.clone())))
-        .map(entry => (
-          badIncidentShadingArray.push(
-            { x: entry.date, 
-              y0: incident.badPeriodMetric, 
-              y1: entry.download_speed_mbps_median
-            }
-          )
-        ));
-
-      this.goodIncidentShading.append('path')
-        .attr('d', incidentShadingGenerator(goodIncidentShadingArray));
-
-      this.badIncidentShading.append('path')
-        .attr('d', incidentShadingGenerator(badIncidentShadingArray));
     }
   }
 
