@@ -342,21 +342,6 @@ class LineChart extends PureComponent {
           .attr('width', badWidth)
           .attr('height', plotAreaHeight-badYmax)
           
-          /// Leaving this here in case we choose to go back to multi-line hover text!
-          // if (rectFitsText) {
-          //   this.infoHoverBox.append('text')
-          //   .classed('bad-hover-text', true)
-          //   .attr('x', xScale(badIncidentSeries.start) + 0.5*width)
-          //   .attr('y', badYmax + verticalTextShifter*(plotAreaHeight-badYmax))
-          //   .append('svg:tspan')
-          //   .attr('x', xScale(badIncidentSeries.start) + 20)
-          //   .attr('dy', 0)
-          //   .text(goodDescription1)
-          //   .append('svg:tspan')
-          //   .attr('x', xScale(badIncidentSeries.start) + 20)
-          //   .attr('dy', 20)
-          //   .text(goodDescription2)
-          // }
           if (rectFitsText) {
             this.infoHoverBox.append('text')
             .classed('bad-hover-text', true)            
@@ -377,21 +362,6 @@ class LineChart extends PureComponent {
           .attr('width', badWidth)
           .attr('height', badYmax-goodYmax)
 
-          /// Leaving this here in case we choose to go back to multi-line hover text!
-          // if (rectFitsText) {
-          //   this.infoHoverBox.append('text')
-          //   .classed('incident-hover-text', true)
-          //   .attr('x', xScale(badIncidentSeries.start) + 0.5*width)
-          //   .attr('y', goodYmax + verticalTextShifter*(plotAreaHeight-goodYmax - badYmax/2))
-          //   .append('svg:tspan')
-          //   .attr('x', xScale(badIncidentSeries.start) + 20)
-          //   .attr('dy', 0)
-          //   .text(goodDescription1)
-          //   .append('svg:tspan')
-          //   .attr('x', xScale(badIncidentSeries.start) + 20)
-          //   .attr('dy', 20)
-          //   .text(goodDescription2)
-          // }
           if (rectFitsText) {
             this.infoHoverBox.append('text')
             .classed('incident-hover-text', true)            
