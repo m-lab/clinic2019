@@ -274,7 +274,7 @@ class LineChart extends PureComponent {
     const { plotAreaHeight, incident, hasIncident, onHighlightDate, series, xScale , xKey, yScale, yKey } = this.props;
     const goodDescription = incident.goodPeriodInfo
     const badDescription = incident.badPeriodInfo
-    const incidentDescription1 = incident.incidentInfo
+    const incidentDescription = incident.incidentInfo
 
     if (!onHighlightDate) {
       return;
@@ -307,10 +307,12 @@ class LineChart extends PureComponent {
       if (hasIncident) {
         const goodWidth = xScale(incident.goodPeriodEnd) - xScale(incident.goodPeriodStart);
         const badWidth = xScale(incident.badPeriodEnd) - xScale(incident.badPeriodStart);
+        const goodHeight = plotAreaHeight-goodYmax
+        const badHeight = plotAreaHeight-badYmax
+        const incidentHeight = Math.abs(badYmax - goodYmax)
         const rectFitsText = (goodWidth > 180) && (badWidth > 180); // NOTE: This also must be manually tuned. It hides hover text in the case 
                                           // that the area is too small for the text to fit.
-        const verticalTextShifter = 0.45; // NOTE: This needs to be tuned based on font size and number of lines :(
-
+        
         // Draw the hover state for the good period information
         if (highlightedDate.isBefore(incident.goodPeriodEnd) && highlightedDate.isSameOrAfter(incident.goodPeriodStart) && mouseY > goodYmax) {
           this.infoHoverBox.append('rect')
@@ -323,15 +325,11 @@ class LineChart extends PureComponent {
           if (rectFitsText) {
             this.infoHoverBox.append('text')
             .classed('good-hover-text', true)
-            .attr('x', xScale(incident.goodPeriodStart) + 0.5*goodWidth)
-            .attr('y', goodYmax + verticalTextShifter*(plotAreaHeight-goodYmax))
-            .append('svg:tspan')
-            .attr('x', xScale(incident.goodPeriodStart) + 20)
-            .attr('dy', 0)
+            .attr('x', xScale(incident.goodPeriodStart) + goodWidth/2)
+            .attr('y', goodYmax + goodHeight/2)
+            .attr("alignment-baseline", "central")
+            .attr("text-anchor", "middle")
             .text(goodDescription)
-            .append('svg:tspan')
-            .attr('x', xScale(incident.goodPeriodStart) + 20)
-            .attr('dy', 20)
           }
         }
 
@@ -346,16 +344,12 @@ class LineChart extends PureComponent {
           
           if (rectFitsText) {
             this.infoHoverBox.append('text')
-            .classed('bad-hover-text', true)
-            .attr('x', xScale(incident.badPeriodStart) + 0.5*badWidth)
-            .attr('y', badYmax + verticalTextShifter*(plotAreaHeight-badYmax))
-            .append('svg:tspan')
-            .attr('x', xScale(incident.badPeriodStart) + 20)
-            .attr('dy', 0)
+            .classed('bad-hover-text', true)            
+            .attr('y', badYmax + badHeight/2)
+            .attr("text-anchor", "middle")
+            .attr("alignment-baseline", "central")
+            .attr('x', xScale(incident.badPeriodStart) + badWidth/2)
             .text(badDescription)
-            .append('svg:tspan')
-            .attr('x', xScale(incident.badPeriodStart) + 20)
-            .attr('dy', 20)
           }
         }
 
@@ -370,16 +364,12 @@ class LineChart extends PureComponent {
 
           if (rectFitsText) {
             this.infoHoverBox.append('text')
-            .classed('incident-hover-text', true)
-            .attr('x', xScale(incident.badPeriodStart) + 0.5*badWidth)
-            .attr('y', goodYmax + verticalTextShifter*(plotAreaHeight-goodYmax - badYmax/2))
-            .append('svg:tspan')
-            .attr('x', xScale(incident.badPeriodStart) + 20)
-            .attr('dy', 0)
-            .text(incidentDescription1)
-            .append('svg:tspan')
-            .attr('x', xScale(incident.badPeriodStart) + 20)
-            .attr('dy', 20)
+            .classed('incident-hover-text', true)            
+            .attr('y', badYmax - incidentHeight/2)
+            .attr("text-anchor", "middle")
+            .attr("alignment-baseline", "central")
+            .attr('x', xScale(incident.badPeriodStart) + badWidth/2)
+            .text(incidentDescription)
           }
         }
       }
@@ -418,16 +408,6 @@ class LineChart extends PureComponent {
       .attr('class', 'axis-label')
       .attr('text-anchor', 'middle');
 
-    // add in groups for data
-    this.annotationLines = this.g.append('g').classed('annotation-lines-group', true);
-    this.lines = this.g.append('g').classed('lines-group', true);
-    this.circles = this.g.append('g').classed('circles-group', true);
-    this.goodIncidentLine = this.g.append('g').classed('good-incident-line', true);
-    this.badIncidentLine = this.g.append('g').classed('bad-incident-line', true);
-    this.incidentArrowLine = this.g.append('g').classed('incident-arrow-line', true);
-    this.incidentArrowTri = this.g.append('g').classed('incident-arrow-tri', true);
-    
-
     // container for showing the x highlighte date indicator
     this.highlightDate = this.g.append('g').attr('class', 'highlight-date');
     this.refLine = this.highlightDate.append('line')
@@ -437,6 +417,15 @@ class LineChart extends PureComponent {
       .attr('y2', plotAreaHeight + 3)
       .attr('class', 'highlight-ref-line');
     this.infoHoverBox = this.highlightDate.append('g')
+
+    // add in groups for data
+    this.annotationLines = this.g.append('g').classed('annotation-lines-group', true);
+    this.lines = this.g.append('g').classed('lines-group', true);
+    this.circles = this.g.append('g').classed('circles-group', true);
+    this.goodIncidentLine = this.g.append('g').classed('good-incident-line', true);
+    this.badIncidentLine = this.g.append('g').classed('bad-incident-line', true);
+    this.incidentArrowLine = this.g.append('g').classed('incident-arrow-line', true);
+    this.incidentArrowTri = this.g.append('g').classed('incident-arrow-tri', true);
 
     // container for showing the highlighted line
     this.highlightLine = this.g.append('g').attr('class', 'highlight-line');
