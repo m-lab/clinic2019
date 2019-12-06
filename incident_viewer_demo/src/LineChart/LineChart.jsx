@@ -441,16 +441,6 @@ class LineChart extends PureComponent {
       .attr('class', 'axis-label')
       .attr('text-anchor', 'middle');
 
-    // add in groups for data
-    this.annotationLines = this.g.append('g').classed('annotation-lines-group', true);
-    this.lines = this.g.append('g').classed('lines-group', true);
-    this.circles = this.g.append('g').classed('circles-group', true);
-    this.goodIncidentLine = this.g.append('g').classed('good-incident-line', true);
-    this.badIncidentLine = this.g.append('g').classed('bad-incident-line', true);
-    this.incidentArrowLine = this.g.append('g').classed('incident-arrow-line', true);
-    this.incidentArrowTri = this.g.append('g').classed('incident-arrow-tri', true);
-    
-
     // container for showing the x highlighte date indicator
     this.highlightDate = this.g.append('g').attr('class', 'highlight-date');
     this.refLine = this.highlightDate.append('line')
@@ -460,6 +450,15 @@ class LineChart extends PureComponent {
       .attr('y2', plotAreaHeight + 3)
       .attr('class', 'highlight-ref-line');
     this.infoHoverBox = this.highlightDate.append('g')
+
+    // add in groups for data
+    this.annotationLines = this.g.append('g').classed('annotation-lines-group', true);
+    this.lines = this.g.append('g').classed('lines-group', true);
+    this.circles = this.g.append('g').classed('circles-group', true);
+    this.goodIncidentLine = this.g.append('g').classed('good-incident-line', true);
+    this.badIncidentLine = this.g.append('g').classed('bad-incident-line', true);
+    this.incidentArrowLine = this.g.append('g').classed('incident-arrow-line', true);
+    this.incidentArrowTri = this.g.append('g').classed('incident-arrow-tri', true);
 
     // container for showing the highlighted line
     this.highlightLine = this.g.append('g').attr('class', 'highlight-line');

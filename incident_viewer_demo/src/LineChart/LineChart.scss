@@ -48,8 +48,6 @@
 
   .good-incident-area {
     fill: rgb(155, 189, 144);
-    stroke-width: 3px !important;
-    stroke: $good-color;
     fill-opacity: .5;
   }
 
@@ -60,15 +58,11 @@
 
   .bad-incident-area {
     fill: #DE8531;
-    stroke-width: 3px !important;
-    stroke: $bad-color;
     fill-opacity: .5;
   }
 
   .incident-area {
     fill: $incident-color;
-    stroke-width: 3px !important;
-    stroke: $incident-color;
     fill-opacity: .3;
   }
 
