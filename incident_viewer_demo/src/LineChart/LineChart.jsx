@@ -307,6 +307,9 @@ class LineChart extends PureComponent {
       if (hasIncident) {
         const goodWidth = xScale(incident.goodPeriodEnd) - xScale(incident.goodPeriodStart);
         const badWidth = xScale(incident.badPeriodEnd) - xScale(incident.badPeriodStart);
+        const goodHeight = plotAreaHeight-goodYmax
+        const badHeight = plotAreaHeight-badYmax
+        const incidentHeight = Math.abs(badYmax - goodYmax)
         const rectFitsText = (goodWidth > 180) && (badWidth > 180); // NOTE: This also must be manually tuned. It hides hover text in the case 
                                           // that the area is too small for the text to fit.
         
@@ -328,7 +331,7 @@ class LineChart extends PureComponent {
           if (rectFitsText) {
             this.infoHoverBox.append('text')
             .classed('good-hover-text', true)
-            .attr('x', xScale(goodIncidentSeries.start) + goodWidth/2)
+            .attr('x', xScale(incident.goodPeriodStart) + goodWidth/2)
             .attr('y', goodYmax + goodHeight/2)
             .attr("alignment-baseline", "central")
             .attr("text-anchor", "middle")
@@ -366,7 +369,7 @@ class LineChart extends PureComponent {
             .attr('y', badYmax + badHeight/2)
             .attr("text-anchor", "middle")
             .attr("alignment-baseline", "central")
-            .attr('x', xScale(incident.badPeriodStart) + width/2)
+            .attr('x', xScale(incident.badPeriodStart) + badWidth/2)
             .text(badDescription)
           }
         }
