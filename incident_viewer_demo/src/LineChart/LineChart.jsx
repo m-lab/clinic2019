@@ -171,8 +171,6 @@ class LineChart extends PureComponent {
   static propTypes = {
     annotationLineChunked: React.PropTypes.func,
     incident: React.PropTypes.object,
-    // goodIncidentSeries: React.PropTypes.object,
-    // badIncidentSeries: React.PropTypes.object,
     annotationSeries: PropTypes.array,
     // Obect mapping series IDs to colors
     colors: PropTypes.object,
