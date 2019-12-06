@@ -307,8 +307,9 @@ class LineChart extends PureComponent {
       this.infoHoverBox.selectAll('*').remove();
 
       if (hasIncident) {
-        const width = xScale(incident.goodPeriodEnd) - xScale(incident.goodPeriodStart);
-        const rectFitsText = width > 180; // NOTE: This also must be manually tuned. It hides hover text in the case 
+        const goodWidth = xScale(incident.goodPeriodEnd) - xScale(incident.goodPeriodStart);
+        const badWidth = xScale(incident.badPeriodEnd) - xScale(incident.badPeriodStart);
+        const rectFitsText = (goodWidth > 180) && (badWidth > 180); // NOTE: This also must be manually tuned. It hides hover text in the case 
                                           // that the area is too small for the text to fit.
         const verticalTextShifter = 0.45; // NOTE: This needs to be tuned based on font size and number of lines :(
 
@@ -318,13 +319,13 @@ class LineChart extends PureComponent {
           .classed("good-incident-area", true)
           .attr('x', xScale(incident.goodPeriodStart))
           .attr('y', goodYmax)
-          .attr('width', width)
+          .attr('width', goodWidth)
           .attr('height', plotAreaHeight-goodYmax);
 
           if (rectFitsText) {
             this.infoHoverBox.append('text')
             .classed('good-hover-text', true)
-            .attr('x', xScale(incident.goodPeriodStart) + 0.5*width)
+            .attr('x', xScale(incident.goodPeriodStart) + 0.5*goodWidth)
             .attr('y', goodYmax + verticalTextShifter*(plotAreaHeight-goodYmax))
             .append('svg:tspan')
             .attr('x', xScale(incident.goodPeriodStart) + 20)
@@ -342,13 +343,13 @@ class LineChart extends PureComponent {
           .classed("bad-incident-area", true)
           .attr('x', xScale(incident.badPeriodStart))
           .attr('y', badYmax)
-          .attr('width', width)
+          .attr('width', badWidth)
           .attr('height', plotAreaHeight-badYmax)
           
           if (rectFitsText) {
             this.infoHoverBox.append('text')
             .classed('bad-hover-text', true)
-            .attr('x', xScale(incident.badPeriodStart) + 0.5*width)
+            .attr('x', xScale(incident.badPeriodStart) + 0.5*badWidth)
             .attr('y', badYmax + verticalTextShifter*(plotAreaHeight-badYmax))
             .append('svg:tspan')
             .attr('x', xScale(incident.badPeriodStart) + 20)
@@ -366,13 +367,13 @@ class LineChart extends PureComponent {
           .classed("incident-area", true)
           .attr('x', xScale(incident.badPeriodStart))
           .attr('y', goodYmax)
-          .attr('width', xScale(incident.badPeriodEnd) - xScale(incident.badPeriodStart))
+          .attr('width', badWidth)
           .attr('height', badYmax-goodYmax)
 
           if (rectFitsText) {
             this.infoHoverBox.append('text')
             .classed('incident-hover-text', true)
-            .attr('x', xScale(incident.badPeriodStart) + 0.5*width)
+            .attr('x', xScale(incident.badPeriodStart) + 0.5*badWidth)
             .attr('y', goodYmax + verticalTextShifter*(plotAreaHeight-goodYmax - badYmax/2))
             .append('svg:tspan')
             .attr('x', xScale(incident.badPeriodStart) + 20)
