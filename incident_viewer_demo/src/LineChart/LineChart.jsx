@@ -313,12 +313,6 @@ class LineChart extends PureComponent {
         const rectFitsText = (goodWidth > 180) && (badWidth > 180); // NOTE: This also must be manually tuned. It hides hover text in the case 
                                           // that the area is too small for the text to fit.
         
-        // const width = xScale(goodIncidentSeries.end) - xScale(goodIncidentSeries.start);
-        // const goodHeight = plotAreaHeight-goodYmax
-        // const badHeight = plotAreaHeight-badYmax
-        // const incidentHeight = Math.abs(badYmax - goodYmax)
-        // const rectFitsText = width > 180; // NOTE: This also must be manually tuned. It hides hover text in the case 
-
         // Draw the hover state for the good period information
         if (highlightedDate.isBefore(incident.goodPeriodEnd) && highlightedDate.isSameOrAfter(incident.goodPeriodStart) && mouseY > goodYmax) {
           this.infoHoverBox.append('rect')
