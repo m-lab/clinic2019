@@ -68,7 +68,7 @@ class App extends React.Component {
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <button onClick={this.toggleIncident}>Toggle Incident Viewer</button> 
+          <button className="showIncident" onClick={this.toggleIncident}>Toggle Incident Viewer</button> 
           <Row className="Chart-row">
             <AutoWidth>
               <LineChartWithCounts
