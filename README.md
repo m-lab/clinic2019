@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/m-lab/clinic2019.svg?branch=master)](https://travis-ci.org/m-lab/clinic2019)
+[![Build Status](https://travis-ci.com/m-lab/clinic2019.svg?branch=master)](https://travis-ci.org/m-lab/clinic2019)
 [![Coverage Status](https://coveralls.io/repos/github/m-lab/clinic2019/badge.svg?branch=master)](https://coveralls.io/github/m-lab/clinic2019?branch=master)
 
 # Incident Viewer Demo
