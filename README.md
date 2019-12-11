@@ -3,14 +3,12 @@
 
 # Incident Viewer Demo
 A demo of the Google M-Lab Incident Viewer created by HMC Clinic.
-Basic mockup of demo:
+Current state of demo:
   ![Basic_Demo_Mockup](images/demo_screencap.png)
 
 This demo showcases the Incident Viewer that we plan to implement into the viz.M-Lab site Spring Semester. We used React to build it and took components from the viz client repo.
 
 This demo has access to a single, static incident object that it displays. When implemented into the site, the Incident Viewer will be able to take in any incident object and display it.
-
-
 
 # Incident Class and Incident Interface
 
