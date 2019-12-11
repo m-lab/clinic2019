@@ -3,6 +3,9 @@
 
 # Incident Viewer Demo
 A demo of the Google M-Lab Incident Viewer created by HMC Clinic.
+
+A live version of our demo hosted on heroku can be found [here](http://mlabclinic1920.herokuapp.com/).
+
 Current state of demo:
   ![Basic_Demo_Mockup](images/demo_screencap.png)
 
