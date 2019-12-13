@@ -13,20 +13,23 @@ import './chart_support/assets/base.scss';
 //////////////////////////////////////////////////////////////////////////
 
 var chartId = "providers-time-series"
-var colors = {naus_AS11486x: "rgb(125, 25, 125)", nauswaseattle_AS11398x: "rgb(69, 160, 58)", nauswaseattle_AS21928: "rgb(125, 66, 25)"}
+var colors = {naus_AS11486x: "rgb(69, 160, 58)", naus_AS11404: "rgb(125, 25, 125)", naus_AS10774x: "rgb(225, 166, 25)"}
 
 // Reading and loading JSON files with sample data of an incident
-var clientIspTimeSeriesData = require('./sample_data/client_isp_time_series_data.json');
+var clientIspTimeSeriesData = require('./sample_data/custom_combined_isp_series.json');
 var annotationTimeSeries = require('./sample_data/annotation_time_series_data.json');
 
 // Convert series and annotationseries dates to moment objs
-for (var i = 0; i < clientIspTimeSeriesData.extents.date.length; i++) {
-  clientIspTimeSeriesData.extents.date[i] = moment(clientIspTimeSeriesData.extents.date[i]);
-  annotationTimeSeries.extents.date[i] = moment(annotationTimeSeries.extents.date[i]);
-}
-for (var j = 0; j < clientIspTimeSeriesData.results.length; j++) {
-  clientIspTimeSeriesData.results[j].date = moment(clientIspTimeSeriesData.results[j].date);
-  annotationTimeSeries.results[j].date = moment(annotationTimeSeries.results[j].date);
+// var isp;
+for (var isp in clientIspTimeSeriesData) {
+  for (var i = 0; i < clientIspTimeSeriesData[isp].extents.date.length; i++) {
+    clientIspTimeSeriesData[isp].extents.date[i] = moment(clientIspTimeSeriesData[isp].extents.date[i]);
+    annotationTimeSeries.extents.date[i] = moment(annotationTimeSeries.extents.date[i]);
+  }
+  for (var j = 0; j < clientIspTimeSeriesData[isp].results.length; j++) {
+    clientIspTimeSeriesData[isp].results[j].date = moment(clientIspTimeSeriesData[isp].results[j].date);
+    annotationTimeSeries.results[j].date = moment(annotationTimeSeries.results[j].date);
+  }
 }
 
 function onHighlightTimeSeriesDate(date) {}
