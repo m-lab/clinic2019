@@ -97,6 +97,7 @@ func convertDefaultIncidentToIncident(arr [100]incident.DefaultIncident) []incid
 func makeJsonObjFile(arr []incident.Incident) *os.File {
 	// numObjects determines how many incidents are stored in the json
 	const numObjects = 1
+	// TODO: replace local file creation with Google Cloud Storage file creation
 	f, err := os.Create("incidents.json")
 	var objs [numObjects]incident.IncidentData
 	if err != nil {
@@ -119,6 +120,8 @@ func makeJsonObjFile(arr []incident.Incident) *os.File {
 	}
 	bytes, err := json.Marshal(objs)
 	n, err := f.Write(bytes)
+
+	// Store contents on Google Cloud
 
 	if err != nil {
 		log.Fatal(n)
