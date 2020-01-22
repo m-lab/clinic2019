@@ -156,7 +156,7 @@ class LineChartWithCounts extends PureComponent {
               paddingRight={padding.right}
               xScale={xScale}
               hasIncident={hasIncident}
-              incident={incidentData}
+              incidentData={incidentData}
             />
           </g>
         </svg>
