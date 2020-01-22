@@ -21,7 +21,7 @@ func Append(slice, data []incident.DefaultIncident) []incident.DefaultIncident {
 		// Allocate double what's needed, for future growth.
 		newSlice := make([]incident.DefaultIncident, (l+len(data))*2)
 		// The copy function is predeclared and works for any slice type.
-		copy(newSlice, slice)
+		copy(slice, newSlice)
 		slice = newSlice
 	}
 	slice = slice[0 : l+len(data)]
@@ -32,7 +32,7 @@ func Append(slice, data []incident.DefaultIncident) []incident.DefaultIncident {
 func CsvParser(filePath string, numIncidents int) []incident.DefaultIncident {
 
 	//just assume that you have 100 rows in the csv and then return an array of 1OO incidents
-	var defaultIncidents []incident.DefaultIncident = make([]incident.DefaultIncident, 1)
+	var defaultIncidents []incident.DefaultIncident = make([]incident.DefaultIncident, 0)
 	var rec []string
 	const shortForm = "2006-01-02"
 
@@ -58,7 +58,6 @@ func CsvParser(filePath string, numIncidents int) []incident.DefaultIncident {
 	var i = 0
 	for {
 		rec, err = reader.Read()
-		i = i + 1
 		if i == numIncidents {
 			break
 		}
@@ -69,7 +68,6 @@ func CsvParser(filePath string, numIncidents int) []incident.DefaultIncident {
 			log.Fatal(err)
 
 		}
-
 		//knowing the structure of the csv file, retrieve some values
 		badTimeStartString := strings.Split(rec[3], " ")
 		timeStart, _ := time.Parse(shortForm, badTimeStartString[1])
@@ -98,10 +96,10 @@ func CsvParser(filePath string, numIncidents int) []incident.DefaultIncident {
 		defaultIncident.Init(goodTimeStart, goodTimeEnd, timeStart, timeEnd, avgGoodDS,
 			avgBadDS, severity, testsAffected)
 
-		defaultIncidents = Append(defaultIncidents, []incident.DefaultIncident{*defaultIncident})
+		defaultIncidents = append(defaultIncidents, *defaultIncident)
+		i = i + 1
 
 	}
-
 	return defaultIncidents
 }
 
