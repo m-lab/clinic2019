@@ -4,6 +4,7 @@ import (
 	"encoding/csv"
 	"encoding/json"
 	"io"
+	"io/ioutil"
 	"log"
 	"os"
 	"strconv"
@@ -13,10 +14,25 @@ import (
 	"github.com/m-lab/clinic2019/incident_viewer_demo/incident"
 )
 
-func CsvParser(filePath string) [100]incident.DefaultIncident {
+// From Go documentation
+func Append(slice, data []incident.DefaultIncident) []incident.DefaultIncident {
+	l := len(slice)
+	if l+len(data) > cap(slice) { // reallocate
+		// Allocate double what's needed, for future growth.
+		newSlice := make([]incident.DefaultIncident, (l+len(data))*2)
+		// The copy function is predeclared and works for any slice type.
+		copy(newSlice, slice)
+		slice = newSlice
+	}
+	slice = slice[0 : l+len(data)]
+	copy(slice[l:], data)
+	return slice
+}
+
+func CsvParser(filePath string, numIncidents int) []incident.DefaultIncident {
 
 	//just assume that you have 100 rows in the csv and then return an array of 1OO incidents
-	var incidentArray [100]incident.DefaultIncident
+	var defaultIncidents []incident.DefaultIncident = make([]incident.DefaultIncident, 1)
 	var rec []string
 	const shortForm = "2006-01-02"
 
@@ -39,15 +55,20 @@ func CsvParser(filePath string) [100]incident.DefaultIncident {
 	// if err != nil{
 	// 	log.Fatal(err)
 	// }
-
-	for i := 0; i < 100; i++ {
-
+	rec, err = reader.Read()
+	var i = 0
+	for {
+		i = i + 1
 		rec, err = reader.Read()
+		if i == numIncidents {
+			break
+		}
 		if err != nil {
 			if err == io.EOF {
 				break
 			}
 			log.Fatal(err)
+
 		}
 
 		//knowing the structure of the csv file, retrieve some values
@@ -78,18 +99,18 @@ func CsvParser(filePath string) [100]incident.DefaultIncident {
 		defaultIncident.Init(goodTimeStart, goodTimeEnd, timeStart, timeEnd, avgGoodDS,
 			avgBadDS, severity, testsAffected)
 
-		incidentArray[i] = *defaultIncident
+		defaultIncidents = Append(defaultIncidents, []incident.DefaultIncident{*defaultIncident})
 
 	}
 
-	return incidentArray
+	return defaultIncidents
 }
 
 //* This function takes in an array of 100 default incidents because that is what is provided by the csvParser above *//
-func convertDefaultIncidentToIncident(arr [100]incident.DefaultIncident) []incident.Incident {
-	incidentArr := make([]incident.Incident, len(arr), len(arr))
-	for i := range arr {
-		incidentArr[i] = &arr[i]
+func convertDefaultIncidentToIncident(defaultIncidents []incident.DefaultIncident) []incident.Incident {
+	incidentArr := make([]incident.Incident, len(defaultIncidents), len(defaultIncidents))
+	for i := range defaultIncidents {
+		incidentArr[i] = &defaultIncidents[i]
 	}
 	return incidentArr
 }
@@ -128,4 +149,33 @@ func makeJsonObjFile(arr []incident.Incident) *os.File {
 	}
 
 	return f
+}
+
+// // Helper functions to store incidents in according directory
+func addIncidentToJSON(inc incident.IncidentData, jsonFileName string) {
+	// // Open existing JSON file
+	// jsonFile, err := os.Open(filename)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	// Helpful resources to look at
+	// https://stackoverflow.com/questions/41135686/how-can-we-read-a-json-file-as-json-object-in-golang
+	// https://www.sohamkamani.com/blog/2017/10/18/parsing-json-in-golang/
+	// https://blog.golang.org/json-and-go
+
+	var incidents []incident.IncidentData
+
+	jsonFile, _ := ioutil.ReadFile(jsonFileName)
+
+	// Unmarshall code
+	err := json.Unmarshal(jsonFile, &incidents)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Add to it
+
+	// Marshall it back
+
 }

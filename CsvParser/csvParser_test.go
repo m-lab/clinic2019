@@ -35,7 +35,7 @@ func Test_CsvParserEntries(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			incidents := CsvParser(tt.input)
+			incidents := CsvParser(tt.input, 20)
 			got := incidents[0]
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("CsvParser() = %v, want %v", got, tt.want)
@@ -54,13 +54,13 @@ func Test_CsvParserSize(t *testing.T) {
 		{
 			name:  "The size of the incidents array",
 			input: "incidentfile.csv",
-			want:  100,
+			want:  40,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			incidents := CsvParser(tt.input)
+			incidents := CsvParser(tt.input, tt.want)
 			got := len(incidents)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("CsvParser() = %v, want %v", got, tt.want)
@@ -94,7 +94,7 @@ func Test_CsvParserFourthEntry(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			incidents := CsvParser(tt.input)
+			incidents := CsvParser(tt.input, 51)
 			got := incidents[50]
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("CsvParser() = %v, want %v", got, tt.want)
@@ -106,7 +106,7 @@ func Test_CsvParserFourthEntry(t *testing.T) {
 func Test_MakeJsonObjFile(t *testing.T) {
 
 	testIncidentArr := make([]incident.Incident, 1, 1)
-	incidents := CsvParser("incidentfile.csv")
+	incidents := CsvParser("incidentfile.csv", 20)
 	testIncident := convertDefaultIncidentToIncident(incidents)
 	testIncidentArr[0] = testIncident[0]
 
@@ -128,4 +128,27 @@ func Test_MakeJsonObjFile(t *testing.T) {
 			}
 		})
 	}
+}
+
+func Test_AddingIncidentToExistingJson(t *testing.T) {
+
+	var filename string = "incidents.json"
+	testIncident := new(incident.IncidentData)
+	// testIncident.Init(time.Date(2017, time.January, 1, 0, 0, 0, 0, time.UTC).AddDate(-1, 0, 0),
+	// 	time.Date(2017, time.January, 1, 0, 0, 0, 0, time.UTC),
+	// 	time.Date(2017, time.January, 1, 0, 0, 0, 0, time.UTC),
+	// 	time.Date(2019, time.April, 1, 0, 0, 0, 0, time.UTC),
+	// 	31.046068,
+	// 	21.27035,
+	// 	0.326146, 4788063)
+
+	addIncidentToJSON(*testIncident, filename)
+
+	// // TODO, finish doing this!
+
+	// // use function to add to JSON
+	// if jsonFile != nil {
+	// 	t.Errorf("todo")
+	// }
+
 }
