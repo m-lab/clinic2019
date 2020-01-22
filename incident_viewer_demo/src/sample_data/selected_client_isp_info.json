@@ -1,0 +1,50 @@
+[
+  {
+    "client_country": "United States",
+    "location_key": "naus",
+    "client_continent": "North America",
+    "last_three_months_test_count": 848520,
+    "client_country_code": "US",
+    "client_asn_name": "Verizon",
+    "test_count": 16188648,
+    "client_continent_code": "NA",
+    "last_six_months_test_count": 2514377,
+    "last_year_test_count": 5837213,
+    "client_asn_number": "AS11486x",
+    "type": "country",
+    "id": "naus_AS11486x",
+    "label": "Verizon"
+  },
+  {
+    "client_country": "United States",
+    "location_key": "naus",
+    "client_continent": "North America",
+    "last_three_months_test_count": 1030768,
+    "client_country_code": "US",
+    "client_asn_name": "AT&T",
+    "test_count": 20288358,
+    "client_continent_code": "NA",
+    "last_six_months_test_count": 3036374,
+    "last_year_test_count": 6908186,
+    "client_asn_number": "AS10774x",
+    "type": "country",
+    "id": "naus_AS10774x",
+    "label": "AT&T"
+  },
+  {
+    "client_country": "United States",
+    "location_key": "naus",
+    "client_continent": "North America",
+    "last_three_months_test_count": 16867,
+    "client_country_code": "US",
+    "client_asn_name": "Wizard Cable",
+    "test_count": 363650,
+    "client_continent_code": "NA",
+    "last_six_months_test_count": 50197,
+    "last_year_test_count": 118749,
+    "client_asn_number": "AS11404",
+    "type": "country",
+    "id": "naus_AS11404",
+    "label": "Wizard Cable"
+  }
+]
