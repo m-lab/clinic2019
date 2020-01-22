@@ -394,7 +394,6 @@ class LineChart extends PureComponent {
     this.g = d3.select(this.root)
       .append('g'); // transformed to have margin in update()
 
-
     this.legendContainer = this.g.append('g').classed('legend', true);
 
     // add in axis groups
