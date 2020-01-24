@@ -9,6 +9,7 @@ import * as moment from 'moment';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './chart_support/assets/base.scss';
 import Icon from './Icon.jsx';
+import { colorsFor } from './chart_support/color';
 
 //////////////////////////////////////////////////////////////////////////
 // Handle all of the discombobulated variables that the chart takes in. //
@@ -19,7 +20,6 @@ import Icon from './Icon.jsx';
 var ispsWithIncidents = require('./sample_data/isps_with_incidents.json'); // ISPs with incidents for this query
 
 var chartId = "providers-time-series"
-var colors = {na_AS11486x: "rgb(69, 160, 58)", na_AS11404: "rgb(125, 25, 125)", na_AS10774x: "rgb(225, 166, 25)"}
 
 // Reading and loading JSON files with sample ISP data
 var clientIspTimeSeriesData = require('./sample_data/newDemoData.json');
@@ -34,6 +34,9 @@ incidentData.badPeriodStart = moment(incidentData.badPeriodStart);
 incidentData.badPeriodEnd = moment(incidentData.badPeriodEnd);
 
 console.log("incident Data", incidentData)
+
+const colors = colorsFor(clientIspTimeSeriesData, (d) => d.meta.id);
+// var colors = {na_AS11486x: "rgb(69, 160, 58)", na_AS11404: "rgb(125, 25, 125)", na_AS10774x: "rgb(225, 166, 25)"}
 
 // Convert series dates to moment objs
 for (var isp in clientIspTimeSeriesData) {
@@ -109,7 +112,8 @@ class App extends React.Component {
               className=""
               onClick={undefined}
             />
-        Toggle Incident Viewer</button> 
+            <span> </span>
+            Incident Found</button> 
           <div className="isp-select-row">
             {/* TODO(amy): Also will need to populate
                 dropdown with only incident ISPs (righ now showing ALL). Will also need toggle the boolean
