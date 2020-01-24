@@ -87,7 +87,7 @@ export default class IspSelect extends PureComponent {
     const style = { backgroundColor: color };
     return (
       <div key={isp.client_asn_number} className="selected-isp" style={style}>
-        <span className="isp-label">{isp.client_asn_name}</span>
+        <span className="isp-label">{isp.client_asn_name} </span>
         <Icon
           name="close"
           className="isp-remove-control"
