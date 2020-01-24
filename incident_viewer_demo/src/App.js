@@ -13,14 +13,9 @@ import './chart_support/assets/base.scss';
 // Handle all of the discombobulated variables that the chart takes in. //
 //////////////////////////////////////////////////////////////////////////
 
-var topClientIsps = require('./sample_data/top_client_isps.json');
-var selectedClientIspInfo = require('./sample_data/selected_client_isp_info.json');
-
-function onSelectedClientIspsChange(e) {
-  // TODO: seems hard coded, need to double check this works for any case. Find a better way for this
-  var selected_isp_id = e[3];
-  alert(selected_isp_id); // gives the id of the selected isp
-}
+// TODO: delete unused JSON before sending a pull request
+// var topClientIsps = require('./sample_data/all_isps.json'); // all ISPs for this query
+var ispsWithIncidents = require('./sample_data/isps_with_incidents.json'); // ISPs with incidents for this query
 
 var chartId = "providers-time-series"
 var colors = {naus_AS11486x: "rgb(69, 160, 58)", naus_AS11404: "rgb(125, 25, 125)", naus_AS10774x: "rgb(225, 166, 25)"}
@@ -66,10 +61,29 @@ class App extends React.Component {
     super(props)
     this.state = {
       hasIncident: false,
+      selected_asn: [], // This is the ISP id (or ACN number)
     }
 
     // bind handlers
     this.toggleIncident = this.toggleIncident.bind(this);
+    this.onSelectedClientIspsChange = this.onSelectedClientIspsChange.bind(this);
+  }
+
+  onSelectedClientIspsChange(values) {
+    var selected_isp_id;
+    if (values.length === 1) {
+      selected_isp_id = values[0];
+    } else {
+      selected_isp_id = values[1];
+    }
+
+    var json_obj = {};
+    for (var obj in ispsWithIncidents) {
+      if (ispsWithIncidents[obj].client_asn_number === selected_isp_id) {
+        json_obj = ispsWithIncidents[obj];
+      }
+    }
+    this.setState({ selected_asn: [json_obj] });
   }
   
   toggleIncident() {
@@ -84,16 +98,15 @@ class App extends React.Component {
           <button className="showIncident" onClick={this.toggleIncident}>Toggle Incident Viewer</button> 
           <div className="client-isp-selector">
             <h5>Client ISPs</h5>
-            {/* TODO(amy): onChange function needs to change, right now is an empty function. This function
-                will handle the updating of the dropdown. (Similar to mouse over function on graph issue).
-                Note: will need to update incident index based on what selected. Also will need to populate
+            {/* TODO(amy): Also will need to populate
                 dropdown with only incident ISPs (righ now showing ALL). Will also need toggle the boolean
                 display incident (show incident overlay or not). Icon component also not rendering, need to
                 look at. Also look at the mlab-vis-client repo to make sure we add the ? helper icon */}
             <IspSelect
-              isps={topClientIsps}
-              selected={selectedClientIspInfo}
-              onChange={onSelectedClientIspsChange}
+              isps={ispsWithIncidents}
+              selected={this.state.selected_asn}
+              onChange={this.onSelectedClientIspsChange}
+              placeholder="Showing Incident"
             />
           </div>
           <Row className="Chart-row">

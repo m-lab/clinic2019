@@ -143,8 +143,6 @@ class LineChartWithCounts extends PureComponent {
     incidentData.badPeriodStart = moment(incidentData.badPeriodStart);
     incidentData.badPeriodEnd = moment(incidentData.badPeriodEnd);
 
-    console.log("incident Data", incidentData)
-
     const height = lineChartHeight + countChartHeight;
     return (
       <div className="line-chart-with-counts-container">
