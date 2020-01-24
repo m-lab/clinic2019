@@ -102,7 +102,7 @@ class App extends React.Component {
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <button className="showIncident" onClick={this.toggleIncident}>Toggle Incident Viewer</button> 
+          <button className="showIncident" onClick={this.toggleIncident}><i className="fa fa-exclamation"></i>Toggle Incident Viewer</button> 
           <div className="isp-select-row">
             {/* TODO(amy): Also will need to populate
                 dropdown with only incident ISPs (righ now showing ALL). Will also need toggle the boolean
