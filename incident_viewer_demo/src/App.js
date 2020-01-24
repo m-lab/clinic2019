@@ -72,7 +72,7 @@ class App extends React.Component {
     super(props)
     this.state = {
       hasIncident: false,
-      selected_asn: [], // This is the ISP id (or ACN number)
+      selected_isp: null, // This is the selected ISP object
     }
 
     // bind handlers
@@ -84,7 +84,7 @@ class App extends React.Component {
     var selected_isp_id;
     var valLen = values.length;
     if (valLen === 0) {
-      this.setState({ selected_asn: [] });
+      this.setState({ selected_isp: null });
     }
     else {
       if (valLen === 1) {
@@ -99,7 +99,8 @@ class App extends React.Component {
           json_obj = ispsWithIncidents[obj];
         }
       }
-      this.setState({ selected_asn: [json_obj] });
+      this.setState({ selected_isp: json_obj });
+      console.log(this.state.selected_isp);
     }
   }
   
@@ -108,11 +109,20 @@ class App extends React.Component {
   }
 
   render() {
+    var selected = this.state.selected_isp ? [this.state.selected_isp] : [];
     return (
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <div className="upper-row">
+          <div className="isp-select-div">
+              <IspSelect
+                isps={ispsWithIncidents}
+                selected={selected}
+                onChange={this.onSelectedClientIspsChange}
+                placeholder="Show Incident"
+              />
+            </div>
             <button className="showIncident" onClick={this.toggleIncident}>
               <Icon
                 name="exclamation"
@@ -120,18 +130,6 @@ class App extends React.Component {
                 onClick={undefined}
               />
               Incident Found</button> 
-            <div className="isp-select-row">
-              {/* TODO(amy): Also will need to populate
-                  dropdown with only incident ISPs (righ now showing ALL). Will also need toggle the boolean
-                  display incident (show incident overlay or not). Icon component also not rendering, need to
-                  look at. Also look at the mlab-vis-client repo to make sure we add the ? helper icon */}
-              <IspSelect
-                isps={ispsWithIncidents}
-                selected={this.state.selected_asn}
-                onChange={this.onSelectedClientIspsChange}
-                placeholder="Show Incident"
-              />
-            </div>
           </div>
           <Row className="Chart-row">
             <AutoWidth>

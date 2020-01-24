@@ -7,7 +7,6 @@ $background: #FFFFFF;
 }
 
 .showIncident {
-  margin-bottom: 20px;
   background-color: rgb(245, 80, 26);
   border-radius: 8px;
   box-shadow: 0px 8px 15px rgba(185, 63, 22, 0.4);
@@ -17,7 +16,9 @@ $background: #FFFFFF;
   border: none;
   font-size: 20px;
   color: #FFF;
-  padding: 10px 20px;
+  padding: 6px 12px 6px 6px;
+  display: inline;
+  float: right;
 }
 
 .showIncident:hover {
@@ -49,7 +50,10 @@ $background: #FFFFFF;
   color: #585858;
 }
 
-.isp-select-row {
+.isp-select-div {
+  display: inline;
+  float: right;
+  margin-left: 25px;
   max-width: 1000px;
   min-width: 250px;
 }
