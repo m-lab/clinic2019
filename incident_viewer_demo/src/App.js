@@ -34,7 +34,7 @@ incidentData.badPeriodEnd = moment(incidentData.badPeriodEnd);
 
 console.log("incident Data", incidentData)
 
-// Convert series and annotationseries dates to moment objs
+// Convert series dates to moment objs
 for (var isp in clientIspTimeSeriesData) {
   for (var i = 0; i < clientIspTimeSeriesData[isp].extents.date.length; i++) {
     clientIspTimeSeriesData[isp].extents.date[i] = moment(clientIspTimeSeriesData[isp].extents.date[i]);
@@ -103,8 +103,7 @@ class App extends React.Component {
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <button className="showIncident" onClick={this.toggleIncident}>Toggle Incident Viewer</button> 
-          <div className="client-isp-selector">
-            <h5>Client ISPs</h5>
+          <div className="isp-select-row">
             {/* TODO(amy): Also will need to populate
                 dropdown with only incident ISPs (righ now showing ALL). Will also need toggle the boolean
                 display incident (show incident overlay or not). Icon component also not rendering, need to
@@ -113,7 +112,7 @@ class App extends React.Component {
               isps={ispsWithIncidents}
               selected={this.state.selected_asn}
               onChange={this.onSelectedClientIspsChange}
-              placeholder="Showing Incident"
+              placeholder="Show Incident"
             />
           </div>
           <Row className="Chart-row">
