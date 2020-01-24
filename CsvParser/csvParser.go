@@ -14,21 +14,6 @@ import (
 	"github.com/m-lab/clinic2019/incident_viewer_demo/incident"
 )
 
-// From Go documentation
-func Append(slice, data []incident.DefaultIncident) []incident.DefaultIncident {
-	l := len(slice)
-	if l+len(data) > cap(slice) { // reallocate
-		// Allocate double what's needed, for future growth.
-		newSlice := make([]incident.DefaultIncident, (l+len(data))*2)
-		// The copy function is predeclared and works for any slice type.
-		copy(slice, newSlice)
-		slice = newSlice
-	}
-	slice = slice[0 : l+len(data)]
-	copy(slice[l:], data)
-	return slice
-}
-
 func CsvParser(filePath string, numIncidents int) []incident.DefaultIncident {
 
 	//just assume that you have 100 rows in the csv and then return an array of 1OO incidents
