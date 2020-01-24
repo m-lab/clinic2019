@@ -2,7 +2,7 @@
 import React, { PureComponent, PropTypes } from 'react';
 import Select from 'react-select';
 
-import Icon from './Icon.jsx';
+import Icon from '../Icon.jsx';
 
 import { colorsFor } from '../chart_support/color';
 
