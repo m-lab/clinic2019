@@ -19,8 +19,7 @@ function visProps(props) {
     idKey,
     labelKey,
     series = [],
-    incident,
-    hasIncident,
+    incidentData,
     forceZeroMin,
     height,
     paddingLeft = 50,
@@ -151,7 +150,7 @@ function visProps(props) {
   return {
     annotationLineChunked,
     annotationSeries,
-    incident,
+    incidentData,
     incidentLineGenerator,
     colors,
     plotAreaHeight,
@@ -170,7 +169,7 @@ function visProps(props) {
 class LineChart extends PureComponent {
   static propTypes = {
     annotationLineChunked: React.PropTypes.func,
-    incident: React.PropTypes.object,
+    incidentData: React.PropTypes.object,
     annotationSeries: PropTypes.array,
     // Obect mapping series IDs to colors
     colors: PropTypes.object,
@@ -271,10 +270,10 @@ class LineChart extends PureComponent {
    * @return {void}
    */
   onMouseMove(mouse) {
-    const { plotAreaHeight, incident, hasIncident, onHighlightDate, series, xScale , xKey, yScale, yKey } = this.props;
-    const goodDescription = incident.goodPeriodInfo
-    const badDescription = incident.badPeriodInfo
-    const incidentDescription = incident.incidentInfo
+    const { plotAreaHeight, incidentData, hasIncident, onHighlightDate, series, xScale , xKey, yScale, yKey } = this.props;
+    const goodDescription = incidentData.goodPeriodInfo
+    const badDescription = incidentData.badPeriodInfo
+    const incidentDescription = incidentData.incidentInfo
 
     if (!onHighlightDate) {
       return;
@@ -300,13 +299,13 @@ class LineChart extends PureComponent {
         .attr('x2', xScale(closest));
 
       const highlightedDate = moment(closest);
-      const goodYmax = yScale(incident.goodPeriodMetric);
-      const badYmax = yScale(incident.badPeriodMetric);
+      const goodYmax = yScale(incidentData.goodPeriodMetric);
+      const badYmax = yScale(incidentData.badPeriodMetric);
       this.infoHoverBox.selectAll('*').remove();
 
       if (hasIncident) {
-        const goodWidth = xScale(incident.goodPeriodEnd) - xScale(incident.goodPeriodStart);
-        const badWidth = xScale(incident.badPeriodEnd) - xScale(incident.badPeriodStart);
+        const goodWidth = xScale(incidentData.goodPeriodEnd) - xScale(incidentData.goodPeriodStart);
+        const badWidth = xScale(incidentData.badPeriodEnd) - xScale(incidentData.badPeriodStart);
         const goodHeight = plotAreaHeight-goodYmax
         const badHeight = plotAreaHeight-badYmax
         const incidentHeight = Math.abs(badYmax - goodYmax)
@@ -314,10 +313,10 @@ class LineChart extends PureComponent {
                                           // that the area is too small for the text to fit.
         
         // Draw the hover state for the good period information
-        if (highlightedDate.isBefore(incident.goodPeriodEnd) && highlightedDate.isSameOrAfter(incident.goodPeriodStart) && mouseY > goodYmax) {
+        if (highlightedDate.isBefore(incidentData.goodPeriodEnd) && highlightedDate.isSameOrAfter(incidentData.goodPeriodStart) && mouseY > goodYmax) {
           this.infoHoverBox.append('rect')
           .classed("good-incident-area", true)
-          .attr('x', xScale(incident.goodPeriodStart))
+          .attr('x', xScale(incidentData.goodPeriodStart))
           .attr('y', goodYmax)
           .attr('width', goodWidth)
           .attr('height', plotAreaHeight-goodYmax);
@@ -325,7 +324,7 @@ class LineChart extends PureComponent {
           if (rectFitsText) {
             this.infoHoverBox.append('text')
             .classed('good-hover-text', true)
-            .attr('x', xScale(incident.goodPeriodStart) + goodWidth/2)
+            .attr('x', xScale(incidentData.goodPeriodStart) + goodWidth/2)
             .attr('y', goodYmax + goodHeight/2)
             .attr("alignment-baseline", "central")
             .attr("text-anchor", "middle")
@@ -334,10 +333,10 @@ class LineChart extends PureComponent {
         }
 
         // Draw the hover state for the bad period information
-        if (highlightedDate.isSameOrBefore(incident.badPeriodEnd) && highlightedDate.isSameOrAfter(incident.badPeriodStart) && mouseY > badYmax) {
+        if (highlightedDate.isSameOrBefore(incidentData.badPeriodEnd) && highlightedDate.isSameOrAfter(incidentData.badPeriodStart) && mouseY > badYmax) {
           this.infoHoverBox.append('rect')
           .classed("bad-incident-area", true)
-          .attr('x', xScale(incident.badPeriodStart))
+          .attr('x', xScale(incidentData.badPeriodStart))
           .attr('y', badYmax)
           .attr('width', badWidth)
           .attr('height', plotAreaHeight-badYmax)
@@ -348,16 +347,16 @@ class LineChart extends PureComponent {
             .attr('y', badYmax + badHeight/2)
             .attr("text-anchor", "middle")
             .attr("alignment-baseline", "central")
-            .attr('x', xScale(incident.badPeriodStart) + badWidth/2)
+            .attr('x', xScale(incidentData.badPeriodStart) + badWidth/2)
             .text(badDescription)
           }
         }
 
         // Draw the hover state for the incident information
-        if (highlightedDate.isSameOrBefore(incident.badPeriodEnd) && highlightedDate.isSameOrAfter(incident.badPeriodStart) && mouseY < badYmax && mouseY > goodYmax) {
+        if (highlightedDate.isSameOrBefore(incidentData.badPeriodEnd) && highlightedDate.isSameOrAfter(incidentData.badPeriodStart) && mouseY < badYmax && mouseY > goodYmax) {
           this.infoHoverBox.append('rect')
           .classed("incident-area", true)
-          .attr('x', xScale(incident.badPeriodStart))
+          .attr('x', xScale(incidentData.badPeriodStart))
           .attr('y', goodYmax)
           .attr('width', badWidth)
           .attr('height', badYmax-goodYmax)
@@ -368,7 +367,7 @@ class LineChart extends PureComponent {
             .attr('y', badYmax - incidentHeight/2)
             .attr("text-anchor", "middle")
             .attr("alignment-baseline", "central")
-            .attr('x', xScale(incident.badPeriodStart) + badWidth/2)
+            .attr('x', xScale(incidentData.badPeriodStart) + badWidth/2)
             .text(incidentDescription)
           }
         }
@@ -393,7 +392,6 @@ class LineChart extends PureComponent {
 
     this.g = d3.select(this.root)
       .append('g'); // transformed to have margin in update()
-
 
     this.legendContainer = this.g.append('g').classed('legend', true);
 
@@ -657,7 +655,7 @@ class LineChart extends PureComponent {
    * Render the incident "good" and "bad" periods reference lines on the chart.
    */
   updateIncident() {
-    const { incident, incidentLineGenerator, hasIncident } = this.props;
+    const { incidentData, hasIncident, incidentLineGenerator } = this.props;
 
     this.goodIncidentLine.selectAll('*').remove();
     this.badIncidentLine.selectAll('*').remove();
@@ -665,8 +663,8 @@ class LineChart extends PureComponent {
     this.updateIncidentArrow();
 
     if (hasIncident) {
-      const goodIncidentSeriesArray = [{x: incident.goodPeriodStart, y: incident.goodPeriodMetric}, {x: incident.goodPeriodEnd, y: incident.goodPeriodMetric} ];
-      const badIncidentSeriesArray = [{x: incident.badPeriodStart, y: incident.badPeriodMetric}, {x: incident.badPeriodEnd, y: incident.badPeriodMetric} ];
+      const goodIncidentSeriesArray = [{x: incidentData.goodPeriodStart, y: incidentData.goodPeriodMetric}, {x: incidentData.goodPeriodEnd, y: incidentData.goodPeriodMetric} ];
+      const badIncidentSeriesArray = [{x: incidentData.badPeriodStart, y: incidentData.badPeriodMetric}, {x: incidentData.badPeriodEnd, y: incidentData.badPeriodMetric} ];
 
       // LINES
       this.goodIncidentLine.append('path')
@@ -685,23 +683,23 @@ class LineChart extends PureComponent {
    * bad period data that is passed in from props. 
    */
   updateIncidentArrow() {
-    const { incident, xScale, yScale, hasIncident } = this.props;
+    const { incidentData, hasIncident, xScale, yScale } = this.props;
 
     this.incidentArrowLine.selectAll('*').remove();
     this.incidentArrowTri.selectAll('*').remove();
 
     if (hasIncident) {
-      const incidentArrowX = incident.goodPeriodEnd;
+      const incidentArrowX = incidentData.goodPeriodEnd;
       const triWidth = 20;
       const triHeight = 15;
       
-      const incidentArrowLineArray = [{x: incidentArrowX, y: incident.goodPeriodMetric}, {x: incidentArrowX, y: incident.badPeriodMetric}];
+      const incidentArrowLineArray = [{x: incidentArrowX, y: incidentData.goodPeriodMetric}, {x: incidentArrowX, y: incidentData.badPeriodMetric}];
       
       
       const incidentArrowTriArray = [
-        {x: xScale(incidentArrowX), y: yScale(incident.badPeriodMetric)}, 
-        {x: xScale(incidentArrowX) + triWidth/2, y: yScale(incident.badPeriodMetric) - triHeight}, 
-        {x: xScale(incidentArrowX) - triWidth/2, y: yScale(incident.badPeriodMetric) - triHeight}
+        {x: xScale(incidentArrowX), y: yScale(incidentData.badPeriodMetric)}, 
+        {x: xScale(incidentArrowX) + triWidth/2, y: yScale(incidentData.badPeriodMetric) - triHeight}, 
+        {x: xScale(incidentArrowX) - triWidth/2, y: yScale(incidentData.badPeriodMetric) - triHeight}
       ];
 
       //TRIANGLE

@@ -18,22 +18,29 @@ import './chart_support/assets/base.scss';
 var ispsWithIncidents = require('./sample_data/isps_with_incidents.json'); // ISPs with incidents for this query
 
 var chartId = "providers-time-series"
-var colors = {naus_AS11486x: "rgb(69, 160, 58)", naus_AS11404: "rgb(125, 25, 125)", naus_AS10774x: "rgb(225, 166, 25)"}
+var colors = {na_AS11486x: "rgb(69, 160, 58)", na_AS11404: "rgb(125, 25, 125)", na_AS10774x: "rgb(225, 166, 25)"}
 
-// Reading and loading JSON files with sample data of an incident
-var clientIspTimeSeriesData = require('./sample_data/custom_combined_isp_series.json');
-var annotationTimeSeries = require('./sample_data/annotation_time_series_data.json');
+// Reading and loading JSON files with sample ISP data
+var clientIspTimeSeriesData = require('./sample_data/newDemoData.json');
+
+// Reading and loading JSON files with sample Incident data
+const incident = require('./incidents.json');
+const incidentData = incident[0]
+// convert dates to moment objects
+incidentData.goodPeriodStart = moment(incidentData.goodPeriodStart);
+incidentData.goodPeriodEnd = moment(incidentData.goodPeriodEnd);
+incidentData.badPeriodStart = moment(incidentData.badPeriodStart);
+incidentData.badPeriodEnd = moment(incidentData.badPeriodEnd);
+
+console.log("incident Data", incidentData)
 
 // Convert series and annotationseries dates to moment objs
-// var isp;
 for (var isp in clientIspTimeSeriesData) {
   for (var i = 0; i < clientIspTimeSeriesData[isp].extents.date.length; i++) {
     clientIspTimeSeriesData[isp].extents.date[i] = moment(clientIspTimeSeriesData[isp].extents.date[i]);
-    annotationTimeSeries.extents.date[i] = moment(annotationTimeSeries.extents.date[i]);
   }
   for (var j = 0; j < clientIspTimeSeriesData[isp].results.length; j++) {
     clientIspTimeSeriesData[isp].results[j].date = moment(clientIspTimeSeriesData[isp].results[j].date);
-    annotationTimeSeries.results[j].date = moment(annotationTimeSeries.results[j].date);
   }
 }
 
@@ -114,9 +121,9 @@ class App extends React.Component {
               <LineChartWithCounts
                 id={chartId}
                 hasIncident={this.state.hasIncident}
+                incidentData={incidentData}
                 colors={colors}
                 series={clientIspTimeSeriesData}
-                annotationSeries={annotationTimeSeries}
                 onHighlightDate={onHighlightTimeSeriesDate}
                 highlightDate={highlightTimeSeriesDate}
                 onHighlightLine={onHighlightTimeSeriesLine}
