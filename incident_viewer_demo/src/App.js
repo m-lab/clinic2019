@@ -112,25 +112,26 @@ class App extends React.Component {
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <button className="showIncident" onClick={this.toggleIncident}>
-            <Icon
-              name="exclamation"
-              className=""
-              onClick={undefined}
-            />
-            <span> </span>
-            Incident Found</button> 
-          <div className="isp-select-row">
-            {/* TODO(amy): Also will need to populate
-                dropdown with only incident ISPs (righ now showing ALL). Will also need toggle the boolean
-                display incident (show incident overlay or not). Icon component also not rendering, need to
-                look at. Also look at the mlab-vis-client repo to make sure we add the ? helper icon */}
-            <IspSelect
-              isps={ispsWithIncidents}
-              selected={this.state.selected_asn}
-              onChange={this.onSelectedClientIspsChange}
-              placeholder="Show Incident"
-            />
+          <div className="upper-row">
+            <button className="showIncident" onClick={this.toggleIncident}>
+              <Icon
+                name="exclamation"
+                className="exclamation"
+                onClick={undefined}
+              />
+              Incident Found</button> 
+            <div className="isp-select-row">
+              {/* TODO(amy): Also will need to populate
+                  dropdown with only incident ISPs (righ now showing ALL). Will also need toggle the boolean
+                  display incident (show incident overlay or not). Icon component also not rendering, need to
+                  look at. Also look at the mlab-vis-client repo to make sure we add the ? helper icon */}
+              <IspSelect
+                isps={ispsWithIncidents}
+                selected={this.state.selected_asn}
+                onChange={this.onSelectedClientIspsChange}
+                placeholder="Show Incident"
+              />
+            </div>
           </div>
           <Row className="Chart-row">
             <AutoWidth>
