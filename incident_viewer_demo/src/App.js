@@ -82,19 +82,25 @@ class App extends React.Component {
 
   onSelectedClientIspsChange(values) {
     var selected_isp_id;
-    if (values.length === 1) {
-      selected_isp_id = values[0];
-    } else {
-      selected_isp_id = values[1];
+    var valLen = values.length;
+    if (valLen === 0) {
+      this.setState({ selected_asn: [] });
     }
-
-    var json_obj = {};
-    for (var obj in ispsWithIncidents) {
-      if (ispsWithIncidents[obj].client_asn_number === selected_isp_id) {
-        json_obj = ispsWithIncidents[obj];
+    else {
+      if (valLen === 1) {
+        selected_isp_id = values[0];
+      } else {
+        selected_isp_id = values[1];
       }
+  
+      var json_obj = {};
+      for (var obj in ispsWithIncidents) {
+        if (ispsWithIncidents[obj].client_asn_number === selected_isp_id) {
+          json_obj = ispsWithIncidents[obj];
+        }
+      }
+      this.setState({ selected_asn: [json_obj] });
     }
-    this.setState({ selected_asn: [json_obj] });
   }
   
   toggleIncident() {
