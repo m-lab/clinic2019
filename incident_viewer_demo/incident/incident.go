@@ -13,6 +13,8 @@ type Incident interface {
 	GetBadMetric() float64
 	GetSeverity() float64
 	GetTestsAffected() int
+	GetLocation() string
+	GetASN() string
 	GetGoodPeriodInfo() string
 	GetBadPeriodInfo() string
 	GetIncidentInfo() string
@@ -26,6 +28,8 @@ type IncidentData struct {
 	BadPeriodEnd     time.Time `json:"badPeriodEnd"`
 	GoodPeriodMetric float64   `json:"goodPeriodMetric"`
 	BadPeriodMetric  float64   `json:"badPeriodMetric"`
+	ASN string			   	   `json:"aSN"`
+	Location string 		   `json:"location"`
 	Severity         float64   `json:"severity"`
 	NumTestsAffected int       `json:"numTestsAffected"`
 	GoodPeriodInfo   string    `json:"goodPeriodInfo"`
@@ -41,6 +45,9 @@ type DefaultIncident struct {
 	badEndTime       time.Time
 	avgGoodDS        float64
 	avgBadDS         float64
+	//the next field is technically ASN but has to start with low case letter to be private
+	aSN              string
+	location         string
 	severityDecimal  float64
 	numTestsAffected int
 }
@@ -56,6 +63,8 @@ func (i *IncidentData) Init(
 	badTimeEnd time.Time,
 	goodMetric float64,
 	badMetric float64,
+	aSN string,
+	location string,
 	severity float64,
 	testsAffected int,
 	goodPeriodInfo string,
@@ -68,6 +77,8 @@ func (i *IncidentData) Init(
 	i.GoodPeriodMetric = goodMetric
 	i.BadPeriodMetric = badMetric
 	i.BadPeriodEnd = badTimeEnd
+	i.ASN = aSN
+	i.Location = location
 	i.Severity = severity
 	i.NumTestsAffected = testsAffected
 	i.GoodPeriodInfo = goodPeriodInfo
@@ -80,6 +91,8 @@ func (i *DefaultIncident) Init(goodTimeStart time.Time, goodTimeEnd time.Time,
 	badTimeEnd time.Time,
 	avgDSGood float64,
 	avgDSBad float64,
+	aSN string,
+	location string,
 	severity float64,
 	testsAffected int) {
 
@@ -89,6 +102,8 @@ func (i *DefaultIncident) Init(goodTimeStart time.Time, goodTimeEnd time.Time,
 	i.badEndTime = badTimeEnd
 	i.avgGoodDS = avgDSGood
 	i.avgBadDS = avgDSBad
+	i.aSN = aSN
+	i.location = location
 	i.severityDecimal = severity
 	i.numTestsAffected = testsAffected
 }
@@ -111,6 +126,14 @@ func (i *DefaultIncident) GetGoodMetric() float64 {
 
 func (i *DefaultIncident) GetBadMetric() float64 {
 	return i.avgBadDS
+}
+
+func (i *DefaultIncident) GetASN() string {
+	return i.aSN
+}
+
+func (i *DefaultIncident) GetLocation() string {
+	return i.location
 }
 
 func (i *DefaultIncident) GetSeverity() float64 {

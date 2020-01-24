@@ -1,7 +1,10 @@
 package csvParser
 
 import (
+	"builtin"
+	"fmt"
 	"encoding/csv"
+	"container/list"
 	"encoding/json"
 	"io"
 	"log"
@@ -73,10 +76,15 @@ func CsvParser(filePath string) [100]incident.DefaultIncident {
 		avgBadDString := strings.Split(rec[7], " ")
 		avgBadDS, _ := strconv.ParseFloat(avgBadDString[1], 64)
 
+		locationString := strings.Split(rec[2], " ")[1]
+		
+		ASN := strings.Split(rec[1], " ")[1]
+		
+
 		defaultIncident := new(incident.DefaultIncident)
 
 		defaultIncident.Init(goodTimeStart, goodTimeEnd, timeStart, timeEnd, avgGoodDS,
-			avgBadDS, severity, testsAffected)
+			avgBadDS, ASN, locationString, severity, testsAffected)
 
 		incidentArray[i] = *defaultIncident
 
@@ -98,6 +106,9 @@ func makeJsonObjFile(arr []incident.Incident) *os.File {
 	const numObjects = 1
 	f, err := os.Create("incidents.json")
 	var objs [numObjects]incident.IncidentData
+	// incidentsList := list.New()
+	// incidentsList = incidentsList.Init()
+
 	if err != nil {
 		log.Fatal(err)
 		return f
@@ -113,10 +124,15 @@ func makeJsonObjFile(arr []incident.Incident) *os.File {
 		gpInfo := arr[i].GetGoodPeriodInfo()
 		bpInfo := arr[i].GetBadPeriodInfo()
 		iInfo := arr[i].GetIncidentInfo()
-		inc := incident.IncidentData{gpStart, gpEnd, bpStart, bpEnd, gMetric, bMetric, severity, testsAffected, gpInfo, bpInfo, iInfo}
+		locationString := arr[i].GetLocation()
+		ASN := arr[i].GetASN()
+		inc := incident.IncidentData{gpStart, gpEnd, bpStart, bpEnd, gMetric, bMetric, ASN, locationString, severity, testsAffected, gpInfo, bpInfo, iInfo}
+		
+		//incidentsList.PushBack(inc)
 		objs[i] = inc
 	}
 	bytes, err := json.Marshal(objs)
+	//bytes,err := json.Marshal(incidentsList)
 	n, err := f.Write(bytes)
 
 	if err != nil {
@@ -125,6 +141,108 @@ func makeJsonObjFile(arr []incident.Incident) *os.File {
 		f.Close()
 		return f
 	}
+	
 
 	return f
+}
+
+func breakTheLocCodeDown(locationCode string) []string{
+	
+	locationCodesArr := make([]string, 0)
+	 
+	if (len(locationCode)) > 6 {
+		for i := 0; i < 6; i = i + 2 {
+			append(locationCodesArr, locationCode[i:i+2])
+		}
+
+		append(locationCodesArr, locationCode[6:])
+		return locationCodesArr
+	}
+
+	for i := 0; i < len(locationCode); i = i + 2 {
+		append(locationCodesArr, locationCodesArr[i:i+2])
+	}
+
+	return locationCodesArr
+	
+}
+
+//check if na or eu exist for example
+func doesDirExist(originPath string, dir string) bool {
+	actualPath := originPath + "/" + dir
+
+	if _, err := os.Stat(actualPath); !os.IsNotExist(err) {
+		return true
+	}
+
+	return false
+}
+
+func doesJsonFileExist(path string, asn string) (bool, string) {
+	
+	filepath := path + "/" +  asn + ".json"
+	info, err := os.Stat(filePath)
+
+	if (os.IsNotExist(err) || info.IsDir()) {
+		return false, ""
+	}
+
+	return true, filepath // make sure this a file not a dir
+}
+
+//have this return the final path for now 
+func dynamicallyMakeDir(originPath string, locationCode string, asn string) string {
+	//just return the path for now and think deep later 
+
+	locationCodeArr := breakTheLocCodeDown(locationCode)
+	locationCodeArrLen := len(locationCodeArr)
+
+	for i := 0; locationCodeArrLen; i++ {
+
+		if !doesDirExist(originPath, locationCodeArr[i]) {
+			err := MkdirAll(originPath + "/" + locationCodeArr[i])
+
+			if err != nil {
+		  		t.Fatalf("MkdirAll %q: %s", originPath, err)
+			}
+		}
+
+		originPath = originPath + "/" + locationCodeArr[i]
+
+	}
+
+	if doesJsonFileExist(originPath, asn) {
+		// now add incident to this file because its asp file is present
+		//file out how to add incident to a file
+	}
+
+	//the else case of creating a file and adding the incident to it
+
+	return originPath
+	
+}
+
+func readJsonFileAddToIt(filenamepath string, incident incident.Incident) {
+	
+	//Open Json file
+
+	jsonFile, err := os.Open(filenamepath)
+
+	byteValue, _ := ioutil.ReadAll(jsonFile)
+
+	var incidents []incident.Incident
+
+	json.Unmarshal (byteValue, &incidents)
+
+	incidents = append(incidents, incident)
+
+	result, err := json.Marshal(incidents)
+
+	var err = os.Remove(filenamepath)
+
+
+}
+
+func placeIncidentInFileStruct(incident incident.Incident) {
+	// call the right function that end up putting the incident in the right location
 }
