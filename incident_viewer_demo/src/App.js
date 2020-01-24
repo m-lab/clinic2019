@@ -23,7 +23,7 @@ function onSelectedClientIspsChange(e) {
 }
 
 var chartId = "providers-time-series"
-var colors = {naus_AS11486x: "rgb(69, 160, 58)", naus_AS11404: "rgb(125, 25, 125)", naus_AS10774x: "rgb(225, 166, 25)"}
+var colors = {na_AS11486x: "rgb(69, 160, 58)", na_AS11404: "rgb(125, 25, 125)", na_AS10774x: "rgb(225, 166, 25)"}
 
 // Reading and loading JSON files with sample ISP data
 // // var clientIspTimeSeriesData = require('./sample_data/custom_combined_isp_series.json');
