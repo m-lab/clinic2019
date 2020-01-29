@@ -14,7 +14,7 @@ import (
 	"github.com/m-lab/clinic2019/incident_viewer_demo/incident"
 )
 
-func CsvParser(filePath string, numIncidents int) []incident.DefaultIncident {
+func CsvParser(filePath string, numIncidents ...int) []incident.DefaultIncident {
 
 	//just assume that you have 100 rows in the csv and then return an array of 1OO incidents
 	var defaultIncidents []incident.DefaultIncident = make([]incident.DefaultIncident, 0)
@@ -40,10 +40,15 @@ func CsvParser(filePath string, numIncidents int) []incident.DefaultIncident {
 	// if err != nil{
 	// 	log.Fatal(err)
 	// }
+
+	if len(numIncidents) > 1 {
+		log.Fatal("too many arguments!")
+	}
+
 	var i = 0
 	for {
 		rec, err = reader.Read()
-		if i == numIncidents {
+		if len(numIncidents) == 1 && i == numIncidents[0] {
 			break
 		}
 		if err != nil {
@@ -53,6 +58,7 @@ func CsvParser(filePath string, numIncidents int) []incident.DefaultIncident {
 			log.Fatal(err)
 
 		}
+
 		//knowing the structure of the csv file, retrieve some values
 		badTimeStartString := strings.Split(rec[3], " ")
 		timeStart, _ := time.Parse(shortForm, badTimeStartString[1])

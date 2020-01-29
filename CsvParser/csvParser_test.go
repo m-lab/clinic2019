@@ -35,7 +35,7 @@ func Test_CsvParserEntries(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			incidents := CsvParser(tt.input, 20)
+			incidents := CsvParser(tt.input, 1)
 			got := incidents[0]
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("CsvParser() = %v, want %v", got, tt.want)
@@ -86,7 +86,7 @@ func Test_CsvParserFourthEntry(t *testing.T) {
 		want  incident.DefaultIncident
 	}{
 		{
-			name:  "The 50th entry in the incident array",
+			name:  "The 51st entry in the incident array",
 			input: "incidentfile.csv",
 			want:  *testIncident,
 		},
@@ -94,6 +94,7 @@ func Test_CsvParserFourthEntry(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			// generate 51 incidents
 			incidents := CsvParser(tt.input, 51)
 			got := incidents[50]
 			if !reflect.DeepEqual(got, tt.want) {
@@ -106,7 +107,7 @@ func Test_CsvParserFourthEntry(t *testing.T) {
 func Test_MakeJsonObjFile(t *testing.T) {
 
 	testIncidentArr := make([]incident.Incident, 1, 1)
-	incidents := CsvParser("incidentfile.csv", 20)
+	incidents := CsvParser("incidentfile.csv")
 	testIncident := convertDefaultIncidentToIncident(incidents)
 	testIncidentArr[0] = testIncident[0]
 
