@@ -126,7 +126,7 @@ class App extends React.Component {
               Incident Found
             </button>
             <div className="isp-select-div">
-              <h5>Client ISPs <HelpTip id="incident-isp-tip" /></h5>
+              <h5>Incident ISPs <HelpTip id="incident-isp-tip" /></h5>
               <IspSelect
                 isps={ispsWithIncidents}
                 selected={selected}
