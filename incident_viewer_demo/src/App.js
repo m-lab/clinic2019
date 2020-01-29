@@ -115,21 +115,23 @@ class App extends React.Component {
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <div className="upper-row">
-          <div className="isp-select-div">
-              <IspSelect
-                isps={ispsWithIncidents}
-                selected={selected}
-                onChange={this.onSelectedClientIspsChange}
-                placeholder="Show Incident"
-              />
-            </div>
             <button className="showIncident" onClick={this.toggleIncident}>
               <Icon
                 name="exclamation"
                 className="exclamation"
                 onClick={undefined}
               />
-              Incident Found</button> 
+              Incident Found
+            </button>
+            <div className="isp-select-div">
+              <h5>Client ISPs</h5>
+              <IspSelect
+                isps={ispsWithIncidents}
+                selected={selected}
+                onChange={this.onSelectedClientIspsChange}
+                placeholder="Show Incident"
+              />
+            </div> 
           </div>
           <Row className="Chart-row">
             <AutoWidth>
