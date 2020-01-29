@@ -145,6 +145,7 @@ func makeJsonObjFile(arr []incident.Incident) *os.File {
 
 	return f
 }
+// break the location code into approapriate locations 
 
 func breakTheLocCodeDown(locationCode string) []string{
 	
@@ -203,7 +204,8 @@ func dynamicallyMakeDir(originPath string, locationCode string, asn string) stri
 			err := MkdirAll(originPath + "/" + locationCodeArr[i])
 
 			if err != nil {
-		  		t.Fatalf("MkdirAll %q: %s", originPath, err)
+				  t.Fatalf("MkdirAll %q: %s", originPath, err)
+				  //think about the implication of this error
 			}
 		}
 
@@ -241,7 +243,7 @@ func readJsonFileAddToIt(filenamepath string, incident incident.Incident) {
 	var err = os.Remove(filenamepath)
 
 	f, err := os.Create(filenamepath)
-	n, err := f.Write(bytes)
+	n, err := f.Write(result)
 
 	if err != nil {
 		log.Fatal(n)
@@ -255,15 +257,15 @@ func readJsonFileAddToIt(filenamepath string, incident incident.Incident) {
 func placeIncidentInFileStruct(originPath string, incident incident.Incident) {
 
 	//this will dynmamically create the dir to store the input incident if it needs to 
-	pathToJsonFile = dynamicallyMakeDir(originPath, incident.GetLocation(), incident.GetASN())
+	pathToJsonFile := dynamicallyMakeDir(originPath, incident.GetLocation(), incident.GetASN())
 
-	fileExistance, filepath = doesJsonFileExist(pathToJsonFile, incident.GetASN())
+	fileExistance, filepath := doesJsonFileExist(pathToJsonFile, incident.GetASN())
 
-	if fileExistance{
+	if fileExistance {
 		readJsonFileAddToIt(filepath, incident)
 	}
 
-	else{
+	else { 
 
 		var incidents []incident.Incident
 		
