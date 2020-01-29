@@ -44,7 +44,7 @@ func Test_CsvParserEntries(t *testing.T) {
 	}
 }
 
-func Test_CsvParserSize(t *testing.T) {
+func Test_numIncidentsSize(t *testing.T) {
 
 	tests := []struct {
 		name  string
@@ -52,7 +52,7 @@ func Test_CsvParserSize(t *testing.T) {
 		want  int
 	}{
 		{
-			name:  "The size of the incidents array",
+			name:  "The size of the incidents array as specified by numIncidents",
 			input: "incidentfile.csv",
 			want:  40,
 		},
@@ -69,7 +69,7 @@ func Test_CsvParserSize(t *testing.T) {
 	}
 }
 
-func Test_CsvParserFourthEntry(t *testing.T) {
+func Test_CsvParserFiftyFirstEntry(t *testing.T) {
 
 	testIncident := new(incident.DefaultIncident)
 	testIncident.Init(time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC).AddDate(-1, 0, 0),
@@ -95,7 +95,7 @@ func Test_CsvParserFourthEntry(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// generate 51 incidents
-			incidents := CsvParser(tt.input, 51)
+			incidents := CsvParser(tt.input)
 			got := incidents[50]
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("CsvParser() = %v, want %v", got, tt.want)
@@ -129,27 +129,4 @@ func Test_MakeJsonObjFile(t *testing.T) {
 			}
 		})
 	}
-}
-
-func Test_AddingIncidentToExistingJson(t *testing.T) {
-
-	var filename string = "incidents.json"
-	testIncident := new(incident.IncidentData)
-	// testIncident.Init(time.Date(2017, time.January, 1, 0, 0, 0, 0, time.UTC).AddDate(-1, 0, 0),
-	// 	time.Date(2017, time.January, 1, 0, 0, 0, 0, time.UTC),
-	// 	time.Date(2017, time.January, 1, 0, 0, 0, 0, time.UTC),
-	// 	time.Date(2019, time.April, 1, 0, 0, 0, 0, time.UTC),
-	// 	31.046068,
-	// 	21.27035,
-	// 	0.326146, 4788063)
-
-	addIncidentToJSON(*testIncident, filename)
-
-	// // TODO, finish doing this!
-
-	// // use function to add to JSON
-	// if jsonFile != nil {
-	// 	t.Errorf("todo")
-	// }
-
 }
