@@ -232,17 +232,46 @@ func readJsonFileAddToIt(filenamepath string, incident incident.Incident) {
 
 	var incidents []incident.Incident
 
-	json.Unmarshal (byteValue, &incidents)
+	json.Unmarshal(byteValue, &incidents)
 
-	incidents = append(incidents, incident)
+	incidents = append(incidents, incident) // add an incident to it
 
 	result, err := json.Marshal(incidents)
 
 	var err = os.Remove(filenamepath)
 
+	f, err := os.Create(filenamepath)
+	n, err := f.Write(bytes)
 
+	if err != nil {
+		log.Fatal(n)
+		log.Fatal(err)
+	}
+
+	f.Close()
+	
 }
 
-func placeIncidentInFileStruct(incident incident.Incident) {
+func placeIncidentInFileStruct(originPath string, incident incident.Incident) {
+
+	//this will dynmamically create the dir to store the input incident if it needs to 
+	pathToJsonFile = dynamicallyMakeDir(originPath, incident.GetLocation(), incident.GetASN())
+
+	fileExistance, filepath = doesJsonFileExist(pathToJsonFile, incident.GetASN())
+
+	if fileExistance{
+		readJsonFileAddToIt(filepath, incident)
+	}
+
+	else{
+
+		var incidents []incident.Incident
+		
+		incidents = append(incidents, incident) // add an incident to it
+		
+		result, err := json.Marshal(incidents)
+		f, err := os.Create(filenamepath)
+		n, err := f.Write(result)
+	}
 	// call the right function that end up putting the incident in the right location
 }
