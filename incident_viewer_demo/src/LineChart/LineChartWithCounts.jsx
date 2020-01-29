@@ -131,7 +131,7 @@ class LineChartWithCounts extends PureComponent {
    */
   render() {
     const { id, width, annotationSeries, series, padding, xScale, colors, lineChartHeight,
-      countChartHeight, hasIncident, incidentData } = this.props;
+      countChartHeight, incidentData, selectedASN } = this.props;
 
     const height = lineChartHeight + countChartHeight;
     return (
@@ -155,8 +155,8 @@ class LineChartWithCounts extends PureComponent {
               paddingLeft={padding.left}
               paddingRight={padding.right}
               xScale={xScale}
-              hasIncident={hasIncident}
               incidentData={incidentData}
+              selectedASN={selectedASN}
             />
           </g>
         </svg>

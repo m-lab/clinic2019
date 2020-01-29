@@ -27,18 +27,21 @@ var chartId = "providers-time-series"
 var clientIspTimeSeriesData = require('./sample_data/newDemoData.json');
 
 // Reading and loading JSON files with sample Incident data
-const incident = require('./incidents.json');
-const incidentData = incident[0]
-// convert dates to moment objects
-incidentData.goodPeriodStart = moment(incidentData.goodPeriodStart);
-incidentData.goodPeriodEnd = moment(incidentData.goodPeriodEnd);
-incidentData.badPeriodStart = moment(incidentData.badPeriodStart);
-incidentData.badPeriodEnd = moment(incidentData.badPeriodEnd);
-
-console.log("incident Data", incidentData)
-
+const incident = require('./sample_data/demo_incidentData.json');
+const incidentData = incident
 const colors = colorsFor(clientIspTimeSeriesData, (d) => d.meta.id);
-// var colors = {na_AS11486x: "rgb(69, 160, 58)", na_AS11404: "rgb(125, 25, 125)", na_AS10774x: "rgb(225, 166, 25)"}
+
+if (incidentData) {
+  // convert dates to moment objects
+  for (var asn in incidentData) {
+    for (var incIndex = 0; incIndex < incidentData[asn].length; incIndex++) {
+      incidentData[asn][incIndex].goodPeriodStart = moment(incidentData[asn][incIndex].goodPeriodStart);
+      incidentData[asn][incIndex].goodPeriodEnd = moment(incidentData[asn][incIndex].goodPeriodEnd);
+      incidentData[asn][incIndex].badPeriodStart = moment(incidentData[asn][incIndex].badPeriodStart);
+      incidentData[asn][incIndex].badPeriodEnd = moment(incidentData[asn][incIndex].badPeriodEnd);
+    }
+  }
+}
 
 // Convert series dates to moment objs
 for (var isp in clientIspTimeSeriesData) {
@@ -101,8 +104,9 @@ class App extends React.Component {
           json_obj = ispsWithIncidents[obj];
         }
       }
-      this.setState({ selected_isp: json_obj });
-      console.log(this.state.selected_isp);
+      this.setState({ selected_isp: json_obj }, () => { 
+        console.log(this.state.selected_isp.client_asn_number);
+      });
     }
   }
   
@@ -141,6 +145,7 @@ class App extends React.Component {
                 id={chartId}
                 hasIncident={this.state.hasIncident}
                 incidentData={incidentData}
+                selectedASN={this.state.selected_isp ? this.state.selected_isp.client_asn_number: null }
                 colors={colors}
                 series={clientIspTimeSeriesData}
                 onHighlightDate={onHighlightTimeSeriesDate}
