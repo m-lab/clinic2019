@@ -5,6 +5,8 @@ import logo from './demo-logo-center.png';
 import './App.scss';
 import LineChartWithCounts from './LineChart/LineChartWithCounts.jsx'
 import IspSelect from './IspSelect/IspSelect.jsx'
+import HelpTip from './HelpTip/HelpTip.jsx'
+
 import * as moment from 'moment';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './chart_support/assets/base.scss';
@@ -124,7 +126,7 @@ class App extends React.Component {
               Incident Found
             </button>
             <div className="isp-select-div">
-              <h5>Client ISPs</h5>
+              <h5>Client ISPs <HelpTip id="incident-isp-tip" /></h5>
               <IspSelect
                 isps={ispsWithIncidents}
                 selected={selected}
