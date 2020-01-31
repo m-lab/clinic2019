@@ -7,23 +7,17 @@ $background: #FFFFFF;
 }
 
 .showIncident {
-  margin-bottom: 20px;
   background-color: rgb(245, 80, 26);
   border-radius: 8px;
   box-shadow: 0px 8px 15px rgba(185, 63, 22, 0.4);
   transition: all 0.3s ease 0s;
-  cursor: pointer;
   outline: none;
   border: none;
   font-size: 20px;
   color: #FFF;
-  padding: 10px 20px;
-}
-
-.showIncident:hover {
-  background-color: rgb(177, 57, 18);
-  box-shadow: 0px 15px 20px rgba(185, 63, 22, 0.4);
-  transform: translateY(-5px);
+  padding: 6px 12px 6px 6px;
+  display: inline;
+  float: right;
 }
 
 .App-logo {
@@ -47,4 +41,21 @@ $background: #FFFFFF;
 }
 .App-link {
   color: #585858;
+}
+
+.isp-select-div {
+  display: inline;
+  float: right;
+  margin-left: 25px;
+  max-width: 1000px;
+  min-width: 250px;
+}
+
+.exclamation {
+  margin: 0 5px;
+}
+
+.upper-row {
+  display: flex;
+  align-items: center;
 }
