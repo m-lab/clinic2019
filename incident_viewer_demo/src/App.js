@@ -81,12 +81,10 @@ class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      hasIncident: false,
       selected_isp: null, // This is the selected ISP object
     }
 
     // bind handlers
-    this.toggleIncident = this.toggleIncident.bind(this);
     this.onSelectedClientIspsChange = this.onSelectedClientIspsChange.bind(this);
   }
 
@@ -113,10 +111,6 @@ class App extends React.Component {
       });
     }
   }
-  
-  toggleIncident() {
-    this.setState({ hasIncident: !this.state.hasIncident });
-  }
 
   render() {
     var selected = this.state.selected_isp ? [this.state.selected_isp] : [];
@@ -125,14 +119,14 @@ class App extends React.Component {
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <div className="upper-row">
-            <button className="showIncident" onClick={this.toggleIncident}>
+            <div className="showIncident">
               <Icon
                 name="exclamation"
                 className="exclamation"
                 onClick={undefined}
               />
               Incident Found
-            </button>
+            </div>
             <div className="isp-select-div">
               <h5>Incident ISPs <HelpTip id="incident-isp-tip" /></h5>
               <IspSelect
@@ -147,7 +141,6 @@ class App extends React.Component {
             <AutoWidth>
               <LineChartWithCounts
                 id={chartId}
-                hasIncident={this.state.hasIncident}
                 incidentData={incidentData}
                 selectedASN={this.state.selected_isp ? this.state.selected_isp.client_asn_number: null }
                 colors={colors}
