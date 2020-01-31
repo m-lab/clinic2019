@@ -142,3 +142,43 @@ func Test_MakeJsonObjFile(t *testing.T) {
 		})
 	}
 }
+
+func Test_FileHierachy(t *testing.T) {
+
+	originPath := "/Users/clinc1920/go/src/github.com/m-lab/clinic2019"
+	testIncident := new(incident.DefaultIncident)
+	testIncident.Init(time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC).AddDate(-1, 0, 0),
+		time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC),
+		time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC),
+		time.Date(2018, time.April, 1, 0, 0, 0, 0, time.UTC),
+		7.862733,
+		5.334354,
+		"AS10774x",
+		"nauscalosangeles",
+		0.321565, 68089)
+
+	// testIncidentArr := make([]incident.Incident, 1, 1)
+	// testIncidentArr[0] = testIncident
+
+	tests := []struct {
+		name  string
+		firstInput string
+		secondInput incident.DefaultIncident
+	}{
+		{
+			name:  "Check of the directories are being created",
+			firstInput: originPath,
+			secondInput: *testIncident,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			placeIncidentInFileStruct(tt.firstInput, tt.secondInput)
+			if _, err := os.Stat("/Users/clinc1920/go/src/github.com/m-lab/clinic2019/na/us"); os.IsNotExist(err) {
+				t.Errorf("File does not exist")
+			}
+		})
+	}
+}
+

@@ -1,10 +1,7 @@
 package csvParser
-
+//"container/list"
 import (
-	"builtin"
-	"fmt"
-	"encoding/csv"
-	"container/list"
+	"io/ioutil"
 	"encoding/json"
 	"io"
 	"log"
@@ -12,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
+	"encoding/csv"
 	"github.com/m-lab/clinic2019/incident_viewer_demo/incident"
 )
 
@@ -153,15 +150,15 @@ func breakTheLocCodeDown(locationCode string) []string{
 	 
 	if (len(locationCode)) > 6 {
 		for i := 0; i < 6; i = i + 2 {
-			append(locationCodesArr, locationCode[i:i+2])
+			locationCodesArr = append(locationCodesArr, locationCode[i:i+2])
 		}
 
-		append(locationCodesArr, locationCode[6:])
+		locationCodesArr = append(locationCodesArr, locationCode[6:])
 		return locationCodesArr
 	}
 
 	for i := 0; i < len(locationCode); i = i + 2 {
-		append(locationCodesArr, locationCodesArr[i:i+2])
+		locationCodesArr = append(locationCodesArr, locationCode[i:i+2])
 	}
 
 	return locationCodesArr
@@ -181,14 +178,14 @@ func doesDirExist(originPath string, dir string) bool {
 
 func doesJsonFileExist(path string, asn string) (bool, string) {
 	
-	filepath := path + "/" +  asn + ".json"
+	filePath := path + "/" +  asn + ".json"
 	info, err := os.Stat(filePath)
 
 	if (os.IsNotExist(err) || info.IsDir()) {
 		return false, ""
 	}
 
-	return true, filepath // make sure this a file not a dir
+	return true, filePath // make sure this a file not a dir
 }
 
 //have this return the final path for now 
@@ -198,13 +195,15 @@ func dynamicallyMakeDir(originPath string, locationCode string, asn string) stri
 	locationCodeArr := breakTheLocCodeDown(locationCode)
 	locationCodeArrLen := len(locationCodeArr)
 
-	for i := 0; locationCodeArrLen; i++ {
+	for i := 0; i < locationCodeArrLen; i++ {
 
 		if !doesDirExist(originPath, locationCodeArr[i]) {
-			err := MkdirAll(originPath + "/" + locationCodeArr[i])
+			err := os.MkdirAll(originPath + "/" + locationCodeArr[i], 0700)
 
 			if err != nil {
-				  t.Fatalf("MkdirAll %q: %s", originPath, err)
+
+				log.Fatal(err)
+				  //t.Fatalf("MkdirAll %q: %s", originPath, err)
 				  //think about the implication of this error
 			}
 		}
@@ -213,10 +212,10 @@ func dynamicallyMakeDir(originPath string, locationCode string, asn string) stri
 
 	}
 
-	if doesJsonFileExist(originPath, asn) {
-		// now add incident to this file because its asp file is present
-		//file out how to add incident to a file
-	}
+	// if doesJsonFileExist(originPath, asn) {
+	// 	// now add incident to this file because its asp file is present
+	// 	//file out how to add incident to a file
+	// }
 
 	//the else case of creating a file and adding the incident to it
 
@@ -224,7 +223,7 @@ func dynamicallyMakeDir(originPath string, locationCode string, asn string) stri
 	
 }
 
-func readJsonFileAddToIt(filenamepath string, incident incident.Incident) {
+func readJsonFileAddToIt(filenamepath string, incident incident.DefaultIncident) {
 	
 	//Open Json file
 
@@ -232,18 +231,20 @@ func readJsonFileAddToIt(filenamepath string, incident incident.Incident) {
 
 	byteValue, _ := ioutil.ReadAll(jsonFile)
 
-	var incidents []incident.Incident
+	//var incidents []incident.DefaultIncident
+
+	var incidents []incident.DefaultIncident = make([]incident.DefaultIncident, 0)
 
 	json.Unmarshal(byteValue, &incidents)
 
 	incidents = append(incidents, incident) // add an incident to it
 
-	result, err := json.Marshal(incidents)
+	result, error := json.Marshal(incidents)
 
 	var err = os.Remove(filenamepath)
 
-	f, err := os.Create(filenamepath)
-	n, err := f.Write(result)
+	f, error1 := os.Create(filenamepath)
+	n, error2 := f.Write(result)
 
 	if err != nil {
 		log.Fatal(n)
@@ -254,26 +255,29 @@ func readJsonFileAddToIt(filenamepath string, incident incident.Incident) {
 	
 }
 
-func placeIncidentInFileStruct(originPath string, incident incident.Incident) {
+func placeIncidentInFileStruct(originPath string, incident incident.DefaultIncident) {
 
 	//this will dynmamically create the dir to store the input incident if it needs to 
 	pathToJsonFile := dynamicallyMakeDir(originPath, incident.GetLocation(), incident.GetASN())
 
 	fileExistance, filepath := doesJsonFileExist(pathToJsonFile, incident.GetASN())
 
-	if fileExistance {
+	if fileExistance == true {
 		readJsonFileAddToIt(filepath, incident)
+
+		return
 	}
 
-	else { 
+	var incidents[]incident.DefaultIncident = make([]incident.DefaultIncident, 0)
+	//incidents = make([]incident.DefaultIncident, 0)
 
-		var incidents []incident.Incident
-		
-		incidents = append(incidents, incident) // add an incident to it
-		
-		result, err := json.Marshal(incidents)
-		f, err := os.Create(filenamepath)
-		n, err := f.Write(result)
-	}
+	//var incidents []incident.DefaultIncident
+	
+	incidents = append(incidents, incident) // add an incident to it
+	
+	result, err := json.Marshal(incidents)
+	f, err := os.Create(filenamepath)
+	n, err := f.Write(result)
+	
 	// call the right function that end up putting the incident in the right location
 }
