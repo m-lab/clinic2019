@@ -302,6 +302,8 @@ class LineChart extends PureComponent {
 
       if (selectedASN && incidentData) {
         for (var incIndex = 0; incIndex < incidentData[selectedASN].length; incIndex++) {
+          
+          // Initialize incident variables
           const goodDescription = incidentData[selectedASN][incIndex].goodPeriodInfo
           const badDescription = incidentData[selectedASN][incIndex].badPeriodInfo
           const incidentDescription = incidentData[selectedASN][incIndex].incidentInfo
@@ -670,13 +672,11 @@ class LineChart extends PureComponent {
 
     if (selectedASN && incidentData) {
       for (var incIndex = 0; incIndex < incidentData[selectedASN].length; incIndex++) {
-        console.log("We are inside the incident showing code!");
-        console.log("incident Data:", incidentData);
 
         const goodIncidentSeriesArray = [{x: incidentData[selectedASN][incIndex].goodPeriodStart, y: incidentData[selectedASN][incIndex].goodPeriodMetric}, {x: incidentData[selectedASN][incIndex].goodPeriodEnd, y: incidentData[selectedASN][incIndex].goodPeriodMetric} ];
         const badIncidentSeriesArray = [{x: incidentData[selectedASN][incIndex].badPeriodStart, y: incidentData[selectedASN][incIndex].badPeriodMetric}, {x: incidentData[selectedASN][incIndex].badPeriodEnd, y: incidentData[selectedASN][incIndex].badPeriodMetric} ];
 
-        // LINES
+        // Lines for good and bad period medians
         this.goodIncidentLine.append('path')
         .classed('good-incident-line', true)
         .attr('d', incidentLineGenerator(goodIncidentSeriesArray))

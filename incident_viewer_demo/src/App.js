@@ -88,17 +88,17 @@ class App extends React.Component {
     this.onSelectedClientIspsChange = this.onSelectedClientIspsChange.bind(this);
   }
 
-  onSelectedClientIspsChange(values) {
+  onSelectedClientIspsChange(selectedASNs) {
     var selected_isp_id;
-    var valLen = values.length;
+    var valLen = selectedASNs.length;
     if (valLen === 0) {
       this.setState({ selected_isp: null });
     }
     else {
       if (valLen === 1) {
-        selected_isp_id = values[0];
+        selected_isp_id = selectedASNs[0];
       } else {
-        selected_isp_id = values[1];
+        selected_isp_id = selectedASNs[1];
       }
   
       var json_obj = {};
