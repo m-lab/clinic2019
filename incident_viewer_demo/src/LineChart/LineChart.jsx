@@ -9,6 +9,7 @@ import { testThreshold } from '../chart_support/constants';
 
 import './LineChart.scss';
 import moment from 'moment';
+import Annotation from 'd3-svg-annotation'
 
 /**
  * Figure out what is needed to render the chart
@@ -432,11 +433,34 @@ class LineChart extends PureComponent {
     this.badIncidentLine = this.g.append('g').classed('bad-incident-line', true);
     this.incidentArrowLine = this.g.append('g').classed('incident-arrow-line', true);
     this.incidentArrowTri = this.g.append('g').classed('incident-arrow-tri', true);
+    this.popOutIncidentHover = this.g.append('g').classed('pop-out-incident-hover', true);
 
     // container for showing the highlighted line
     this.highlightLine = this.g.append('g').attr('class', 'highlight-line');
     this.highlightLine.append('rect').attr('class', 'series-overlay');
     this.highlightLine.append('g');
+
+    // add in pop-out for incident hovers
+      // Features of the annotation
+      const annotations = [
+        {
+          note: {
+            label: "Here is the annotation label",
+            title: "Annotation title"
+          },
+          x: 100,
+          y: 100,
+          dy: 100,
+          dx: 100
+        }
+      ]
+
+      // Add annotation to the chart
+      const makeAnnotations = d3.annotation()
+        .annotations(annotations)
+      d3.select("#example1")
+        .append("g")
+        .call(makeAnnotations)
 
     // add in mouse listener -- this should be added above the lines and axes
     const that = this;
