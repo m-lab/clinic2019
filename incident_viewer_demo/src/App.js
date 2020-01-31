@@ -20,11 +20,11 @@ import { colorsFor } from './chart_support/color';
 var chartId = "providers-time-series"
 
 // Reading and loading JSON files with sample ISP data
-var clientIspTimeSeriesData = require('./sample_data/newDemoData.json');
+var clientIspTimeSeriesData = require('./sample_data/incidentData.json');
 
 // Reading and loading JSON files with sample Incident data
 const incident = require('./sample_data/demo_incidentData.json');
-const incidentData = incident
+const incidentData = incident;
 const colors = colorsFor(clientIspTimeSeriesData, (d) => d.meta.id);
 
 const ispsWithIncidents = [];
@@ -110,7 +110,6 @@ class App extends React.Component {
         }
       }
       this.setState({ selected_isp: json_obj }, () => { 
-        console.log(this.state.selected_isp.client_asn_number);
       });
     }
   }
