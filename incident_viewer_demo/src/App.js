@@ -19,7 +19,6 @@ import { colorsFor } from './chart_support/color';
 
 // TODO: delete unused JSON before sending a pull request
 // var topClientIsps = require('./sample_data/all_isps.json'); // all ISPs for this query
-var ispsWithIncidents = require('./sample_data/isps_with_incidents.json'); // ISPs with incidents for this query
 
 var chartId = "providers-time-series"
 
@@ -30,6 +29,15 @@ var clientIspTimeSeriesData = require('./sample_data/newDemoData.json');
 const incident = require('./sample_data/demo_incidentData.json');
 const incidentData = incident
 const colors = colorsFor(clientIspTimeSeriesData, (d) => d.meta.id);
+
+const ispsWithIncidents = [];
+for (var asn in incidentData) {
+  const asnData = {
+    "client_asn_name": asn,
+    "client_asn_number": asn
+  }
+  ispsWithIncidents.push(asnData);
+}
 
 if (incidentData) {
   // convert dates to moment objects
