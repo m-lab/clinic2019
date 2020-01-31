@@ -17,9 +17,6 @@ import { colorsFor } from './chart_support/color';
 // Handle all of the discombobulated variables that the chart takes in. //
 //////////////////////////////////////////////////////////////////////////
 
-// TODO: delete unused JSON before sending a pull request
-// var topClientIsps = require('./sample_data/all_isps.json'); // all ISPs for this query
-
 var chartId = "providers-time-series"
 
 // Reading and loading JSON files with sample ISP data
