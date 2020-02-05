@@ -145,7 +145,7 @@ func Test_FileHierachy(t *testing.T) {
 		7.862733,
 		5.334354,
 		"AS10774x",
-		"nacatoontario",
+		"nauscaclaremont",
 		0.3565, 68089)
 
 	tests := []struct {
