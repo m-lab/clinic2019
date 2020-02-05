@@ -90,12 +90,21 @@ func CsvParser(filePath string) [100]incident.DefaultIncident {
 	return incidentArray
 }
 
-func convertDefaultIncidentToIncident(arr []incident.DefaultIncident) []incident.Incident {
-	incidentArr := make([]incident.Incident, len(arr), len(arr))
-	for i := range arr {
-		incidentArr[i] = &arr[i]
-	}
-	return incidentArr
+func convertDefaultIncidentToIncidentData(i incident.DefaultIncident) incident.IncidentData {
+
+	gpStart, gpEnd := i.GetGoodPeriod()
+	bpStart, bpEnd := i.GetBadPeriod()
+	gMetric := i.GetGoodMetric()
+	bMetric := i.GetBadMetric()
+	severity := i.GetSeverity()
+	testsAffected := i.GetTestsAffected()
+	gpInfo := i.GetGoodPeriodInfo()
+	bpInfo := i.GetBadPeriodInfo()
+	iInfo := i.GetIncidentInfo()
+	locationString := i.GetLocation()
+	ASN := i.GetASN()
+	inc := incident.IncidentData{gpStart, gpEnd, bpStart, bpEnd, gMetric, bMetric, ASN, locationString, severity, testsAffected, gpInfo, bpInfo, iInfo}
+	return inc
 }
 
 func makeJsonObjFile(arr []incident.Incident) *os.File {
@@ -138,14 +147,21 @@ func makeJsonObjFile(arr []incident.Incident) *os.File {
 		f.Close()
 		return f
 	}
-	
 
 	return f
 }
-// break the location code into approapriate locations 
 
-func breakTheLocCodeDown(locationCode string) []string{
-	
+//convert a default incident that implements our interface to a less safe incident type to be dumped on .json file
+func convertDefaultIncidentToIncident(arr []incident.DefaultIncident) []incident.Incident {
+	incidentArr := make([]incident.Incident, len(arr), len(arr))
+	for i := range arr {
+		incidentArr[i] = &arr[i]
+	}
+	return incidentArr
+}
+
+// break the location code into approapriate locations 
+func breakTheLocCodeDown(locationCode string) []string {
 	locationCodesArr := make([]string, 0)
 	 
 	if (len(locationCode)) > 6 {
@@ -154,6 +170,7 @@ func breakTheLocCodeDown(locationCode string) []string{
 		}
 
 		locationCodesArr = append(locationCodesArr, locationCode[6:])
+
 		return locationCodesArr
 	}
 
@@ -162,10 +179,9 @@ func breakTheLocCodeDown(locationCode string) []string{
 	}
 
 	return locationCodesArr
-	
 }
 
-//check if na or eu exist for example
+//check if na or eu locations directories exist for example
 func doesDirExist(originPath string, dir string) bool {
 	actualPath := originPath + "/" + dir
 
@@ -176,22 +192,20 @@ func doesDirExist(originPath string, dir string) bool {
 	return false
 }
 
+//check if a .json file of incidents for an asn(isp) exists in a specific location/dir
 func doesJsonFileExist(path string, asn string) (bool, string) {
-	
 	filePath := path + "/" +  asn + ".json"
 	info, err := os.Stat(filePath)
 
 	if (os.IsNotExist(err) || info.IsDir()) {
-		return false, ""
+		return false, filePath
 	}
 
-	return true, filePath // make sure this a file not a dir
+	return true, filePath 
 }
 
-//have this return the final path for now 
+//construct location dir hierachy as you look at an incident and return the path that the incident ends up in 
 func dynamicallyMakeDir(originPath string, locationCode string, asn string) string {
-	//just return the path for now and think deep later 
-
 	locationCodeArr := breakTheLocCodeDown(locationCode)
 	locationCodeArrLen := len(locationCodeArr)
 
@@ -201,50 +215,33 @@ func dynamicallyMakeDir(originPath string, locationCode string, asn string) stri
 			err := os.MkdirAll(originPath + "/" + locationCodeArr[i], 0700)
 
 			if err != nil {
-
 				log.Fatal(err)
-				  //t.Fatalf("MkdirAll %q: %s", originPath, err)
-				  //think about the implication of this error
+				//think about the implication of this error
 			}
 		}
 
 		originPath = originPath + "/" + locationCodeArr[i]
-
 	}
 
-	// if doesJsonFileExist(originPath, asn) {
-	// 	// now add incident to this file because its asp file is present
-	// 	//file out how to add incident to a file
-	// }
-
-	//the else case of creating a file and adding the incident to it
-
 	return originPath
-	
 }
 
-func readJsonFileAddToIt(filenamepath string, incident incident.DefaultIncident) {
-	
-	//Open Json file
-
-	jsonFile, err := os.Open(filenamepath)
-
+func readJsonFileAddToIt(filenamepath string, i incident.DefaultIncident) {
+	jsonFile, _ := os.Open(filenamepath)
 	byteValue, _ := ioutil.ReadAll(jsonFile)
 
-	//var incidents []incident.DefaultIncident
-
-	var incidents []incident.DefaultIncident = make([]incident.DefaultIncident, 0)
+	var incidents []incident.IncidentData = make([]incident.IncidentData, 0)
 
 	json.Unmarshal(byteValue, &incidents)
 
-	incidents = append(incidents, incident) // add an incident to it
+	incidents = append(incidents, convertDefaultIncidentToIncidentData(i)) // add an incident to it
 
-	result, error := json.Marshal(incidents)
+	result, _ := json.Marshal(incidents)
 
-	var err = os.Remove(filenamepath)
+	os.Remove(filenamepath)
 
-	f, error1 := os.Create(filenamepath)
-	n, error2 := f.Write(result)
+	f, _ := os.Create(filenamepath)
+	n, err := f.Write(result)
 
 	if err != nil {
 		log.Fatal(n)
@@ -252,32 +249,33 @@ func readJsonFileAddToIt(filenamepath string, incident incident.DefaultIncident)
 	}
 
 	f.Close()
-	
+
 }
 
-func placeIncidentInFileStruct(originPath string, incident incident.DefaultIncident) {
-
+//uses all the helper functions above to dynamically store incidents in a file tree hierachy
+func placeIncidentInFileStruct(originPath string, i incident.DefaultIncident) {
 	//this will dynmamically create the dir to store the input incident if it needs to 
-	pathToJsonFile := dynamicallyMakeDir(originPath, incident.GetLocation(), incident.GetASN())
+	pathToJsonFile := dynamicallyMakeDir(originPath, i.GetLocation(), i.GetASN())
 
-	fileExistance, filepath := doesJsonFileExist(pathToJsonFile, incident.GetASN())
+	fileExistance, filepath := doesJsonFileExist(pathToJsonFile, i.GetASN())
 
-	if fileExistance == true {
-		readJsonFileAddToIt(filepath, incident)
+	if fileExistance {
+		readJsonFileAddToIt(filepath, i)
 
 		return
 	}
 
-	var incidents[]incident.DefaultIncident = make([]incident.DefaultIncident, 0)
-	//incidents = make([]incident.DefaultIncident, 0)
-
-	//var incidents []incident.DefaultIncident
+	var incidents []incident.IncidentData = make([]incident.IncidentData, 0)
+	incidents = append(incidents, convertDefaultIncidentToIncidentData(i)) // add an incident to it
 	
-	incidents = append(incidents, incident) // add an incident to it
+	result, _ := json.Marshal(incidents)
 	
-	result, err := json.Marshal(incidents)
-	f, err := os.Create(filenamepath)
-	n, err := f.Write(result)
+	f, _ := os.Create(filepath)
+	n , err := f.Write(result)
 	
-	// call the right function that end up putting the incident in the right location
+	if err != nil {
+		log.Fatal(n)
+		log.Fatal(err)
+		f.Close()
+	}
 }

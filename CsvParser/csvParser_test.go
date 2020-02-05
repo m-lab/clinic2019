@@ -117,7 +117,7 @@ func Test_MakeJsonObjFile(t *testing.T) {
 		7.862733,
 		5.334354,
 		"AS10774x",
-		"nauscalosangeles",
+		"nauscodenver",
 		0.321565, 68089)
 
 	testIncidentArr := make([]incident.Incident, 1, 1)
@@ -154,8 +154,8 @@ func Test_FileHierachy(t *testing.T) {
 		7.862733,
 		5.334354,
 		"AS10774x",
-		"nauscalosangeles",
-		0.321565, 68089)
+		"nacatoontario",
+		0.3565, 68089)
 
 	// testIncidentArr := make([]incident.Incident, 1, 1)
 	// testIncidentArr[0] = testIncident
