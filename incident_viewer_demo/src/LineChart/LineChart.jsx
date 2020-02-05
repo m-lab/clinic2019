@@ -9,7 +9,7 @@ import { testThreshold } from '../chart_support/constants';
 
 import './LineChart.scss';
 import moment from 'moment';
-import anno from 'd3-svg-annotation'
+import svgAnnotation from 'd3-svg-annotation'
 
 /**
  * Figure out what is needed to render the chart
@@ -456,7 +456,7 @@ class LineChart extends PureComponent {
       ]
 
       // Add annotation to the chart
-      var makeAnnotations = anno.annotation()
+      var makeAnnotations = svgAnnotation.annotation()
         .annotations(annotations)
       d3.select(".pop-out-incident-hover")
         .append("g")
