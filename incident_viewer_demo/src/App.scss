@@ -1,0 +1,61 @@
+
+// Color Variables
+$background: #FFFFFF;
+
+.App {
+  text-align: center;
+}
+
+.showIncident {
+  background-color: rgb(245, 80, 26);
+  border-radius: 8px;
+  box-shadow: 0px 8px 15px rgba(185, 63, 22, 0.4);
+  transition: all 0.3s ease 0s;
+  outline: none;
+  border: none;
+  font-size: 20px;
+  color: #FFF;
+  padding: 6px 12px 6px 6px;
+  display: inline;
+  float: right;
+}
+
+.App-logo {
+  height: 40vmin;
+}
+
+.App-header {
+  background-color: $background;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: rgb(0, 0, 0);
+}
+
+.Chart-row {
+  width: 70%;
+  max-width: 1000px;
+}
+.App-link {
+  color: #585858;
+}
+
+.isp-select-div {
+  display: inline;
+  float: right;
+  margin-left: 25px;
+  max-width: 1000px;
+  min-width: 250px;
+}
+
+.exclamation {
+  margin: 0 5px;
+}
+
+.upper-row {
+  display: flex;
+  align-items: center;
+}

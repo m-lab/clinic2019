@@ -1,16 +1,17 @@
-[![Build Status](https://travis-ci.org/m-lab/clinic2019.svg?branch=master)](https://travis-ci.org/m-lab/clinic2019)
+[![Build Status](https://travis-ci.com/m-lab/clinic2019.svg?branch=master)](https://travis-ci.org/m-lab/clinic2019)
 [![Coverage Status](https://coveralls.io/repos/github/m-lab/clinic2019/badge.svg?branch=master)](https://coveralls.io/github/m-lab/clinic2019?branch=master)
 
-# Incident_Viewer_Demo
+# Incident Viewer Demo
 A demo of the Google M-Lab Incident Viewer created by HMC Clinic.
-Basic mockup of demo:
-  ![Basic_Demo_Mockup](images/Statement_Of_Work_Mock.png)
 
-This demo will showcase the Incident Viewer that we plan to implement into the viz.M-Lab site Spring Semester. We are using React to build it will be taking some components from the viz client repo. The purpose of making this demo separate from the client is to be able to build it quickly without running into compatibility problems with the larger system that the client code is in. That being said, we do not want to have to reimplement components like the graphs, so we will be taking that code from the client repo.
+A live version of our demo hosted on heroku can be found [here](http://mlabclinic1920.herokuapp.com/).
 
-This demo will have access to a single, static incident object that it will display. When we implement this into the site, the Incident Viewer will be able to take in any incident object and display it.
+Current state of demo:
+  ![Basic_Demo_Mockup](images/demo_screencap.png)
 
+This demo showcases the Incident Viewer that we plan to implement into the viz.M-Lab site Spring Semester. We used React to build it and took components from the viz client repo.
 
+This demo has access to a single, static incident object that it displays. When implemented into the site, the Incident Viewer will be able to take in any incident object and display it.
 
 # Incident Class and Incident Interface
 

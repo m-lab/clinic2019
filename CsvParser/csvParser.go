@@ -90,21 +90,14 @@ func CsvParser(filePath string) [100]incident.DefaultIncident {
 	return incidentArray
 }
 
-func convertDefaultIncidentToIncidentData(i incident.DefaultIncident) incident.IncidentData {
 
-	gpStart, gpEnd := i.GetGoodPeriod()
-	bpStart, bpEnd := i.GetBadPeriod()
-	gMetric := i.GetGoodMetric()
-	bMetric := i.GetBadMetric()
-	severity := i.GetSeverity()
-	testsAffected := i.GetTestsAffected()
-	gpInfo := i.GetGoodPeriodInfo()
-	bpInfo := i.GetBadPeriodInfo()
-	iInfo := i.GetIncidentInfo()
-	locationString := i.GetLocation()
-	ASN := i.GetASN()
-	inc := incident.IncidentData{gpStart, gpEnd, bpStart, bpEnd, gMetric, bMetric, ASN, locationString, severity, testsAffected, gpInfo, bpInfo, iInfo}
-	return inc
+//* This function takes in an array of 100 default incidents because that is what is provided by the csvParser above *//
+func convertDefaultIncidentToIncident(arr [100]incident.DefaultIncident) []incident.Incident {
+	incidentArr := make([]incident.Incident, len(arr), len(arr))
+	for i := range arr {
+		incidentArr[i] = &arr[i]
+	}
+	return incidentArr
 }
 
 func makeJsonObjFile(arr []incident.Incident) *os.File {
@@ -152,12 +145,20 @@ func makeJsonObjFile(arr []incident.Incident) *os.File {
 }
 
 //convert a default incident that implements our interface to a less safe incident type to be dumped on .json file
-func convertDefaultIncidentToIncident(arr []incident.DefaultIncident) []incident.Incident {
-	incidentArr := make([]incident.Incident, len(arr), len(arr))
-	for i := range arr {
-		incidentArr[i] = &arr[i]
-	}
-	return incidentArr
+func convertDefaultIncidentToIncidentData(i incident.DefaultIncident) incident.IncidentData {
+	gpStart, gpEnd := i.GetGoodPeriod()
+	bpStart, bpEnd := i.GetBadPeriod()
+	gMetric := i.GetGoodMetric()
+	bMetric := i.GetBadMetric()
+	severity := i.GetSeverity()
+	testsAffected := i.GetTestsAffected()
+	gpInfo := i.GetGoodPeriodInfo()
+	bpInfo := i.GetBadPeriodInfo()
+	iInfo := i.GetIncidentInfo()
+	locationString := i.GetLocation()
+	ASN := i.GetASN()
+	inc := incident.IncidentData{gpStart, gpEnd, bpStart, bpEnd, gMetric, bMetric, ASN, locationString, severity, testsAffected, gpInfo, bpInfo, iInfo}
+	return inc
 }
 
 // break the location code into approapriate locations 
