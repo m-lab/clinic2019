@@ -13,6 +13,8 @@ var i DefaultIncident = DefaultIncident{time.Date(2000, 12, 12, 0, 0, 0, 0, time
 	time.Date(2002, 12, 12, 0, 0, 0, 0, time.UTC),
 	50.2,
 	25.1,
+	"AS10774x",
+	"nauscaclaremont",
 	0.5,
 	123456,
 }
