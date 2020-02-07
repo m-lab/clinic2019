@@ -153,13 +153,13 @@ func Test_FileHierachy(t *testing.T) {
 		0.3565, 68089)
 
 	tests := []struct {
-		name  string
-		firstInput string
+		name        string
+		firstInput  string
 		secondInput incident.DefaultIncident
 	}{
 		{
-			name:  "Check of the directories are being created",
-			firstInput: originPath,
+			name:        "Check of the directories are being created",
+			firstInput:  originPath,
 			secondInput: *testIncident,
 		},
 	}
@@ -173,4 +173,3 @@ func Test_FileHierachy(t *testing.T) {
 		})
 	}
 }
-

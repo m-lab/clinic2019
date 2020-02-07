@@ -1,15 +1,17 @@
 package csvParser
+
 //"container/list"
 import (
-	"io/ioutil"
+	"encoding/csv"
 	"encoding/json"
 	"io"
+	"io/ioutil"
 	"log"
 	"os"
 	"strconv"
 	"strings"
 	"time"
-	"encoding/csv"
+
 	"github.com/m-lab/clinic2019/incident_viewer_demo/incident"
 )
 
@@ -74,9 +76,8 @@ func CsvParser(filePath string) [100]incident.DefaultIncident {
 		avgBadDS, _ := strconv.ParseFloat(avgBadDString[1], 64)
 
 		locationString := strings.Split(rec[2], " ")[1]
-		
+
 		ASN := strings.Split(rec[1], " ")[1]
-		
 
 		defaultIncident := new(incident.DefaultIncident)
 
@@ -89,7 +90,6 @@ func CsvParser(filePath string) [100]incident.DefaultIncident {
 
 	return incidentArray
 }
-
 
 //* This function takes in an array of 100 default incidents because that is what is provided by the csvParser above *//
 func convertDefaultIncidentToIncident(arr [100]incident.DefaultIncident) []incident.Incident {
@@ -126,7 +126,7 @@ func makeJsonObjFile(arr []incident.Incident) *os.File {
 		locationString := arr[i].GetLocation()
 		ASN := arr[i].GetASN()
 		inc := incident.IncidentData{gpStart, gpEnd, bpStart, bpEnd, gMetric, bMetric, ASN, locationString, severity, testsAffected, gpInfo, bpInfo, iInfo}
-		
+
 		//incidentsList.PushBack(inc)
 		objs[i] = inc
 	}
@@ -161,10 +161,10 @@ func convertDefaultIncidentToIncidentData(i incident.DefaultIncident) incident.I
 	return inc
 }
 
-// break the location code into approapriate locations 
+// break the location code into approapriate locations
 func breakTheLocCodeDown(locationCode string) []string {
 	locationCodesArr := make([]string, 0)
-	 
+
 	if (len(locationCode)) > 6 {
 		for i := 0; i < 6; i = i + 2 {
 			locationCodesArr = append(locationCodesArr, locationCode[i:i+2])
@@ -195,17 +195,17 @@ func doesDirExist(originPath string, dir string) bool {
 
 //check if a .json file of incidents for an asn(isp) exists in a specific location/dir
 func doesJsonFileExist(path string, asn string) (bool, string) {
-	filePath := path + "/" +  asn + ".json"
+	filePath := path + "/" + asn + ".json"
 	info, err := os.Stat(filePath)
 
-	if (os.IsNotExist(err) || info.IsDir()) {
+	if os.IsNotExist(err) || info.IsDir() {
 		return false, filePath
 	}
 
-	return true, filePath 
+	return true, filePath
 }
 
-//construct location dir hierachy as you look at an incident and return the path that the incident ends up in 
+//construct location dir hierachy as you look at an incident and return the path that the incident ends up in
 func dynamicallyMakeDir(originPath string, locationCode string, asn string) string {
 	locationCodeArr := breakTheLocCodeDown(locationCode)
 	locationCodeArrLen := len(locationCodeArr)
@@ -213,7 +213,7 @@ func dynamicallyMakeDir(originPath string, locationCode string, asn string) stri
 	for i := 0; i < locationCodeArrLen; i++ {
 
 		if !doesDirExist(originPath, locationCodeArr[i]) {
-			err := os.MkdirAll(originPath + "/" + locationCodeArr[i], 0700)
+			err := os.MkdirAll(originPath+"/"+locationCodeArr[i], 0755)
 
 			if err != nil {
 				log.Fatal(err)
@@ -255,7 +255,7 @@ func readJsonFileAddToIt(filenamepath string, i incident.DefaultIncident) {
 
 //uses all the helper functions above to dynamically store incidents in a file tree hierachy
 func placeIncidentInFileStruct(originPath string, i incident.DefaultIncident) {
-	//this will dynmamically create the dir to store the input incident if it needs to 
+	//this will dynmamically create the dir to store the input incident if it needs to
 	pathToJsonFile := dynamicallyMakeDir(originPath, i.GetLocation(), i.GetASN())
 
 	fileExistance, filepath := doesJsonFileExist(pathToJsonFile, i.GetASN())
@@ -268,12 +268,12 @@ func placeIncidentInFileStruct(originPath string, i incident.DefaultIncident) {
 
 	var incidents []incident.IncidentData = make([]incident.IncidentData, 0)
 	incidents = append(incidents, convertDefaultIncidentToIncidentData(i)) // add an incident to it
-	
+
 	result, _ := json.Marshal(incidents)
-	
+
 	f, _ := os.Create(filepath)
-	n , err := f.Write(result)
-	
+	n, err := f.Write(result)
+
 	if err != nil {
 		log.Fatal(n)
 		log.Fatal(err)
