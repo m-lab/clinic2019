@@ -138,32 +138,3 @@ func makeJsonObjFile(arr []incident.Incident) *os.File {
 
 	return f
 }
-
-// // Helper functions to store incidents in according directory
-func addIncidentToJSON(inc incident.IncidentData, jsonFileName string) {
-	// // Open existing JSON file
-	// jsonFile, err := os.Open(filename)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	// Helpful resources to look at
-	// https://stackoverflow.com/questions/41135686/how-can-we-read-a-json-file-as-json-object-in-golang
-	// https://www.sohamkamani.com/blog/2017/10/18/parsing-json-in-golang/
-	// https://blog.golang.org/json-and-go
-
-	var incidents []incident.IncidentData
-
-	jsonFile, _ := ioutil.ReadFile(jsonFileName)
-
-	// Unmarshall code
-	err := json.Unmarshal(jsonFile, &incidents)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Add to it
-
-	// Marshall it back
-
-}
