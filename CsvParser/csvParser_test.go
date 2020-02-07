@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 	"time"
-
+	"path/filepath"
 	"github.com/m-lab/clinic2019/incident_viewer_demo/incident"
 )
 
@@ -135,8 +135,12 @@ func Test_MakeJsonObjFile(t *testing.T) {
 }
 
 func Test_FileHierachy(t *testing.T) {
+	ex, err := os.Executable()
+	if err != nil {
+		panic(err)
+	}
+	originPath := filepath.Dir(ex)
 
-	originPath := "/Users/clinc1920/go/src/github.com/m-lab/clinic2019"
 	testIncident := new(incident.DefaultIncident)
 	testIncident.Init(time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC).AddDate(-1, 0, 0),
 		time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC),
@@ -163,7 +167,7 @@ func Test_FileHierachy(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			placeIncidentInFileStruct(tt.firstInput, tt.secondInput)
-			if _, err := os.Stat("/Users/clinc1920/go/src/github.com/m-lab/clinic2019/na/us"); os.IsNotExist(err) {
+			if _, err := os.Stat(originPath + "/na/us"); os.IsNotExist(err) {
 				t.Errorf("File does not exist")
 			}
 		})
