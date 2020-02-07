@@ -87,7 +87,8 @@ func CsvParser(filePath string, numIncidents ...int) []incident.DefaultIncident 
 			avgBadDS, severity, testsAffected)
 
 		defaultIncidents = append(defaultIncidents, *defaultIncident)
-		i = i + 1
+		
+		i++
 
 	}
 	return defaultIncidents
