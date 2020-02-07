@@ -41,8 +41,8 @@ func CsvParser(filePath string, numIncidents ...int) []incident.DefaultIncident 
 	// 	log.Fatal(err)
 	// }
 
-	if len(numIncidents) > 1 {
-		log.Fatal("too many arguments!")
+	if len(numIncidents) > 1 || len(numIncidents) == 0 {
+		log.Fatal("Please have one argument.")
 	}
 
 	var i = 0
@@ -88,7 +88,7 @@ func CsvParser(filePath string, numIncidents ...int) []incident.DefaultIncident 
 			avgBadDS, severity, testsAffected)
 
 		defaultIncidents = append(defaultIncidents, *defaultIncident)
-		i = i + 1
+		i++
 
 	}
 	return defaultIncidents
