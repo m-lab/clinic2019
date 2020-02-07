@@ -41,8 +41,8 @@ func CsvParser(filePath string, numIncidents ...int) []incident.DefaultIncident 
 	// 	log.Fatal(err)
 	// }
 
-	if len(numIncidents) > 1 {
-		log.Fatal("too many arguments!")
+	if len(numIncidents) > 1 || len(numIncidents) == 0 {
+		log.Fatal("Please only input one integer to signify the number of incidents you would like to generate.")
 	}
 
 	var i = 0
