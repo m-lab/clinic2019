@@ -73,13 +73,11 @@ func CsvParser(filePath string) [100]incident.DefaultIncident {
 		avgBadDString := strings.Split(rec[7], " ")
 		avgBadDS, _ := strconv.ParseFloat(avgBadDString[1], 64)
 
-		defaultIncident := new(incident.DefaultIncident)
-
-		defaultIncident.Init(goodTimeStart, goodTimeEnd, timeStart, timeEnd, avgGoodDS,
-			avgBadDS, severity, testsAffected)
-
-		incidentArray[i] = *defaultIncident
-
+		// NEW STYLE - use this instead
+		incidentArray[i] = &incident.DefaultIncident{
+			goodTimeStart, goodTimeEnd, timeStart, timeEnd, avgGoodDS,
+			avgBadDS, severity, testsAffected
+		}
 	}
 
 	return incidentArray
@@ -115,7 +113,7 @@ func makeJsonObjFile(arr []incident.Incident) *os.File {
 		bpInfo := arr[i].GetBadPeriodInfo()
 		iInfo := arr[i].GetIncidentInfo()
 		inc := incident.IncidentData{gpStart, gpEnd, bpStart, bpEnd, gMetric, bMetric, severity, testsAffected, gpInfo, bpInfo, iInfo}
-		objs[i] = inc
+		objs[i] = arr[i].MakeIncident()
 	}
 	bytes, err := json.Marshal(objs)
 	n, err := f.Write(bytes)
