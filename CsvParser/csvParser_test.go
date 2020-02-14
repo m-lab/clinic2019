@@ -37,7 +37,7 @@ func Test_CsvParserEntries(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			incidents := CsvParser(tt.input)
+			incidents := CsvParser(tt.input, 1)
 			got := incidents[0]
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("CsvParser() = %v, want %v", got, tt.want)
@@ -46,7 +46,7 @@ func Test_CsvParserEntries(t *testing.T) {
 	}
 }
 
-func Test_CsvParserSize(t *testing.T) {
+func Test_numIncidentsSize(t *testing.T) {
 
 	tests := []struct {
 		name  string
@@ -54,15 +54,15 @@ func Test_CsvParserSize(t *testing.T) {
 		want  int
 	}{
 		{
-			name:  "The size of the incidents array",
+			name:  "The size of the incidents array as specified by numIncidents",
 			input: "incidentfile.csv",
-			want:  100,
+			want:  40,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			incidents := CsvParser(tt.input)
+			incidents := CsvParser(tt.input, tt.want)
 			got := len(incidents)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("CsvParser() = %v, want %v", got, tt.want)
@@ -71,7 +71,7 @@ func Test_CsvParserSize(t *testing.T) {
 	}
 }
 
-func Test_CsvParserFourthEntry(t *testing.T) {
+func Test_CsvParserFiftyFirstEntry(t *testing.T) {
 
 	testIncident := new(incident.DefaultIncident)
 	testIncident.Init(time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC).AddDate(-1, 0, 0),
@@ -90,7 +90,7 @@ func Test_CsvParserFourthEntry(t *testing.T) {
 		want  incident.DefaultIncident
 	}{
 		{
-			name:  "The 50th entry in the incident array",
+			name:  "The 51st entry in the incident array",
 			input: "incidentfile.csv",
 			want:  *testIncident,
 		},
@@ -98,6 +98,7 @@ func Test_CsvParserFourthEntry(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			// generate 51 incidents
 			incidents := CsvParser(tt.input)
 			got := incidents[50]
 			if !reflect.DeepEqual(got, tt.want) {
