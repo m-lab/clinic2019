@@ -123,8 +123,7 @@ func Test_MakeJsonObjFile(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			makeJsonObjFile(tt.input)
-			// TODO: change this file name back to incidents.json
-			if _, err := os.Stat("testinggcloudincidents.json"); os.IsNotExist(err) {
+			if _, err := os.Stat("incidents.json"); os.IsNotExist(err) {
 				t.Errorf("File does not exist")
 			}
 		})

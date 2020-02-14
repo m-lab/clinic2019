@@ -1,7 +1,6 @@
 package csvParser
 
 import (
-	"context"
 	"encoding/csv"
 	"encoding/json"
 	"io"
@@ -11,7 +10,6 @@ import (
 	"strings"
 	"time"
 
-	"cloud.google.com/go/storage"
 	"github.com/m-lab/clinic2019/incident_viewer_demo/incident"
 )
 
@@ -99,9 +97,7 @@ func convertDefaultIncidentToIncident(arr [100]incident.DefaultIncident) []incid
 func makeJsonObjFile(arr []incident.Incident) *os.File {
 	// numObjects determines how many incidents are stored in the json
 	const numObjects = 1
-	// TODO: replace local file creation with Google Cloud Storage file creation
-	fileName := "testinggcloudincidents.json" // TODO: change this file name back to incidents.json
-	f, err := os.Create(fileName)
+	f, err := os.Create("incidents.json")
 	var objs [numObjects]incident.IncidentData
 	if err != nil {
 		log.Fatal(err)
@@ -122,50 +118,10 @@ func makeJsonObjFile(arr []incident.Incident) *os.File {
 		objs[i] = inc
 	}
 	bytes, err := json.Marshal(objs)
-	// n, err := f.Write(bytes)
-
-	// Store contents on Google Cloud
-	bucketName := "incidents-location-hierarchy"
-
-	// Create a client
-	ctx := context.Background()
-	client, err := storage.NewClient(ctx)
-	if err != nil {
-		log.Fatalf("Failed to create client: %v", err)
-	}
-
-	// Create a reference to the bucket
-	bucketHandle := client.Bucket(bucketName)
-
-	// Write the file to the bucket
-	obj := bucketHandle.Object(fileName)
-
-	wc := obj.NewWriter(ctx)
-
-	if _, err = wc.Write(bytes); err != nil {
-		log.Fatalf("Failed to write file to bucket with error %v", err)
-	}
-	// TODO: Leaving this code here in case we want to pick up work from here again
-	// TODO: Currently, the writing to the bucket doesnt work... Peter suggested checking permissions settings
-	// if _, err = io.Copy(wc, f); err != nil {
-	// 	log.Fatalf("Failed to write file to bucket with error %v", err)
-	// }
-	if errClose := wc.Close(); err != nil {
-		log.Fatalf("Failed to close write client with error %v", errClose)
-	}
-
-	// sanity read checking - delete later
-	r, err := obj.NewReader(ctx)
-	if err != nil {
-		log.Fatalf("Failed to create reader: %v", err)
-	}
-	defer r.Close()
-	if _, err := io.Copy(os.Stdout, r); err != nil {
-		log.Fatalf("Failed to copy from read")
-	}
+	n, err := f.Write(bytes)
 
 	if err != nil {
-		// log.Fatal(n)
+		log.Fatal(n)
 		log.Fatal(err)
 		f.Close()
 		return f
