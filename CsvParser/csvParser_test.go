@@ -159,7 +159,7 @@ func Test_FileHierachy(t *testing.T) {
 		secondInput incident.DefaultIncident
 	}{
 		{
-			name:        "Check of the directories are being created",
+			name: "Check of the directories are being created",
 			firstInput:  originPath,
 			secondInput: *testIncident,
 		},
@@ -173,4 +173,116 @@ func Test_FileHierachy(t *testing.T) {
 			}
 		})
 	}
+}
+
+func Test_FileHierachyTwo(t *testing.T) {
+	ex, err := os.Executable()
+	if err != nil {
+		panic(err)
+	}
+	originPath := filepath.Dir(ex)
+
+	testIncident := new(incident.DefaultIncident)
+	testIncident.Init(time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC).AddDate(-1, 0, 0),
+		time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC),
+		time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC),
+		time.Date(2018, time.April, 1, 0, 0, 0, 0, time.UTC),
+		7.862733,
+		5.334354,
+		"AS10774x",
+		"nacatoontario",
+		0.3565, 68089)
+
+	tests := []struct {
+		name        string
+		firstInput  string
+		secondInput incident.DefaultIncident
+	}{
+		{
+			name: "Check of the directories are being created",
+			firstInput:  originPath,
+			secondInput: *testIncident,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			placeIncidentInFileStruct(tt.firstInput, tt.secondInput)
+			_, error := os.Stat(originPath + "/na/us")
+			if _, err := os.Stat(originPath + "/na/ca/to/ontario"); os.IsNotExist(err) && os.IsNotExist(error) {
+				t.Errorf("File does not exist")
+			}
+		})
+	}
+}
+
+func Test_FileHierachyThree(t *testing.T) {
+	ex, err := os.Executable()
+	if err != nil {
+		panic(err)
+	}
+	//originPath := "//Users/clinc1920/go/src/github.com/m-lab/clinic2019/CsvParser"
+	originPath := filepath.Dir(ex)
+
+	testIncident := new(incident.DefaultIncident)
+	testIncident.Init(time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC).AddDate(-1, 0, 0),
+		time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC),
+		time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC),
+		time.Date(2018, time.April, 1, 0, 0, 0, 0, time.UTC),
+		7.862733,
+		5.334354,
+		"AS10774x",
+		"asjp",
+		0.3565, 68089)
+
+	tests := []struct {
+		name        string
+		firstInput  string
+		secondInput incident.DefaultIncident
+	}{
+		{
+			name: "Check of the directories are being created",
+			firstInput:  originPath,
+			secondInput: *testIncident,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			placeIncidentInFileStruct(tt.firstInput, tt.secondInput)
+			if _, err := os.Stat(originPath + "/as/jp"); os.IsNotExist(err) {
+				t.Errorf(originPath)
+			}
+		})
+	}
+}
+
+func Test_ParseLocationCode(t *testing.T) {
+	locationCodesArr := make([]string, 0)
+	locationCodesArr = append(locationCodesArr, "na")
+	locationCodesArr = append(locationCodesArr, "us")
+	locationCodesArr = append(locationCodesArr, "wa")
+	locationCodesArr = append(locationCodesArr, "redmond")
+	
+	tests := []struct {
+		name  string
+		input string
+		want  []string
+	}{
+		{
+			name:  "Parsing the location code string",
+			input: "nauswaredmond",
+			want: locationCodesArr,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			parsedCode := parseLocationCode(tt.input)
+			if !reflect.DeepEqual(parsedCode, tt.want) {
+				t.Errorf("parseLocationCode() = %v, want %v", parsedCode, tt.want)
+			}
+		})
+	}
+
 }
