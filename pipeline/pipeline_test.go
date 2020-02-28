@@ -9,14 +9,6 @@ import (
 	"github.com/m-lab/signal-searcher/analyzer"
 )
 
-// type Incident struct {
-// 	Start, End         time.Time
-// 	AffectedCount      int
-// 	Severity           float64
-// 	GoodPeriodDownload float64
-// 	BadPeriodDownload  float64
-// }
-
 // TODO: make a fake implementation of the class that gets called and then use that
 // to test hard coded input/output pairs
 type incidentArrayTest struct {
