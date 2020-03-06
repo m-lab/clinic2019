@@ -9,13 +9,9 @@ import (
 	"github.com/m-lab/signal-searcher/analyzer"
 )
 
-// TODO: make a fake implementation of the class that gets called and then use that
-// to test hard coded input/output pairs
-type incidentArrayTest struct {
-	arr [100]incident.DefaultIncident
-}
+type mockIncidentProducer struct{}
 
-func (i incidentArrayTest) findIncidents() [1]analyzer.Incident {
+func (mock *mockIncidentProducer) findIncidents() {
 	inc := analyzer.Incident{
 		Start:              time.Date(2017, time.January, 1, 0, 0, 0, 0, time.UTC).AddDate(-1, 0, 0),
 		End:                time.Date(2019, time.April, 1, 0, 0, 0, 0, time.UTC),
@@ -23,9 +19,27 @@ func (i incidentArrayTest) findIncidents() [1]analyzer.Incident {
 		GoodPeriodDownload: 31.046068,
 		BadPeriodDownload:  21.27035,
 	}
-	incArr := [1]analyzer.Incident{inc}
+	incArr := []analyzer.Incident{inc}
 	return incArr
 }
+
+// TODO: make a fake implementation of the class that gets called and then use that
+// to test hard coded input/output pairs
+// type incidentArrayTest struct {
+// 	arr [100]incident.DefaultIncident
+// }
+
+// func (i incidentArrayTest) findIncidents() [1]analyzer.Incident {
+// 	inc := analyzer.Incident{
+// 		Start:              time.Date(2017, time.January, 1, 0, 0, 0, 0, time.UTC).AddDate(-1, 0, 0),
+// 		End:                time.Date(2019, time.April, 1, 0, 0, 0, 0, time.UTC),
+// 		AffectedCount:      4788063,
+// 		GoodPeriodDownload: 31.046068,
+// 		BadPeriodDownload:  21.27035,
+// 	}
+// 	incArr := [1]analyzer.Incident{inc}
+// 	return incArr
+// }
 
 func Test_runPipeline(t *testing.T) {
 
