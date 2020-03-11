@@ -1,13 +1,69 @@
 package csvParser
 
 import (
-	"os"
-	"reflect"
-	"testing"
-	"time"
-	"path/filepath"
-	"github.com/m-lab/clinic2019/incident_viewer_demo/incident"
+    "os"
+    "reflect"
+    "testing"
+    "time"
+    "path/filepath"
+    "github.com/m-lab/clinic2019/incident_viewer_demo/incident"
 )
+
+func GenerateTestIncidents() []incident.DefaultIncident{
+
+	testIncident := new(incident.DefaultIncident)
+    testIncident.Init(time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC).AddDate(-1, 0, 0),
+        time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC),
+        time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC),
+        time.Date(2018, time.April, 1, 0, 0, 0, 0, time.UTC),
+        7.862733,
+        5.334354,
+        "AS10774x",
+        "eufr",
+        0.3565, 68089)
+
+	testIncidentTwo := new(incident.DefaultIncident)
+	testIncidentTwo.Init(time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC).AddDate(-1, 0, 0),
+		time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC),
+		time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC),
+		time.Date(2018, time.April, 1, 0, 0, 0, 0, time.UTC),
+		7.862733,
+		5.334354,
+		"AS10774x",
+		"naus",
+		0.3565, 68089)
+
+	testIncidentThree := new(incident.DefaultIncident)
+	testIncidentThree.Init(time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC).AddDate(-1, 0, 0),
+		time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC),
+		time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC),
+		time.Date(2018, time.April, 1, 0, 0, 0, 0, time.UTC),
+		7.862733,
+		5.334354,
+		"AS10774x",
+		"eufr",
+		0.3575, 69089)
+
+	testIncidentFour := new(incident.DefaultIncident)
+	testIncidentFour.Init(time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC).AddDate(-1, 0, 0),
+		time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC),
+		time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC),
+		time.Date(2018, time.April, 1, 0, 0, 0, 0, time.UTC),
+		7.862733,
+		5.334354,
+		"AS10774z",
+		"eufr",
+		0.3565, 68089)
+
+	testIncidentsArr := make([]incident.DefaultIncident, 0)
+	testIncidentsArr = append(testIncidentsArr, *testIncident)
+	testIncidentsArr = append(testIncidentsArr, *testIncidentTwo)
+	testIncidentsArr = append(testIncidentsArr, *testIncidentThree)
+	testIncidentsArr = append(testIncidentsArr, *testIncidentFour)
+
+	return testIncidentsArr
+}
+
 
 func Test_CsvParserEntries(t *testing.T) {
 
@@ -108,33 +164,6 @@ func Test_CsvParserFiftyFirstEntry(t *testing.T) {
 	}
 }
 
-func Test_MakeJsonObjFile(t *testing.T) {
-
-	testIncidentArr := make([]incident.Incident, 1, 1)
-	incidents := CsvParser("incidentfile.csv")
-	testIncident := convertDefaultIncidentToIncident(incidents)
-	testIncidentArr[0] = testIncident[0]
-
-	tests := []struct {
-		name  string
-		input []incident.Incident
-	}{
-		{
-			name:  "Create a file with one entry",
-			input: testIncidentArr,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			makeJsonObjFile(tt.input)
-			if _, err := os.Stat("incidents.json"); os.IsNotExist(err) {
-				t.Errorf("File does not exist")
-			}
-		})
-	}
-}
-
 func Test_FileHierachy(t *testing.T) {
 	ex, err := os.Executable()
 	if err != nil {
@@ -142,118 +171,38 @@ func Test_FileHierachy(t *testing.T) {
 	}
 	originPath := filepath.Dir(ex)
 
-	testIncident := new(incident.DefaultIncident)
-	testIncident.Init(time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC).AddDate(-1, 0, 0),
-		time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC),
-		time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC),
-		time.Date(2018, time.April, 1, 0, 0, 0, 0, time.UTC),
-		7.862733,
-		5.334354,
-		"AS10774x",
-		"nauscaclaremont",
-		0.3565, 68089)
+	incidentMap := incidentsMemPlacer(GenerateTestIncidents())
+
+	locationCodesArr := make([]string, 0)
+	locationCodesArr = append(locationCodesArr, "/eu/fr")
+	locationCodesArr = append(locationCodesArr, "/eu/fr/AS10774x.json")
+	locationCodesArr = append(locationCodesArr, "/eu/fr/AS10774z.json")
+	locationCodesArr = append(locationCodesArr, "/na/us")
 
 	tests := []struct {
 		name        string
-		firstInput  string
-		secondInput incident.DefaultIncident
+		input  []string
 	}{
 		{
 			name: "Check of the directories are being created",
-			firstInput:  originPath,
-			secondInput: *testIncident,
+			input: locationCodesArr,
 		},
 	}
 
+	placeIncidentInFileStruct(originPath, incidentMap)
 	for _, tt := range tests {
+
+		i := 0
+
 		t.Run(tt.name, func(t *testing.T) {
-			placeIncidentInFileStruct(tt.firstInput, tt.secondInput)
-			if _, err := os.Stat(originPath + "/na/us"); os.IsNotExist(err) {
-				t.Errorf("File does not exist")
+			for ( i != 4) {
+				if _, err := os.Stat(originPath + tt.input[i]); os.IsNotExist(err) {
+					t.Errorf("File does not exist")
+				}
+				i++
 			}
 		})
-	}
-}
-
-func Test_FileHierachyTwo(t *testing.T) {
-	ex, err := os.Executable()
-	if err != nil {
-		panic(err)
-	}
-	originPath := filepath.Dir(ex)
-
-	testIncident := new(incident.DefaultIncident)
-	testIncident.Init(time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC).AddDate(-1, 0, 0),
-		time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC),
-		time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC),
-		time.Date(2018, time.April, 1, 0, 0, 0, 0, time.UTC),
-		7.862733,
-		5.334354,
-		"AS10774x",
-		"nacatoontario",
-		0.3565, 68089)
-
-	tests := []struct {
-		name        string
-		firstInput  string
-		secondInput incident.DefaultIncident
-	}{
-		{
-			name: "Check of the directories are being created",
-			firstInput:  originPath,
-			secondInput: *testIncident,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			placeIncidentInFileStruct(tt.firstInput, tt.secondInput)
-			_, error := os.Stat(originPath + "/na/us")
-			if _, err := os.Stat(originPath + "/na/ca/to/ontario"); os.IsNotExist(err) && os.IsNotExist(error) {
-				t.Errorf("File does not exist")
-			}
-		})
-	}
-}
-
-func Test_FileHierachyThree(t *testing.T) {
-	ex, err := os.Executable()
-	if err != nil {
-		panic(err)
-	}
-	//originPath := "//Users/clinc1920/go/src/github.com/m-lab/clinic2019/CsvParser"
-	originPath := filepath.Dir(ex)
-
-	testIncident := new(incident.DefaultIncident)
-	testIncident.Init(time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC).AddDate(-1, 0, 0),
-		time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC),
-		time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC),
-		time.Date(2018, time.April, 1, 0, 0, 0, 0, time.UTC),
-		7.862733,
-		5.334354,
-		"AS10774x",
-		"asjp",
-		0.3565, 68089)
-
-	tests := []struct {
-		name        string
-		firstInput  string
-		secondInput incident.DefaultIncident
-	}{
-		{
-			name: "Check of the directories are being created",
-			firstInput:  originPath,
-			secondInput: *testIncident,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			placeIncidentInFileStruct(tt.firstInput, tt.secondInput)
-			if _, err := os.Stat(originPath + "/as/jp"); os.IsNotExist(err) {
-				t.Errorf(originPath)
-			}
-		})
+		
 	}
 }
 
@@ -285,4 +234,71 @@ func Test_ParseLocationCode(t *testing.T) {
 		})
 	}
 
+}
+
+func Test_incidentsMemPlacer(t *testing.T) {
+    
+    tests := []struct {
+        name  string
+		input string
+		inputTwo string
+        want  string
+    }{
+        {
+            name:  "A location that should exist in the map",
+            input: "AS10774x",
+            inputTwo: "naus",
+            want:  "naus",
+        },
+
+        {
+            name:  "A location that has two ISPs associated w/ it",
+            input: "AS10774z",
+            inputTwo: "eufr",
+            want:  "eufr",
+        },
+
+        {
+            name:  "A location that has two ISPs associated w/ it",
+            input: "AS10774x",
+            inputTwo: "eufr",
+            want:  "eufr",
+        },
+
+    }
+
+    incidentMap := incidentsMemPlacer(GenerateTestIncidents())
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            if !reflect.DeepEqual(incidentMap[tt.inputTwo][tt.input][0].Location, tt.want) {
+                t.Errorf("map[keyLocation][keyISP]'s Location = %v, want %v", incidentMap[tt.inputTwo][tt.input][0].Location, tt.want)
+            }
+        })
+    }
+}
+
+func Test_incidentsMemPlacerTwo(t *testing.T) {
+    
+    tests := []struct {
+        name  string
+		input string
+		inputTwo string
+        want  string
+    }{
+        {
+            name:  "A location with an ISP w/ two incidents",
+            input: "AS10774x",
+            inputTwo: "eufr",
+            want:  "eufr",
+        },
+    }
+
+    incidentMap := incidentsMemPlacer(GenerateTestIncidents())
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            if !reflect.DeepEqual(incidentMap[tt.inputTwo][tt.input][0].Location, tt.want) && !reflect.DeepEqual(incidentMap[tt.inputTwo][tt.input][1].Location, tt.want){
+                t.Errorf("incidentMap[eufr][AS10774x][0]= %v, want %v", incidentMap[tt.inputTwo][tt.input][0].Location, tt.want)
+            }
+        })
+    }
 }

@@ -5,7 +5,6 @@ import (
 	"encoding/csv"
 	"encoding/json"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"strconv"
@@ -99,57 +98,6 @@ func CsvParser(filePath string, numIncidents ...int) []incident.DefaultIncident 
 	return defaultIncidents
 }
 
-//* This function takes in an array of 100 default incidents because that is what is provided by the csvParser above *//
-func convertDefaultIncidentToIncident(defaultIncidents []incident.DefaultIncident) []incident.Incident {
-	incidentArr := make([]incident.Incident, len(defaultIncidents), len(defaultIncidents))
-	for i := range defaultIncidents {
-		incidentArr[i] = &defaultIncidents[i]
-	}
-	return incidentArr
-}
-
-func makeJsonObjFile(arr []incident.Incident) *os.File {
-	// numObjects determines how many incidents are stored in the json
-	const numObjects = 1
-	f, err := os.Create("incidents.json")
-	var objs [numObjects]incident.IncidentData
-
-	if err != nil {
-		log.Fatal(err)
-		return f
-	}
-
-	for i := 0; i < numObjects; i++ {
-		gpStart, gpEnd := arr[i].GetGoodPeriod()
-		bpStart, bpEnd := arr[i].GetBadPeriod()
-		gMetric := arr[i].GetGoodMetric()
-		bMetric := arr[i].GetBadMetric()
-		severity := arr[i].GetSeverity()
-		testsAffected := arr[i].GetTestsAffected()
-		gpInfo := arr[i].GetGoodPeriodInfo()
-		bpInfo := arr[i].GetBadPeriodInfo()
-		iInfo := arr[i].GetIncidentInfo()
-		locationString := arr[i].GetLocation()
-		asn := arr[i].GetASN()
-		inc := incident.IncidentData{gpStart, gpEnd, bpStart, bpEnd, gMetric, bMetric, asn, locationString, severity, testsAffected, gpInfo, bpInfo, iInfo}
-
-		//incidentsList.PushBack(inc)
-		objs[i] = inc
-	}
-	bytes, err := json.Marshal(objs)
-	//bytes,err := json.Marshal(incidentsList)
-	n, err := f.Write(bytes)
-
-	if err != nil {
-		log.Fatal(n)
-		log.Fatal(err)
-		f.Close()
-		return f
-	}
-
-	return f
-}
-
 //convert a default incident that implements our interface to an incident object designed to exist in a json file
 //It returns incident of type IncidentData to 
 func convertDefaultIncidentToIncidentData(i incident.DefaultIncident) incident.IncidentData {
@@ -202,21 +150,9 @@ func dirExists(originPath string, dir string) bool {
 	return false
 }
 
-//check if a .json file of incidents for an asn(isp) exists in a specific location/dir
-func jsonFileExists(path string, asn string) (bool, string) {
-	filePath := path + "/" + asn + ".json"
-	info, err := os.Stat(filePath)
-
-	if os.IsNotExist(err) || info.IsDir() {
-		return false, filePath
-	}
-
-	return true, filePath
-}
-
 //constructs incidents file hierarchy on basis of an incident location code
 //construction happens dynamically and returns the path where an incident ends up sitting on the disk 
-func dynamicallyMakeDir(originPath string, locationCode string, asn string) string {
+func dynamicallyMakeDir(originPath string, locationCode string) string {
 	locationCodeArr := parseLocationCode(locationCode)
 	locationCodeArrLen := len(locationCodeArr)
 
@@ -236,61 +172,84 @@ func dynamicallyMakeDir(originPath string, locationCode string, asn string) stri
 	return originPath
 }
 
-//appends a new incident to an already existing json file of incidents in a specific directory
-func readJsonFileAddToIt(filenamepath string, i incident.DefaultIncident) {
-	jsonFile, _ := os.Open(filenamepath)
-	byteValue, _ := ioutil.ReadAll(jsonFile)
-
-	var incidents []incident.IncidentData = make([]incident.IncidentData, 0)
-
-	json.Unmarshal(byteValue, &incidents)
-
-	incidents = append(incidents, convertDefaultIncidentToIncidentData(i)) // add an incident to it
-
-	result, _ := json.Marshal(incidents)
-
-	os.Remove(filenamepath)
-
-	f, _ := os.Create(filenamepath)
-	n, err := f.Write(result)
-
-	if err != nil {
-		log.Fatal(n)
-		log.Fatal(err.Error())
-	}
-
-	f.Close()
-
-}
-
 //uses all the helper functions above to dynamically store incidents in a file tree hierachy
-func placeIncidentInFileStruct(originPath string, i incident.DefaultIncident) {
+func placeIncidentInFileStruct(originPath string, incMap map[string]map[string][]incident.IncidentData) {
 	//this will dynmamically create the dir to store the input incident if it needs to
-	pathToJsonFile := dynamicallyMakeDir(originPath, i.GetLocation(), i.GetASN())
 
-	fileExistence, filepath := jsonFileExists(pathToJsonFile, i.GetASN())
+	for key, value := range incMap {
+		pathToAsnJsonFiles := dynamicallyMakeDir(originPath, key)
 
-	if fileExistence {
-		readJsonFileAddToIt(filepath, i)
+		for asnkey, asnValue := range value {
+			filePath := pathToAsnJsonFiles + "/" + asnkey + ".json"
+			f, err := os.Create(filePath)
 
-		return
+			if err != nil {
+				fmt.Printf(err.Error())
+				fmt.Printf("\n")
+				return
+			}
+			
+			result, errorMarshal := json.Marshal(asnValue)
+
+			if errorMarshal != nil {
+				fmt.Printf(errorMarshal.Error())
+				fmt.Printf("\n")
+				return			
+
+			}
+
+			n, errWrite := f.Write(result)
+
+			if errWrite != nil {
+				fmt.Printf(errWrite.Error())
+				fmt.Printf("\n")
+				fmt.Printf("%d",n)				
+				return
+			}
+
+			errClose := f.Close()
+
+			if errClose != nil {
+				fmt.Printf(errClose.Error())
+				fmt.Print("\n")
+				return
+
+			}
+		}
 	}
-
-	var incidents []incident.IncidentData = make([]incident.IncidentData, 0)
-	incidents = append(incidents, convertDefaultIncidentToIncidentData(i)) // add an incident to it
-
-	result, _ := json.Marshal(incidents)
-
-	f, _ := os.Create(filepath)
-	n, err := f.Write(result)
-
-	if err != nil {
-		log.Fatal(n)
-		log.Fatal(err)
-		
-	}
-
-	f.Close()
 }
 
+//given an array of an incidents, this function places them in a map with every location having asn map of incidents
+//mapped to it
+func incidentsMemPlacer(incArr []incident.DefaultIncident) map[string]map[string][]incident.IncidentData{
 
+	incidentsMemMap := make(map[string]map[string][]incident.IncidentData)
+	incNum := len(incArr)
+
+	for i := 0; i < incNum; i++{
+
+		// new location
+		_, found := incidentsMemMap[incArr[i].GetLocation()]
+		if  (!found) {
+			incidentsAsnMap := make(map[string][]incident.IncidentData)
+			var incidents []incident.IncidentData = make([]incident.IncidentData, 0)
+			incidentsAsnMap[incArr[i].GetASN()] = append(incidents, convertDefaultIncidentToIncidentData(incArr[i]))
+			incidentsMemMap[incArr[i].GetLocation()] = incidentsAsnMap
+		
+		} else {
+			// new asn within an existing location
+			_, valFound := incidentsMemMap[incArr[i].GetLocation()][incArr[i].GetASN()]
+			if  !valFound {
+				var incidents []incident.IncidentData = make([]incident.IncidentData, 0)
+				incidentsMemMap[incArr[i].GetLocation()][incArr[i].GetASN()] = append(incidents, convertDefaultIncidentToIncidentData(incArr[i]))
+		
+			//already existing asn within an exisiting location
+			} 
+			if (valFound) {
+				incidentsMemMap[incArr[i].GetLocation()][incArr[i].GetASN()] = append(incidentsMemMap[incArr[i].GetLocation()][incArr[i].GetASN()], convertDefaultIncidentToIncidentData(incArr[i]))
+			}
+		}
+	}
+
+	return incidentsMemMap
+}
