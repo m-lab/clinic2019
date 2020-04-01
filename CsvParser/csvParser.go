@@ -13,10 +13,10 @@ import (
 	"github.com/m-lab/clinic2019/incident_viewer_demo/incident"
 )
 
-func CsvParser(filePath string) [100]incident.DefaultIncident {
+func CsvParser(filePath string, numIncidents ...int) []incident.DefaultIncident {
 
 	//just assume that you have 100 rows in the csv and then return an array of 1OO incidents
-	var incidentArray [100]incident.DefaultIncident
+	var defaultIncidents []incident.DefaultIncident = make([]incident.DefaultIncident, 0)
 	var rec []string
 	const shortForm = "2006-01-02"
 
@@ -40,14 +40,22 @@ func CsvParser(filePath string) [100]incident.DefaultIncident {
 	// 	log.Fatal(err)
 	// }
 
-	for i := 0; i < 100; i++ {
+	if len(numIncidents) > 1 {
+		log.Fatal("Please only input one integer to signify the number of incidents you would like to generate.")
+	}
 
+	var i = 0
+	for {
 		rec, err = reader.Read()
+		if len(numIncidents) == 1 && i == numIncidents[0] {
+			break
+		}
 		if err != nil {
 			if err == io.EOF {
 				break
 			}
 			log.Fatal(err)
+
 		}
 
 		//knowing the structure of the csv file, retrieve some values
@@ -78,18 +86,19 @@ func CsvParser(filePath string) [100]incident.DefaultIncident {
 		defaultIncident.Init(goodTimeStart, goodTimeEnd, timeStart, timeEnd, avgGoodDS,
 			avgBadDS, severity, testsAffected)
 
-		incidentArray[i] = *defaultIncident
+		defaultIncidents = append(defaultIncidents, *defaultIncident)
+		
+		i++
 
 	}
-
-	return incidentArray
+	return defaultIncidents
 }
 
 //* This function takes in an array of 100 default incidents because that is what is provided by the csvParser above *//
-func convertDefaultIncidentToIncident(arr [100]incident.DefaultIncident) []incident.Incident {
-	incidentArr := make([]incident.Incident, len(arr), len(arr))
-	for i := range arr {
-		incidentArr[i] = &arr[i]
+func convertDefaultIncidentToIncident(defaultIncidents []incident.DefaultIncident) []incident.Incident {
+	incidentArr := make([]incident.Incident, len(defaultIncidents), len(defaultIncidents))
+	for i := range defaultIncidents {
+		incidentArr[i] = &defaultIncidents[i]
 	}
 	return incidentArr
 }
