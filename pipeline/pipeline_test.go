@@ -11,7 +11,7 @@ import (
 
 type mockIncidentProducer struct{}
 
-func (mock *mockIncidentProducer) findIncidents() {
+func (mock *mockIncidentProducer) findIncidents() []analyzer.Incident {
 	inc := analyzer.Incident{
 		Start:              time.Date(2017, time.January, 1, 0, 0, 0, 0, time.UTC).AddDate(-1, 0, 0),
 		End:                time.Date(2019, time.April, 1, 0, 0, 0, 0, time.UTC),

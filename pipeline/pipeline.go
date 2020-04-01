@@ -19,7 +19,7 @@ func (ai *AnalyzerIncidents) findIncidents() {
 
 func runPipeline() []incident.DefaultIncident {
 	// Run script that generates CSV
-	var i incidentArray
+	var i AnalyzerIncidents
 	i.findIncidents()
 	incidents := csvParser.CsvParser("incidents.csv")
 	return incidents // eventually want to take this out
