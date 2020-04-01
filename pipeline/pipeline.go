@@ -17,7 +17,7 @@ func (ai *AnalyzerIncidents) findIncidents() {
 	exec.Command("bash", "-c", "go run github.com/m-lab/signal-searcher  | sort -nk1 > incidents.csv").Output()
 }
 
-func runPipeline() [100]incident.DefaultIncident {
+func runPipeline() []incident.DefaultIncident {
 	// Run script that generates CSV
 	var i incidentArray
 	i.findIncidents()
