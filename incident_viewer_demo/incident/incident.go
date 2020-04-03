@@ -5,20 +5,12 @@ import (
 	"time"
 )
 
-//* All incident types must implement the Incident interface *//
+/* All incident types must implement the Incident interface */
 type Incident interface {
-	GetGoodPeriod() (time.Time, time.Time)
-	GetBadPeriod() (time.Time, time.Time)
-	GetGoodMetric() float64
-	GetBadMetric() float64
-	GetSeverity() float64
-	GetTestsAffected() int
-	GetGoodPeriodInfo() string
-	GetBadPeriodInfo() string
-	GetIncidentInfo() string
+	MakeIncidentData()
 }
 
-//* This is the incident format for the JSON file *//
+/* This is the incident format for the JSON file */
 type IncidentData struct {
 	GoodPeriodStart  time.Time `json:"goodPeriodStart"`
 	GoodPeriodEnd    time.Time `json:"goodPeriodEnd"`
@@ -33,7 +25,7 @@ type IncidentData struct {
 	IncidentInfo     string    `json:"incidentInfo"`
 }
 
-//* An incident for a 30% or more drop in download speed over a period of a year or longer *//
+/* An incident for a 30% or more drop in download speed over a period of a year or longer */
 type DefaultIncident struct {
 	goodStartTime    time.Time
 	goodEndTime      time.Time
@@ -41,14 +33,15 @@ type DefaultIncident struct {
 	badEndTime       time.Time
 	avgGoodDS        float64
 	avgBadDS         float64
-	severityDecimal  float64
+	severity         float64
 	numTestsAffected int
+	goodPeriodInfo   string
+	badPeriodInfo    string
+	incidentInfo     string
 }
 
-//**************************************//
-//    		CONSTRUCTORS
-//**************************************//
-
+// TODO: see if we can take this out...
+/* Create an IncidentData object to be stored in JSON format */
 func (i *IncidentData) Init(
 	goodTimeStart time.Time,
 	goodTimeEnd time.Time,
@@ -75,13 +68,19 @@ func (i *IncidentData) Init(
 	i.IncidentInfo = incidentInfo
 }
 
-func (i *DefaultIncident) Init(goodTimeStart time.Time, goodTimeEnd time.Time,
+/* Assign data members and set appropriate text for information fields */
+func (i *DefaultIncident) MakeIncidentData(goodTimeStart time.Time, goodTimeEnd time.Time,
 	badTimeStart time.Time,
 	badTimeEnd time.Time,
 	avgDSGood float64,
 	avgDSBad float64,
-	severity float64,
+	severityDecimal float64,
 	testsAffected int) {
+
+	gds := strconv.FormatFloat(avgDSGood, 'f', 2, 64)
+	bds := strconv.FormatFloat(avgDSGood, 'f', 2, 64)
+	s := strconv.FormatFloat(severityDecimal*100, 'f', 2, 64)
+	ta := strconv.Itoa(testsAffected)
 
 	i.goodStartTime = goodTimeStart
 	i.goodEndTime = goodTimeEnd
@@ -89,50 +88,10 @@ func (i *DefaultIncident) Init(goodTimeStart time.Time, goodTimeEnd time.Time,
 	i.badEndTime = badTimeEnd
 	i.avgGoodDS = avgDSGood
 	i.avgBadDS = avgDSBad
-	i.severityDecimal = severity
+	i.severity = severityDecimal
 	i.numTestsAffected = testsAffected
-}
+	i.goodPeriodInfo = "Average download speed: " + gds + " mb/s"
+	i.badPeriodInfo = "Average download speed: " + bds + " mb/s"
+	i.incidentInfo = "Download speed dropped by " + s + "% affecting " + ta + " tests"
 
-//**************************************//
-//    		GETTER METHODS
-//**************************************//
-
-func (i *DefaultIncident) GetGoodPeriod() (time.Time, time.Time) {
-	return i.goodStartTime, i.goodEndTime
-}
-
-func (i *DefaultIncident) GetBadPeriod() (time.Time, time.Time) {
-	return i.badStartTime, i.badEndTime
-}
-
-func (i *DefaultIncident) GetGoodMetric() float64 {
-	return i.avgGoodDS
-}
-
-func (i *DefaultIncident) GetBadMetric() float64 {
-	return i.avgBadDS
-}
-
-func (i *DefaultIncident) GetSeverity() float64 {
-	return i.severityDecimal
-}
-
-func (i *DefaultIncident) GetTestsAffected() int {
-	return i.numTestsAffected
-}
-
-func (i *DefaultIncident) GetGoodPeriodInfo() string {
-	ds := strconv.FormatFloat(i.avgGoodDS, 'f', 2, 64)
-	return "Average download speed: " + ds + " mb/s"
-}
-
-func (i *DefaultIncident) GetBadPeriodInfo() string {
-	ds := strconv.FormatFloat(i.avgBadDS, 'f', 2, 64)
-	return "Average download speed: " + ds + " mb/s"
-}
-
-func (i *DefaultIncident) GetIncidentInfo() string {
-	s := strconv.FormatFloat(i.severityDecimal*100, 'f', 2, 64)
-	ta := strconv.Itoa(i.numTestsAffected)
-	return "Download speed dropped by " + s + "% affecting " + ta + " tests"
 }
