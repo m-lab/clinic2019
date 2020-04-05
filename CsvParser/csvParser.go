@@ -98,8 +98,8 @@ func CsvParser(filePath string, numIncidents ...int) []incident.DefaultIncident 
 	return defaultIncidents
 }
 
-//convert a default incident that implements our interface to an incident object designed to exist in a json file
-//It returns incident of type IncidentData to 
+// Converts a default incident that implements our interface to an incident object designed to exist in a json file
+// Returns incident of type IncidentData 
 func convertDefaultIncidentToIncidentData(i incident.DefaultIncident) incident.IncidentData {
 	gpStart, gpEnd := i.GetGoodPeriod()
 	bpStart, bpEnd := i.GetBadPeriod()
@@ -116,13 +116,15 @@ func convertDefaultIncidentToIncidentData(i incident.DefaultIncident) incident.I
 	return inc
 }
 
-//Takes in a location code and breaks it down into different location levels
-//Returns an array of string, where each string represents a location
+// Takes in a location code and slices it into different location levels
+// Returns an array of strings, where each string represents a location
 func parseLocationCode(locationCode string) []string {
 	locationCodesArr := make([]string, 0)
+	customLocationLen := 6 // Examples: nausca, nauscaclaremont (nonCustom) 
 
-	if (len(locationCode)) > 6 {
-		for i := 0; i < 6; i = i + 2 {
+	if (len(locationCode)) > customLocationLen {
+		// Increment by 2 because location code consists of two characters at each level
+		for i := 0; i < customLocationLen; i = i + 2 {
 			locationCodesArr = append(locationCodesArr, locationCode[i:i+2])
 		}
 
@@ -138,8 +140,8 @@ func parseLocationCode(locationCode string) []string {
 	return locationCodesArr
 }
 
-//checks if a specific directory, which corresponds to a specifi location, has been made
-//Returns a bool
+// Checks if a specific directory, which corresponds to a specifi location, has been created
+// Returns a bool
 func dirExists(originPath string, dir string) bool {
 	actualPath := originPath + "/" + dir
 
@@ -150,16 +152,17 @@ func dirExists(originPath string, dir string) bool {
 	return false
 }
 
-//constructs incidents file hierarchy on basis of an incident location code
-//construction happens dynamically and returns the path where an incident ends up sitting on the disk 
+// Constructs incidents file hierarchy on basis of an incident location code
+// Dynamically construct a directory hierarchy and return the path where an incident ends on the disk 
 func dynamicallyMakeDir(originPath string, locationCode string) string {
 	locationCodeArr := parseLocationCode(locationCode)
 	locationCodeArrLen := len(locationCodeArr)
+	perm os.FileMode = 0755
 
 	for i := 0; i < locationCodeArrLen; i++ {
 
 		if !dirExists(originPath, locationCodeArr[i]) {
-			err := os.MkdirAll(originPath+"/"+locationCodeArr[i], 0755)
+			err := os.MkdirAll(originPath+"/"+locationCodeArr[i], perm)
 
 			if err != nil {
 				log.Fatal(err)
@@ -172,7 +175,7 @@ func dynamicallyMakeDir(originPath string, locationCode string) string {
 	return originPath
 }
 
-//uses all the helper functions above to dynamically store incidents in a file tree hierachy
+// Uses all the helper functions above to dynamically store incidents in a file tree hierachy
 func placeIncidentInFileStruct(originPath string, incMap map[string]map[string][]incident.IncidentData) {
 	//this will dynmamically create the dir to store the input incident if it needs to
 
@@ -184,44 +187,33 @@ func placeIncidentInFileStruct(originPath string, incMap map[string]map[string][
 			f, err := os.Create(filePath)
 
 			if err != nil {
-				fmt.Printf(err.Error())
-				fmt.Printf("\n")
-				return
+				log.Fatalf(err)
 			}
 			
 			result, errorMarshal := json.Marshal(asnValue)
 
-			if errorMarshal != nil {
-				fmt.Printf(errorMarshal.Error())
-				fmt.Printf("\n")
-				return			
-
+			if errorMarshal != nil {	
+				log.Fatalf(errorMarshal)
 			}
 
 			n, errWrite := f.Write(result)
 
 			if errWrite != nil {
-				fmt.Printf(errWrite.Error())
-				fmt.Printf("\n")
-				fmt.Printf("%d",n)				
-				return
+				log.Fatalf(errWrite)
 			}
 
 			errClose := f.Close()
 
 			if errClose != nil {
-				fmt.Printf(errClose.Error())
-				fmt.Print("\n")
-				return
+				log.Fatalf(errClose)
 
 			}
 		}
 	}
 }
 
-//given an array of an incidents, this function places them in a map with every location having asn map of incidents
-//mapped to it
-func incidentsMemPlacer(incArr []incident.DefaultIncident) map[string]map[string][]incident.IncidentData{
+// Places an array of incidents in a map with every location having an asn map of incidents mapped to it
+func mapIncidentsToLocAndISP(incArr []incident.DefaultIncident) map[string]map[string][]incident.IncidentData{
 
 	incidentsMemMap := make(map[string]map[string][]incident.IncidentData)
 	incNum := len(incArr)
