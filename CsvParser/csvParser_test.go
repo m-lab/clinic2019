@@ -171,7 +171,7 @@ func Test_FileHierachy(t *testing.T) {
 	}
 	originPath := filepath.Dir(ex)
 
-	incidentMap := incidentsMemPlacer(GenerateTestIncidents())
+	incidentMap := mapIncidentsToLocAndISP(GenerateTestIncidents())
 
 	locationCodesArr := make([]string, 0)
 	locationCodesArr = append(locationCodesArr, "/eu/fr")
@@ -267,7 +267,7 @@ func Test_incidentsMemPlacer(t *testing.T) {
 
     }
 
-    incidentMap := incidentsMemPlacer(GenerateTestIncidents())
+    incidentMap := mapIncidentsToLocAndISP(GenerateTestIncidents())
     for _, tt := range tests {
         t.Run(tt.name, func(t *testing.T) {
             if !reflect.DeepEqual(incidentMap[tt.inputTwo][tt.input][0].Location, tt.want) {
@@ -293,7 +293,7 @@ func Test_incidentsMemPlacerTwo(t *testing.T) {
         },
     }
 
-    incidentMap := incidentsMemPlacer(GenerateTestIncidents())
+    incidentMap := mapIncidentsToLocAndISP(GenerateTestIncidents())
     for _, tt := range tests {
         t.Run(tt.name, func(t *testing.T) {
             if !reflect.DeepEqual(incidentMap[tt.inputTwo][tt.input][0].Location, tt.want) && !reflect.DeepEqual(incidentMap[tt.inputTwo][tt.input][1].Location, tt.want){

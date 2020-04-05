@@ -1,7 +1,6 @@
 package csvParser
 
 import (
-	"fmt"
 	"encoding/csv"
 	"encoding/json"
 	"io"
@@ -124,7 +123,7 @@ func parseLocationCode(locationCode string) []string {
 
 	if (len(locationCode)) > customLocationLen {
 		// Increment by 2 because location code consists of two characters at each level
-		for i := 0; i < customLocationLen; i = i + 2 {
+		for i := 0; i < customLocationLen; i += 2 {
 			locationCodesArr = append(locationCodesArr, locationCode[i:i+2])
 		}
 
@@ -157,7 +156,7 @@ func dirExists(originPath string, dir string) bool {
 func dynamicallyMakeDir(originPath string, locationCode string) string {
 	locationCodeArr := parseLocationCode(locationCode)
 	locationCodeArrLen := len(locationCodeArr)
-	perm os.FileMode = 0755
+	var perm os.FileMode = 0755
 
 	for i := 0; i < locationCodeArrLen; i++ {
 
@@ -187,25 +186,25 @@ func placeIncidentInFileStruct(originPath string, incMap map[string]map[string][
 			f, err := os.Create(filePath)
 
 			if err != nil {
-				log.Fatalf(err)
+				log.Fatalf("failed to create a file: %p",err)
 			}
 			
 			result, errorMarshal := json.Marshal(asnValue)
 
 			if errorMarshal != nil {	
-				log.Fatalf(errorMarshal)
+				log.Fatalf("failed to marshel: %p", errorMarshal)
 			}
 
-			n, errWrite := f.Write(result)
+			_, errWrite := f.Write(result)
 
 			if errWrite != nil {
-				log.Fatalf(errWrite)
+				log.Fatalf("failed to write to a file: %p",errWrite)
 			}
 
 			errClose := f.Close()
 
 			if errClose != nil {
-				log.Fatalf(errClose)
+				log.Fatalf("failed to close a file: %p",errClose)
 
 			}
 		}
