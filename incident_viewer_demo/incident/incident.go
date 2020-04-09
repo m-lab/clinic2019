@@ -7,7 +7,14 @@ import (
 
 /* All incident types must implement the Incident interface */
 type Incident interface {
-	MakeIncidentData()
+	MakeIncidentData(goodTimeStart time.Time, goodTimeEnd time.Time,
+		badTimeStart time.Time,
+		badTimeEnd time.Time,
+		avgDSGood float64,
+		avgDSBad float64,
+		severityDecimal float64,
+		testsAffected int)
+	GetIncidentData() (time.Time, time.Time, time.Time, time.Time, float64, float64, float64, int, string, string, string)
 }
 
 /* This is the incident format for the JSON file */
@@ -42,7 +49,7 @@ type DefaultIncident struct {
 
 // TODO: see if we can take this out...
 /* Create an IncidentData object to be stored in JSON format */
-func (i *IncidentData) Init(
+func (i *IncidentData) MakeJsonIncident(
 	goodTimeStart time.Time,
 	goodTimeEnd time.Time,
 	badTimeStart time.Time,
@@ -58,9 +65,9 @@ func (i *IncidentData) Init(
 	i.GoodPeriodStart = goodTimeStart
 	i.GoodPeriodEnd = goodTimeEnd
 	i.BadPeriodStart = badTimeStart
+	i.BadPeriodEnd = badTimeEnd
 	i.GoodPeriodMetric = goodMetric
 	i.BadPeriodMetric = badMetric
-	i.BadPeriodEnd = badTimeEnd
 	i.Severity = severity
 	i.NumTestsAffected = testsAffected
 	i.GoodPeriodInfo = goodPeriodInfo
@@ -94,4 +101,8 @@ func (i *DefaultIncident) MakeIncidentData(goodTimeStart time.Time, goodTimeEnd 
 	i.badPeriodInfo = "Average download speed: " + bds + " mb/s"
 	i.incidentInfo = "Download speed dropped by " + s + "% affecting " + ta + " tests"
 
+}
+
+func (i *DefaultIncident) GetIncidentData() (time.Time, time.Time, time.Time, time.Time, float64, float64, float64, int, string, string, string) {
+	return i.goodStartTime, i.goodEndTime, i.badStartTime, i.badEndTime, i.avgGoodDS, i.avgBadDS, i.severity, i.numTestsAffected, i.goodPeriodInfo, i.badPeriodInfo, i.incidentInfo
 }
