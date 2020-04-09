@@ -47,7 +47,6 @@ type DefaultIncident struct {
 	incidentInfo     string
 }
 
-// TODO: see if we can take this out...
 /* Create an IncidentData object to be stored in JSON format */
 func (i *IncidentData) MakeJsonIncident(
 	goodTimeStart time.Time,
@@ -103,6 +102,7 @@ func (i *DefaultIncident) MakeIncidentData(goodTimeStart time.Time, goodTimeEnd 
 
 }
 
+/* Retrieve all Incident fields */
 func (i *DefaultIncident) GetIncidentData() (time.Time, time.Time, time.Time, time.Time, float64, float64, float64, int, string, string, string) {
 	return i.goodStartTime, i.goodEndTime, i.badStartTime, i.badEndTime, i.avgGoodDS, i.avgBadDS, i.severity, i.numTestsAffected, i.goodPeriodInfo, i.badPeriodInfo, i.incidentInfo
 }
