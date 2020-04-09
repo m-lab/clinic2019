@@ -9,7 +9,7 @@ import (
     "github.com/m-lab/clinic2019/incident_viewer_demo/incident"
 )
 
-func GenerateTestIncidents() []incident.DefaultIncident{
+func generateTestIncidents() []incident.DefaultIncident{
 
 	testIncident := new(incident.DefaultIncident)
     testIncident.Init(time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC).AddDate(-1, 0, 0),
@@ -171,7 +171,7 @@ func Test_FileHierachy(t *testing.T) {
 	}
 	originPath := filepath.Dir(ex)
 
-	incidentMap := mapIncidentsToLocAndISP(GenerateTestIncidents())
+	incidentMap := mapIncidentsToLocAndISP(generateTestIncidents())
 
 	locationCodesArr := make([]string, 0)
 	locationCodesArr = append(locationCodesArr, "/eu/fr")
@@ -189,7 +189,7 @@ func Test_FileHierachy(t *testing.T) {
 		},
 	}
 
-	placeIncidentInFileStruct(originPath, incidentMap)
+	placeIncidentsInFileHierarchy(originPath, incidentMap)
 	for _, tt := range tests {
 
 		i := 0
@@ -267,7 +267,7 @@ func Test_incidentsMemPlacer(t *testing.T) {
 
     }
 
-    incidentMap := mapIncidentsToLocAndISP(GenerateTestIncidents())
+    incidentMap := mapIncidentsToLocAndISP(generateTestIncidents())
     for _, tt := range tests {
         t.Run(tt.name, func(t *testing.T) {
             if !reflect.DeepEqual(incidentMap[tt.inputTwo][tt.input][0].Location, tt.want) {
@@ -293,7 +293,7 @@ func Test_incidentsMemPlacerTwo(t *testing.T) {
         },
     }
 
-    incidentMap := mapIncidentsToLocAndISP(GenerateTestIncidents())
+    incidentMap := mapIncidentsToLocAndISP(generateTestIncidents())
     for _, tt := range tests {
         t.Run(tt.name, func(t *testing.T) {
             if !reflect.DeepEqual(incidentMap[tt.inputTwo][tt.input][0].Location, tt.want) && !reflect.DeepEqual(incidentMap[tt.inputTwo][tt.input][1].Location, tt.want){

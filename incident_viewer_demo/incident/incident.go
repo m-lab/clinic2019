@@ -28,7 +28,7 @@ type IncidentData struct {
 	BadPeriodEnd     time.Time `json:"badPeriodEnd"`
 	GoodPeriodMetric float64   `json:"goodPeriodMetric"`
 	BadPeriodMetric  float64   `json:"badPeriodMetric"`
-	ASN string			   	   `json:"aSN"`
+	ASN string			   	   `json:"asn"`
 	Location string 		   `json:"location"`
 	Severity         float64   `json:"severity"`
 	NumTestsAffected int       `json:"numTestsAffected"`
@@ -45,8 +45,7 @@ type DefaultIncident struct {
 	badEndTime       time.Time
 	avgGoodDS        float64
 	avgBadDS         float64
-	//the next field is technically ASN but has to start with low case letter to be private
-	aSN              string
+	asn              string
 	location         string
 	severityDecimal  float64
 	numTestsAffected int
@@ -63,7 +62,7 @@ func (i *IncidentData) Init(
 	badTimeEnd time.Time,
 	goodMetric float64,
 	badMetric float64,
-	aSN string,
+	asn string,
 	location string,
 	severity float64,
 	testsAffected int,
@@ -77,7 +76,7 @@ func (i *IncidentData) Init(
 	i.GoodPeriodMetric = goodMetric
 	i.BadPeriodMetric = badMetric
 	i.BadPeriodEnd = badTimeEnd
-	i.ASN = aSN
+	i.ASN = asn
 	i.Location = location
 	i.Severity = severity
 	i.NumTestsAffected = testsAffected
@@ -91,7 +90,7 @@ func (i *DefaultIncident) Init(goodTimeStart time.Time, goodTimeEnd time.Time,
 	badTimeEnd time.Time,
 	avgDSGood float64,
 	avgDSBad float64,
-	aSN string,
+	asn string,
 	location string,
 	severity float64,
 	testsAffected int) {
@@ -102,7 +101,7 @@ func (i *DefaultIncident) Init(goodTimeStart time.Time, goodTimeEnd time.Time,
 	i.badEndTime = badTimeEnd
 	i.avgGoodDS = avgDSGood
 	i.avgBadDS = avgDSBad
-	i.aSN = aSN
+	i.asn = asn
 	i.location = location
 	i.severityDecimal = severity
 	i.numTestsAffected = testsAffected
@@ -129,7 +128,7 @@ func (i *DefaultIncident) GetBadMetric() float64 {
 }
 
 func (i *DefaultIncident) GetASN() string {
-	return i.aSN
+	return i.asn
 }
 
 func (i *DefaultIncident) GetLocation() string {

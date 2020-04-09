@@ -12,9 +12,10 @@ import (
 	"github.com/m-lab/clinic2019/incident_viewer_demo/incident"
 )
 
+// Given a csv file of incidents meta data, retrieves that meta data to construct incidents, and 
+// Returns an Array of those incidents
 func CsvParser(filePath string, numIncidents ...int) []incident.DefaultIncident {
 
-	//just assume that you have 100 rows in the csv and then return an array of 1OO incidents
 	var defaultIncidents []incident.DefaultIncident = make([]incident.DefaultIncident, 0)
 	var rec []string
 	const shortForm = "2006-01-02"
@@ -57,18 +58,18 @@ func CsvParser(filePath string, numIncidents ...int) []incident.DefaultIncident 
 
 		}
 
-		//knowing the structure of the csv file, retrieve some values
+		// Given the structure of the csv file, retrieve some values
 		badTimeStartString := strings.Split(rec[3], " ")
 		timeStart, _ := time.Parse(shortForm, badTimeStartString[1])
 
 		badTimeEndString := strings.Split(rec[4], " ")
 		timeEnd, _ := time.Parse(shortForm, badTimeEndString[1])
 
-		//the good period starts one year prior to the start of the bad period in this demo
+		// The good period starts one year prior to the start of the bad period in this demo
 		goodTimeStart := timeStart.AddDate(-1, 0, 0)
 		goodTimeEnd := timeStart
 
-		//the empty space string accounts for an empty space in the structure of the csv file
+		// The empty space string accounts for an empty space in the structure of the csv file entries
 		severityString := strings.Split(rec[5], " ")
 		severity, _ := strconv.ParseFloat(severityString[1], 64)
 
@@ -119,15 +120,15 @@ func convertDefaultIncidentToIncidentData(i incident.DefaultIncident) incident.I
 // Returns an array of strings, where each string represents a location
 func parseLocationCode(locationCode string) []string {
 	locationCodesArr := make([]string, 0)
-	customLocationLen := 6 // Examples: nausca, nauscaclaremont (nonCustom) 
+	upToStateLevelLocationLen := 6 // Examples: nausca, nausco
 
-	if (len(locationCode)) > customLocationLen {
+	if (len(locationCode)) > upToStateLevelLocationLen {
 		// Increment by 2 because location code consists of two characters at each level
-		for i := 0; i < customLocationLen; i += 2 {
+		for i := 0; i < upToStateLevelLocationLen; i += 2 {
 			locationCodesArr = append(locationCodesArr, locationCode[i:i+2])
 		}
 
-		locationCodesArr = append(locationCodesArr, locationCode[6:])
+		locationCodesArr = append(locationCodesArr, locationCode[upToStateLevelLocationLen:])
 
 		return locationCodesArr
 	}
@@ -139,7 +140,7 @@ func parseLocationCode(locationCode string) []string {
 	return locationCodesArr
 }
 
-// Checks if a specific directory, which corresponds to a specifi location, has been created
+// Checks if a specific directory, which corresponds to a specific location, has been created
 // Returns a bool
 func dirExists(originPath string, dir string) bool {
 	actualPath := originPath + "/" + dir
@@ -156,12 +157,13 @@ func dirExists(originPath string, dir string) bool {
 func dynamicallyMakeDir(originPath string, locationCode string) string {
 	locationCodeArr := parseLocationCode(locationCode)
 	locationCodeArrLen := len(locationCodeArr)
-	var perm os.FileMode = 0755
+	// Owner can read, write, execute. Everyone else can only read and execute.
+	var permissionBits os.FileMode = 0755
 
 	for i := 0; i < locationCodeArrLen; i++ {
 
 		if !dirExists(originPath, locationCodeArr[i]) {
-			err := os.MkdirAll(originPath+"/"+locationCodeArr[i], perm)
+			err := os.MkdirAll(originPath+"/"+locationCodeArr[i], permissionBits)
 
 			if err != nil {
 				log.Fatal(err)
@@ -174,8 +176,8 @@ func dynamicallyMakeDir(originPath string, locationCode string) string {
 	return originPath
 }
 
-// Uses all the helper functions above to dynamically store incidents in a file tree hierachy
-func placeIncidentInFileStruct(originPath string, incMap map[string]map[string][]incident.IncidentData) {
+// Dynamically store incidents in a file tree hierachy
+func placeIncidentsInFileHierarchy(originPath string, incMap map[string]map[string][]incident.IncidentData) {
 	//this will dynmamically create the dir to store the input incident if it needs to
 
 	for key, value := range incMap {
@@ -219,7 +221,7 @@ func mapIncidentsToLocAndISP(incArr []incident.DefaultIncident) map[string]map[s
 
 	for i := 0; i < incNum; i++{
 
-		// new location
+		// New location
 		_, found := incidentsMemMap[incArr[i].GetLocation()]
 		if  (!found) {
 			incidentsAsnMap := make(map[string][]incident.IncidentData)
@@ -228,13 +230,13 @@ func mapIncidentsToLocAndISP(incArr []incident.DefaultIncident) map[string]map[s
 			incidentsMemMap[incArr[i].GetLocation()] = incidentsAsnMap
 		
 		} else {
-			// new asn within an existing location
+			// New asn within an existing location
 			_, valFound := incidentsMemMap[incArr[i].GetLocation()][incArr[i].GetASN()]
 			if  !valFound {
 				var incidents []incident.IncidentData = make([]incident.IncidentData, 0)
 				incidentsMemMap[incArr[i].GetLocation()][incArr[i].GetASN()] = append(incidents, convertDefaultIncidentToIncidentData(incArr[i]))
 		
-			//already existing asn within an exisiting location
+			// Already existing asn within an exisiting location
 			} 
 			if (valFound) {
 				incidentsMemMap[incArr[i].GetLocation()][incArr[i].GetASN()] = append(incidentsMemMap[incArr[i].GetLocation()][incArr[i].GetASN()], convertDefaultIncidentToIncidentData(incArr[i]))
