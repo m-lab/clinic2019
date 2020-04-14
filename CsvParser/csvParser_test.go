@@ -14,7 +14,7 @@ func Test_CsvParserEntries(t *testing.T) {
 	// Create test incident to check result against
 	var testIncident incident.DefaultIncident = incident.DefaultIncident{}
 
-	var gs = time.Date(2017, time.January, 1, 0, 0, 0, 0, time.UTC).AddDate(-1, 0, 0)
+	var gs = time.Date(2016, time.January, 1, 0, 0, 0, 0, time.UTC)
 	var ge = time.Date(2017, time.January, 1, 0, 0, 0, 0, time.UTC)
 	var bs = time.Date(2017, time.January, 1, 0, 0, 0, 0, time.UTC)
 	var be = time.Date(2019, time.April, 1, 0, 0, 0, 0, time.UTC)
@@ -74,7 +74,7 @@ func Test_CsvParserFiftyFirstEntry(t *testing.T) {
 	// Create test incident to check result against
 	var testIncident incident.DefaultIncident = incident.DefaultIncident{}
 
-	var gs = time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC).AddDate(-1, 0, 0)
+	var gs = time.Date(2015, time.July, 1, 0, 0, 0, 0, time.UTC)
 	var ge = time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC)
 	var bs = time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC)
 	var be = time.Date(2018, time.April, 1, 0, 0, 0, 0, time.UTC)
