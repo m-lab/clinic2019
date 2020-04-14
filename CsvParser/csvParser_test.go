@@ -1,10 +1,12 @@
 package csvParser
 
 import (
-    "os"
+	"os"
+	"encoding/json"
     "reflect"
     "testing"
-    "time"
+	"time"
+	"io/ioutil"
     "path/filepath"
     "github.com/m-lab/clinic2019/incident_viewer_demo/incident"
 )
@@ -190,6 +192,7 @@ func Test_FileHierachy(t *testing.T) {
 	}
 
 	placeIncidentsInFileHierarchy(originPath, incidentMap)
+
 	for _, tt := range tests {
 
 		i := 0
@@ -202,7 +205,40 @@ func Test_FileHierachy(t *testing.T) {
 				i++
 			}
 		})
-		
+
+		// Set things up to run file hierarchy again to simulate two consecutive monthly run jobs
+		testIncident := new(incident.DefaultIncident)
+    	testIncident.Init(time.Date(2017, time.July, 1, 0, 0, 0, 0, time.UTC).AddDate(-1, 0, 0),
+        time.Date(2017, time.July, 1, 0, 0, 0, 0, time.UTC),
+        time.Date(2017, time.July, 1, 0, 0, 0, 0, time.UTC),
+        time.Date(2019, time.April, 1, 0, 0, 0, 0, time.UTC),
+        7.862733,
+        5.334354,
+        "AS10774x",
+        "eufr",
+		0.3565, 68089)
+
+		theNextMonthIncidents := append(generateTestIncidents(), *testIncident)
+		theNextMonthIcidentMap := mapIncidentsToLocAndISP(theNextMonthIncidents)
+
+		placeIncidentsInFileHierarchy(originPath, theNextMonthIcidentMap)
+
+		jsonFile, _ := os.Open(originPath + "/eu/fr/AS10774x.json")
+		byteValue, _ := ioutil.ReadAll(jsonFile)
+		var incidents []incident.IncidentData = make([]incident.IncidentData, 0)
+		json.Unmarshal(byteValue, &incidents)
+
+		t.Run(tt.name, func(t *testing.T) {
+			for ( i != 4) {
+				if _, err := os.Stat(originPath + tt.input[i]); os.IsNotExist(err) {
+					t.Errorf("File does not exist")
+				}
+				i++
+			}
+			if len(incidents) != 3{
+				t.Errorf("Rerun is not working")
+			}
+		})
 	}
 }
 

@@ -153,7 +153,8 @@ func dirExists(originPath string, dir string) bool {
 }
 
 // Constructs incidents file hierarchy on basis of an incident location code
-// Dynamically construct a directory hierarchy and return the path where an incident ends on the disk 
+// Dynamically construct a directory hierarchy and return the path where an incident ends on the disk
+// Gets used by placeIncidentsInFileHierarchy function 
 func dynamicallyMakeDir(originPath string, locationCode string) string {
 	locationCodeArr := parseLocationCode(locationCode)
 	locationCodeArrLen := len(locationCodeArr)
@@ -178,13 +179,25 @@ func dynamicallyMakeDir(originPath string, locationCode string) string {
 
 // Dynamically store incidents in a file tree hierachy
 func placeIncidentsInFileHierarchy(originPath string, incMap map[string]map[string][]incident.IncidentData) {
-	//this will dynmamically create the dir to store the input incident if it needs to
 
 	for key, value := range incMap {
 		pathToAsnJsonFiles := dynamicallyMakeDir(originPath, key)
-
+	
 		for asnkey, asnValue := range value {
 			filePath := pathToAsnJsonFiles + "/" + asnkey + ".json"
+
+			// Delete an incident file if it already exist from the previous run
+			// Call create later. This is all to avoid anything "incremental running"
+			if _, err := os.Stat(filePath); !os.IsNotExist(err) {
+				removeErr := os.Remove(filePath)
+				// Don't know if os.Remove is atomic
+				// Might have to wait for it
+				
+				if removeErr != nil {
+					log.Fatalf("failed to remove an existing: %p", removeErr)
+				}
+			}
+
 			f, err := os.Create(filePath)
 
 			if err != nil {
