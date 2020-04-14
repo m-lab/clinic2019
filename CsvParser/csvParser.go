@@ -65,8 +65,8 @@ func CsvParser(filePath string, numIncidents ...int) []incident.DefaultIncident 
 		timeEnd, _ := time.Parse(shortForm, badTimeEndString[1])
 
 		//the good period starts one year prior to the start of the bad period in this demo
-		goodTimeStart := timeStart.AddDate(-1, 0, 0)
-		goodTimeEnd := timeStart
+		goodStartTime := timeStart.AddDate(-1, 0, 0)
+		goodEndTime := timeStart
 
 		//the empty space string accounts for an empty space in the structure of the csv file
 		severityString := strings.Split(rec[5], " ")
@@ -82,7 +82,7 @@ func CsvParser(filePath string, numIncidents ...int) []incident.DefaultIncident 
 
 		// Make an instance of a DefaultIncident that is compatible with the Incident interface
 		defaultIncident := new(incident.DefaultIncident)
-		defaultIncident.MakeIncidentData(goodTimeStart, goodTimeEnd, timeStart, timeEnd, avgGoodDS, avgBadDS, severity, testsAffected)
+		defaultIncident.MakeIncidentData(goodStartTime, goodEndTime, timeStart, timeEnd, avgGoodDS, avgBadDS, severity, testsAffected)
 
 		defaultIncidents = append(defaultIncidents, *defaultIncident)
 

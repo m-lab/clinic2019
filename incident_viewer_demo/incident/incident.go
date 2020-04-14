@@ -7,12 +7,12 @@ import (
 
 /* All incident types must implement the Incident interface */
 type Incident interface {
-	MakeIncidentData(goodTimeStart time.Time, goodTimeEnd time.Time,
-		badTimeStart time.Time,
-		badTimeEnd time.Time,
-		avgDSGood float64,
-		avgDSBad float64,
-		severityDecimal float64,
+	MakeIncidentData(goodStartTime time.Time, goodEndTime time.Time,
+		badStartTime time.Time,
+		badEndTime time.Time,
+		avgGoodDS float64,
+		avgBadDS float64,
+		severity float64,
 		testsAffected int)
 	GetIncidentData() (time.Time, time.Time, time.Time, time.Time, float64, float64, float64, int, string, string, string)
 }
@@ -75,26 +75,26 @@ func (i *IncidentData) MakeJsonIncident(
 }
 
 /* Assign data members and set appropriate text for information fields */
-func (i *DefaultIncident) MakeIncidentData(goodTimeStart time.Time, goodTimeEnd time.Time,
-	badTimeStart time.Time,
-	badTimeEnd time.Time,
-	avgDSGood float64,
-	avgDSBad float64,
-	severityDecimal float64,
+func (i *DefaultIncident) MakeIncidentData(goodStartTime time.Time, goodEndTime time.Time,
+	badStartTime time.Time,
+	badEndTime time.Time,
+	avgGoodDS float64,
+	avgBadDS float64,
+	severity float64,
 	testsAffected int) {
 
-	gds := strconv.FormatFloat(avgDSGood, 'f', 2, 64)
-	bds := strconv.FormatFloat(avgDSGood, 'f', 2, 64)
-	s := strconv.FormatFloat(severityDecimal*100, 'f', 2, 64)
+	gds := strconv.FormatFloat(avgGoodDS, 'f', 2, 64)
+	bds := strconv.FormatFloat(avgGoodDS, 'f', 2, 64)
+	s := strconv.FormatFloat(severity*100, 'f', 2, 64)
 	ta := strconv.Itoa(testsAffected)
 
-	i.goodStartTime = goodTimeStart
-	i.goodEndTime = goodTimeEnd
-	i.badStartTime = badTimeStart
-	i.badEndTime = badTimeEnd
-	i.avgGoodDS = avgDSGood
-	i.avgBadDS = avgDSBad
-	i.severity = severityDecimal
+	i.goodStartTime = goodStartTime
+	i.goodEndTime = goodEndTime
+	i.badStartTime = badStartTime
+	i.badEndTime = badEndTime
+	i.avgGoodDS = avgGoodDS
+	i.avgBadDS = avgBadDS
+	i.severity = severity
 	i.numTestsAffected = testsAffected
 	i.goodPeriodInfo = "Average download speed: " + gds + " mb/s"
 	i.badPeriodInfo = "Average download speed: " + bds + " mb/s"
