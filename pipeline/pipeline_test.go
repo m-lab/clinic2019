@@ -9,6 +9,8 @@ import (
 	"github.com/m-lab/signal-searcher/analyzer"
 )
 
+// TODO after Pascal's PR goes in: make an full test of running the pipeline and then seeing if a particular incident is on google cloud
+
 type mockIncidentProducer struct{}
 
 func (mock *mockIncidentProducer) findIncidents() []analyzer.Incident {
