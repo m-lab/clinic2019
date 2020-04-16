@@ -15,7 +15,6 @@ import (
 
 func CsvParser(filePath string, numIncidents ...int) []incident.DefaultIncident {
 
-	//just assume that you have 100 rows in the csv and then return an array of 1OO incidents
 	var defaultIncidents []incident.DefaultIncident = make([]incident.DefaultIncident, 0)
 	var rec []string
 	const shortForm = "2006-01-02"
@@ -66,8 +65,8 @@ func CsvParser(filePath string, numIncidents ...int) []incident.DefaultIncident 
 		timeEnd, _ := time.Parse(shortForm, badTimeEndString[1])
 
 		//the good period starts one year prior to the start of the bad period in this demo
-		goodTimeStart := timeStart.AddDate(-1, 0, 0)
-		goodTimeEnd := timeStart
+		goodStartTime := timeStart.AddDate(-1, 0, 0)
+		goodEndTime := timeStart
 
 		//the empty space string accounts for an empty space in the structure of the csv file
 		severityString := strings.Split(rec[5], " ")
@@ -81,20 +80,19 @@ func CsvParser(filePath string, numIncidents ...int) []incident.DefaultIncident 
 		avgBadDString := strings.Split(rec[7], " ")
 		avgBadDS, _ := strconv.ParseFloat(avgBadDString[1], 64)
 
+		// Make an instance of a DefaultIncident that is compatible with the Incident interface
 		defaultIncident := new(incident.DefaultIncident)
-
-		defaultIncident.Init(goodTimeStart, goodTimeEnd, timeStart, timeEnd, avgGoodDS,
-			avgBadDS, severity, testsAffected)
+		defaultIncident.MakeIncidentData(goodStartTime, goodEndTime, timeStart, timeEnd, avgGoodDS, avgBadDS, severity, testsAffected)
 
 		defaultIncidents = append(defaultIncidents, *defaultIncident)
-		
+
 		i++
 
 	}
 	return defaultIncidents
 }
 
-//* This function takes in an array of 100 default incidents because that is what is provided by the csvParser above *//
+//* This function takes in an array of default incidents *//
 func convertDefaultIncidentToIncident(defaultIncidents []incident.DefaultIncident) []incident.Incident {
 	incidentArr := make([]incident.Incident, len(defaultIncidents), len(defaultIncidents))
 	for i := range defaultIncidents {
@@ -113,19 +111,15 @@ func makeJsonObjFile(arr []incident.Incident) *os.File {
 		return f
 	}
 
+	// Use data retrieved through the Incident interface to create incidents formatted for JSON
 	for i := 0; i < numObjects; i++ {
-		gpStart, gpEnd := arr[i].GetGoodPeriod()
-		bpStart, bpEnd := arr[i].GetBadPeriod()
-		gMetric := arr[i].GetGoodMetric()
-		bMetric := arr[i].GetBadMetric()
-		severity := arr[i].GetSeverity()
-		testsAffected := arr[i].GetTestsAffected()
-		gpInfo := arr[i].GetGoodPeriodInfo()
-		bpInfo := arr[i].GetBadPeriodInfo()
-		iInfo := arr[i].GetIncidentInfo()
-		inc := incident.IncidentData{gpStart, gpEnd, bpStart, bpEnd, gMetric, bMetric, severity, testsAffected, gpInfo, bpInfo, iInfo}
-		objs[i] = inc
+		inc := arr[i]
+		var incidentData = incident.IncidentData{}
+		incidentData.MakeJsonIncident(inc.GetIncidentData())
+		objs[i] = incidentData
 	}
+
+	// Write the incident JSON file
 	bytes, err := json.Marshal(objs)
 	n, err := f.Write(bytes)
 
