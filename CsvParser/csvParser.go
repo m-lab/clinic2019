@@ -178,10 +178,12 @@ func dynamicallyMakeDir(originPath string, locationCode string) string {
 }
 
 // Dynamically store incidents in a file tree hierachy
-func placeIncidentsInFileHierarchy(originPath string, incMap map[string]map[string][]incident.IncidentData) {
+// The rootPath argument specifies where the incident file hierarchy is going to sit on disk
+// Example: placeIncidentsInFileHierarchy("/Users/pascoball7/Documents/test", someIncidentMap)
+func placeIncidentsInFileHierarchy(rootPath string, incMap map[string]map[string][]incident.IncidentData) {
 
 	for key, value := range incMap {
-		pathToAsnJsonFiles := dynamicallyMakeDir(originPath, key)
+		pathToAsnJsonFiles := dynamicallyMakeDir(rootPath, key)
 	
 		for asnkey, asnValue := range value {
 			filePath := pathToAsnJsonFiles + "/" + asnkey + ".json"
