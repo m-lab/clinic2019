@@ -171,7 +171,7 @@ func Test_FileHierachy(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	originPath := filepath.Dir(ex)
+	rootPath := filepath.Dir(ex)
 
 	incidentMap := mapIncidentsToLocAndISP(generateTestIncidents())
 
@@ -182,24 +182,22 @@ func Test_FileHierachy(t *testing.T) {
 	locationCodesArr = append(locationCodesArr, "/na/us")
 
 	tests := []struct {
-		name        string
-		input  []string
+		name    string
+		input	[]string
 	}{
 		{
-			name: "Check of the directories are being created",
+			name: "Check if the directories are being created",
 			input: locationCodesArr,
 		},
 	}
 
-	placeIncidentsInFileHierarchy(originPath, incidentMap)
+	placeIncidentsInFileHierarchy(rootPath, incidentMap)
 
 	for _, tt := range tests {
-
 		i := 0
-
 		t.Run(tt.name, func(t *testing.T) {
 			for ( i != 4) {
-				if _, err := os.Stat(originPath + tt.input[i]); os.IsNotExist(err) {
+				if _, err := os.Stat(rootPath + tt.input[i]); os.IsNotExist(err) {
 					t.Errorf("File does not exist")
 				}
 				i++
@@ -221,22 +219,22 @@ func Test_FileHierachy(t *testing.T) {
 		theNextMonthIncidents := append(generateTestIncidents(), *testIncident)
 		theNextMonthIcidentMap := mapIncidentsToLocAndISP(theNextMonthIncidents)
 
-		placeIncidentsInFileHierarchy(originPath, theNextMonthIcidentMap)
+		placeIncidentsInFileHierarchy(rootPath, theNextMonthIcidentMap)
 
-		jsonFile, _ := os.Open(originPath + "/eu/fr/AS10774x.json")
+		jsonFile, _ := os.Open(rootPath + "/eu/fr/AS10774x.json")
 		byteValue, _ := ioutil.ReadAll(jsonFile)
 		var incidents []incident.IncidentData = make([]incident.IncidentData, 0)
 		json.Unmarshal(byteValue, &incidents)
 
 		t.Run(tt.name, func(t *testing.T) {
 			for ( i != 4) {
-				if _, err := os.Stat(originPath + tt.input[i]); os.IsNotExist(err) {
+				if _, err := os.Stat(rootPath + tt.input[i]); os.IsNotExist(err) {
 					t.Errorf("File does not exist")
 				}
 				i++
 			}
-			if len(incidents) != 3{
-				t.Errorf("Rerun is not working")
+			if len(incidents) != 3 {
+				t.Errorf("Rerun is not working properly")
 			}
 		})
 	}
