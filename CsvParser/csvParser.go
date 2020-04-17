@@ -264,3 +264,13 @@ func mapIncidentsToLocAndISP(incArr []incident.DefaultIncident) map[string]map[s
 
 	return incidentsMemMap
 }
+
+// A wrapper function that takes a csv file of incidents metadata and 
+// a root path to create a file hierarchy of incidents where directories
+// represents location in internet topography and files have incidents mapped to
+// a specific ISP and location
+func createHierarchy(rootPath string, incidentsCSVfilePath string){
+	arrayofIncidents := csvParser(incidentsCSVfilePath)
+	incidentsMap := mapIncidentsToLocAndISP(arrayofIncidents)
+	placeIncidentsInFileHierarchy(rootPath, incidentsMap)
+}
