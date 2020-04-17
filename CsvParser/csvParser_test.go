@@ -179,6 +179,7 @@ func Test_FileHierachy(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
+	// Same directory as the executable
 	rootPath := filepath.Dir(ex)
 
 	incidentMap := mapIncidentsToLocAndISP(generateTestIncidents())

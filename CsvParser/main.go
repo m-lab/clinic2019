@@ -1,20 +1,20 @@
-package csvParser
-
+package main
+//"container/list"
 import (
 	"encoding/csv"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"os"
 	"strconv"
 	"strings"
 	"time"
-	"os/exec"
 	"github.com/m-lab/clinic2019/incident_viewer_demo/incident"
 )
 
-// Given a CSV file of incidents metadata, retrieve that meta data to construct incidents
-// Returns an Array of constructed incidents
+// Given a csv file of incidents meta data, retrieves that meta data to construct incidents, and 
+// Returns an Array of those incidents
 func CsvParser(filePath string, numIncidents ...int) []incident.DefaultIncident {
 
 	var defaultIncidents []incident.DefaultIncident = make([]incident.DefaultIncident, 0)
@@ -67,8 +67,8 @@ func CsvParser(filePath string, numIncidents ...int) []incident.DefaultIncident 
 		timeEnd, _ := time.Parse(shortForm, badTimeEndString[1])
 
 		// The good period starts one year prior to the start of the bad period in this demo
-		goodStartTime := timeStart.AddDate(-1, 0, 0)
-		goodEndTime := timeStart
+		goodTimeStart := timeStart.AddDate(-1, 0, 0)
+		goodTimeEnd := timeStart
 
 		// The empty space string accounts for an empty space in the structure of the csv file entries
 		severityString := strings.Split(rec[5], " ")
@@ -86,12 +86,13 @@ func CsvParser(filePath string, numIncidents ...int) []incident.DefaultIncident 
 
 		ASN := strings.Split(rec[1], " ")[1]
 
-		// Make an instance of a DefaultIncident that is compatible with the Incident interface
 		defaultIncident := new(incident.DefaultIncident)
-		defaultIncident.MakeIncidentData(goodStartTime, goodEndTime, timeStart, timeEnd, avgGoodDS, avgBadDS, ASN, locationString, severity, testsAffected)
+
+		defaultIncident.Init(goodTimeStart, goodTimeEnd, timeStart, timeEnd, avgGoodDS,
+			avgBadDS, ASN, locationString, severity, testsAffected)
 
 		defaultIncidents = append(defaultIncidents, *defaultIncident)
-
+		
 		i++
 
 	}
@@ -99,23 +100,20 @@ func CsvParser(filePath string, numIncidents ...int) []incident.DefaultIncident 
 }
 
 // Converts a default incident that implements our interface to an incident object designed to exist in a json file
-// Returns incident of type IncidentJsonData
-func convertDefaultIncidentToIncidentJsonData(i incident.DefaultIncident) incident.IncidentJsonData {
-	gpStart, gpEnd, bpStart, bpEnd, gMetric, bMetric, asn, locationString, severity, testsAffected, gpInfo, bpInfo, iInfo := i.GetIncidentData()
-	inc := incident.IncidentJsonData{
-		GoodPeriodStart:  gpStart,
-		GoodPeriodEnd:    gpEnd,
-		BadPeriodStart:   bpStart,
-		BadPeriodEnd:     bpEnd,
-		GoodPeriodMetric: gMetric,
-		BadPeriodMetric:  bMetric,
-		ASN:              asn,
-		Location:         locationString,
-		Severity:         severity,
-		NumTestsAffected: testsAffected,
-		GoodPeriodInfo:   gpInfo,
-		BadPeriodInfo:    bpInfo,
-		IncidentInfo:     iInfo}
+// Returns incident of type IncidentData 
+func convertDefaultIncidentToIncidentData(i incident.DefaultIncident) incident.IncidentData {
+	gpStart, gpEnd := i.GetGoodPeriod()
+	bpStart, bpEnd := i.GetBadPeriod()
+	gMetric := i.GetGoodMetric()
+	bMetric := i.GetBadMetric()
+	severity := i.GetSeverity()
+	testsAffected := i.GetTestsAffected()
+	gpInfo := i.GetGoodPeriodInfo()
+	bpInfo := i.GetBadPeriodInfo()
+	iInfo := i.GetIncidentInfo()
+	locationString := i.GetLocation()
+	asn := i.GetASN()
+	inc := incident.IncidentData{gpStart, gpEnd, bpStart, bpEnd, gMetric, bMetric, asn, locationString, severity, testsAffected, gpInfo, bpInfo, iInfo}
 	return inc
 }
 
@@ -156,8 +154,7 @@ func dirExists(originPath string, dir string) bool {
 }
 
 // Constructs incidents file hierarchy on basis of an incident location code
-// Dynamically construct a directory hierarchy and return the path where an incident ends on the disk
-// Gets used by placeIncidentsInFileHierarchy function
+// Dynamically construct a directory hierarchy and return the path where an incident ends on the disk 
 func dynamicallyMakeDir(originPath string, locationCode string) string {
 	locationCodeArr := parseLocationCode(locationCode)
 	locationCodeArrLen := len(locationCodeArr)
@@ -180,14 +177,47 @@ func dynamicallyMakeDir(originPath string, locationCode string) string {
 	return originPath
 }
 
+// Places an array of incidents in a map with every location having an asn map of incidents mapped to it
+func mapIncidentsToLocAndISP(incArr []incident.DefaultIncident) map[string]map[string][]incident.IncidentData{
+
+	incidentsMemMap := make(map[string]map[string][]incident.IncidentData)
+	incNum := len(incArr)
+
+	for i := 0; i < incNum; i++{
+		fmt.Printf("%d",i)
+		fmt.Printf("\n")
+		// New location
+		_, found := incidentsMemMap[incArr[i].GetLocation()]
+		if  (!found) {
+			incidentsAsnMap := make(map[string][]incident.IncidentData)
+			var incidents []incident.IncidentData = make([]incident.IncidentData, 0)
+			incidentsAsnMap[incArr[i].GetASN()] = append(incidents, convertDefaultIncidentToIncidentData(incArr[i]))
+			incidentsMemMap[incArr[i].GetLocation()] = incidentsAsnMap
+		
+		} else {
+			// New asn within an existing location
+			_, valFound := incidentsMemMap[incArr[i].GetLocation()][incArr[i].GetASN()]
+			if  !valFound {
+				var incidents []incident.IncidentData = make([]incident.IncidentData, 0)
+				incidentsMemMap[incArr[i].GetLocation()][incArr[i].GetASN()] = append(incidents, convertDefaultIncidentToIncidentData(incArr[i]))
+		
+			// Already existing asn within an exisiting location
+			} 
+			if (valFound) {
+				incidentsMemMap[incArr[i].GetLocation()][incArr[i].GetASN()] = append(incidentsMemMap[incArr[i].GetLocation()][incArr[i].GetASN()], convertDefaultIncidentToIncidentData(incArr[i]))
+			}
+		}
+	}
+
+	return incidentsMemMap
+}
+
 // Dynamically store incidents in a file tree hierachy
-// The rootPath argument specifies where the incident file hierarchy is going to sit on disk
-// Example: placeIncidentsInFileHierarchy("/Users/pascoball7/Documents/test", someIncidentMap)
-func placeIncidentsInFileHierarchy(rootPath string, incMap map[string]map[string][]incident.IncidentJsonData) {
+func placeIncidentsInFileHierarchy(originPath string, incMap map[string]map[string][]incident.IncidentData) {
 
 	for key, value := range incMap {
-		pathToAsnJsonFiles := dynamicallyMakeDir(rootPath, key)
-
+		pathToAsnJsonFiles := dynamicallyMakeDir(originPath, key)
+	
 		for asnkey, asnValue := range value {
 			filePath := pathToAsnJsonFiles + "/" + asnkey + ".json"
 
@@ -195,9 +225,9 @@ func placeIncidentsInFileHierarchy(rootPath string, incMap map[string]map[string
 			// Call create later. This is all to avoid anything "incremental running"
 			if _, err := os.Stat(filePath); !os.IsNotExist(err) {
 				removeErr := os.Remove(filePath)
-				// Don't know if os.Remove is atomic
+				// I don't know if os.Remove is atomic
 				// Might have to wait for it
-
+				
 				if removeErr != nil {
 					log.Fatalf("failed to remove an existing: %p", removeErr)
 				}
@@ -206,75 +236,36 @@ func placeIncidentsInFileHierarchy(rootPath string, incMap map[string]map[string
 			f, err := os.Create(filePath)
 
 			if err != nil {
-				log.Fatalf("failed to create a file: %p", err)
+				log.Fatalf("failed to create a file: %p",err)
 			}
-
+			
 			result, errorMarshal := json.Marshal(asnValue)
 
-			if errorMarshal != nil {
+			if errorMarshal != nil {	
 				log.Fatalf("failed to marshel: %p", errorMarshal)
 			}
 
 			_, errWrite := f.Write(result)
 
 			if errWrite != nil {
-				log.Fatalf("failed to write to a file: %p", errWrite)
+				log.Fatalf("failed to write to a file: %p",errWrite)
 			}
 
 			errClose := f.Close()
 
 			if errClose != nil {
-				log.Fatalf("failed to close a file: %p", errClose)
+				log.Fatalf("failed to close a file: %p",errClose)
 
 			}
 		}
 	}
 }
 
-// Places an array of incidents in a map with every location having an asn map of incidents mapped to it
-func mapIncidentsToLocAndISP(incArr []incident.DefaultIncident) map[string]map[string][]incident.IncidentJsonData {
 
-	incidentsMemMap := make(map[string]map[string][]incident.IncidentJsonData)
-	incNum := len(incArr)
 
-	for i := 0; i < incNum; i++ {
+func main() {
 
-		// New location
-		_, _, _, _, _, _, asn, location, _, _, _, _, _ := incArr[i].GetIncidentData()
-		_, found := incidentsMemMap[location]
-		if !found {
-			incidentsAsnMap := make(map[string][]incident.IncidentJsonData)
-			var incidents []incident.IncidentJsonData = make([]incident.IncidentJsonData, 0)
-			incidentsAsnMap[asn] = append(incidents, convertDefaultIncidentToIncidentJsonData(incArr[i]))
-			incidentsMemMap[location] = incidentsAsnMap
-
-		} else {
-			// New asn within an existing location
-			_, valFound := incidentsMemMap[location][asn]
-			if !valFound {
-				var incidents []incident.IncidentJsonData = make([]incident.IncidentJsonData, 0)
-				incidentsMemMap[location][asn] = append(incidents, convertDefaultIncidentToIncidentJsonData(incArr[i]))
-			}
-			// Already existing asn within an exisiting location
-			if valFound {
-				incidentsMemMap[location][asn] = append(incidentsMemMap[location][asn], convertDefaultIncidentToIncidentJsonData(incArr[i]))
-			}
-		}
-	}
-
-	return incidentsMemMap
-}
-
-// A wrapper function that takes a csv file of incidents metadata and 
-// a root path to create a file hierarchy of incidents where directories
-// represents location in internet topography and files have incidents mapped to
-// a specific ISP and location
-func createHierarchy(rootPath string, incidentsCSVfilePath string){
-	arrayofIncidents := csvParser(incidentsCSVfilePath)
-	incidentsMap := mapIncidentsToLocAndISP(arrayofIncidents)
-	placeIncidentsInFileHierarchy(rootPath, incidentsMap)
-
-	cloudWriteCmd := "gsutil -m cp -r " + rootPath + " gs://incident_mounting_test"
-	exec.Commmand("bash", "-c", cloudWriteCmd)
-
+	incidentArray := CsvParser("incidentfile.csv")
+	incMemMap := mapIncidentsToLocAndISP(incidentArray)
+	placeIncidentsInFileHierarchy("/Users/pascoball7/Documents/test", incMemMap)
 }
