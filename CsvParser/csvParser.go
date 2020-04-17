@@ -66,7 +66,7 @@ func CsvParser(filePath string, numIncidents ...int) []incident.DefaultIncident 
 		badTimeEndString := strings.Split(rec[4], " ")
 		timeEnd, _ := time.Parse(shortForm, badTimeEndString[1])
 
-		//the good period starts one year prior to the start of the bad period in this demo
+		// The good period starts one year prior to the start of the bad period in this demo
 		goodStartTime := timeStart.AddDate(-1, 0, 0)
 		goodEndTime := timeStart
 
