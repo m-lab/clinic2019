@@ -22,8 +22,8 @@ func initializeTestIncident() {
 	var ge = time.Date(2001, 12, 12, 0, 0, 0, 0, time.UTC)
 	var bs = time.Date(2001, 12, 12, 1, 0, 0, 0, time.UTC)
 	var be = time.Date(2002, 12, 12, 0, 0, 0, 0, time.UTC)
- 
-	i.MakeIncidentData(gs, ge, bs, be, "AS10774x", "nauscaclaremont", 50.2, 25.1, 0.5, 123456)
+
+	i.MakeIncidentData(gs, ge, bs, be, 50.2, 25.1, "AS10774x", "nauscaclaremont", 0.5, 123456)
 }
 
 func Test_getGoodPeriod(t *testing.T) {
