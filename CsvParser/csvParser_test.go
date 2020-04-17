@@ -69,17 +69,15 @@ func generateTestIncidents() []incident.DefaultIncident{
 
 func Test_CsvParserEntries(t *testing.T) {
 
-	testIncident := new(incident.DefaultIncident)
-	testIncident.Init(time.Date(2017, time.January, 1, 0, 0, 0, 0, time.UTC).AddDate(-1, 0, 0),
-		time.Date(2017, time.January, 1, 0, 0, 0, 0, time.UTC),
-		time.Date(2017, time.January, 1, 0, 0, 0, 0, time.UTC),
-		time.Date(2019, time.April, 1, 0, 0, 0, 0, time.UTC),
-		31.046068,
-		21.27035,
-		"AS11486x",
-		"naus",
-		0.326146, 4788063)
+	// Create test incident to check result against
+	var testIncident incident.DefaultIncident = incident.DefaultIncident{}
 
+	var gs = time.Date(2016, time.January, 1, 0, 0, 0, 0, time.UTC)
+	var ge = time.Date(2017, time.January, 1, 0, 0, 0, 0, time.UTC)
+	var bs = time.Date(2017, time.January, 1, 0, 0, 0, 0, time.UTC)
+	var be = time.Date(2019, time.April, 1, 0, 0, 0, 0, time.UTC)
+	testIncident.MakeIncidentData(gs, ge, bs, be, 31.046068, 21.27035, "AS11486x", "naus", 0.326146, 4788063)
+  
 	tests := []struct {
 		name string
 
@@ -89,7 +87,7 @@ func Test_CsvParserEntries(t *testing.T) {
 		{
 			name:  "The first entry in the incidents array",
 			input: "incidentfile.csv",
-			want:  *testIncident,
+			want:  testIncident,
 		},
 	}
 
@@ -130,17 +128,15 @@ func Test_numIncidentsSize(t *testing.T) {
 }
 
 func Test_CsvParserFiftyFirstEntry(t *testing.T) {
+  
+	// Create test incident to check result against
+	var testIncident incident.DefaultIncident = incident.DefaultIncident{}
 
-	testIncident := new(incident.DefaultIncident)
-	testIncident.Init(time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC).AddDate(-1, 0, 0),
-		time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC),
-		time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC),
-		time.Date(2018, time.April, 1, 0, 0, 0, 0, time.UTC),
-		7.862733,
-		5.334354,
-		"AS10774x",
-		"nauscalosangeles",
-		0.321565, 68089)
+	var gs = time.Date(2015, time.July, 1, 0, 0, 0, 0, time.UTC)
+	var ge = time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC)
+	var bs = time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC)
+	var be = time.Date(2018, time.April, 1, 0, 0, 0, 0, time.UTC)
+	testIncident.MakeIncidentData(gs, ge, bs, be, 7.862733, 5.334354, "AS10774x", "nauscalosangeles", 0.321565, 68089)
 
 	tests := []struct {
 		name  string
@@ -150,7 +146,7 @@ func Test_CsvParserFiftyFirstEntry(t *testing.T) {
 		{
 			name:  "The 51st entry in the incident array",
 			input: "incidentfile.csv",
-			want:  *testIncident,
+			want:  testIncident,
 		},
 	}
 

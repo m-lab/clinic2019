@@ -65,9 +65,9 @@ func CsvParser(filePath string, numIncidents ...int) []incident.DefaultIncident 
 		badTimeEndString := strings.Split(rec[4], " ")
 		timeEnd, _ := time.Parse(shortForm, badTimeEndString[1])
 
-		// The good period starts one year prior to the start of the bad period in this demo
-		goodTimeStart := timeStart.AddDate(-1, 0, 0)
-		goodTimeEnd := timeStart
+		//the good period starts one year prior to the start of the bad period in this demo
+		goodStartTime := timeStart.AddDate(-1, 0, 0)
+		goodEndTime := timeStart
 
 		// The empty space string accounts for an empty space in the structure of the csv file entries
 		severityString := strings.Split(rec[5], " ")
@@ -84,36 +84,44 @@ func CsvParser(filePath string, numIncidents ...int) []incident.DefaultIncident 
 		locationString := strings.Split(rec[2], " ")[1]
 
 		ASN := strings.Split(rec[1], " ")[1]
-
+    
+		// Make an instance of a DefaultIncident that is compatible with the Incident interface
 		defaultIncident := new(incident.DefaultIncident)
-
-		defaultIncident.Init(goodTimeStart, goodTimeEnd, timeStart, timeEnd, avgGoodDS,
-			avgBadDS, ASN, locationString, severity, testsAffected)
+		defaultIncident.MakeIncidentData(goodStartTime, goodEndTime, timeStart, timeEnd, avgGoodDS, avgBadDS, ASN, locationString, severity, testsAffected)
 
 		defaultIncidents = append(defaultIncidents, *defaultIncident)
-		
+
 		i++
 
 	}
 	return defaultIncidents
 }
 
+
 // Converts a default incident that implements our interface to an incident object designed to exist in a json file
 // Returns incident of type IncidentData 
-func convertDefaultIncidentToIncidentData(i incident.DefaultIncident) incident.IncidentData {
-	gpStart, gpEnd := i.GetGoodPeriod()
-	bpStart, bpEnd := i.GetBadPeriod()
-	gMetric := i.GetGoodMetric()
-	bMetric := i.GetBadMetric()
-	severity := i.GetSeverity()
-	testsAffected := i.GetTestsAffected()
-	gpInfo := i.GetGoodPeriodInfo()
-	bpInfo := i.GetBadPeriodInfo()
-	iInfo := i.GetIncidentInfo()
-	locationString := i.GetLocation()
-	asn := i.GetASN()
-	inc := incident.IncidentData{gpStart, gpEnd, bpStart, bpEnd, gMetric, bMetric, asn, locationString, severity, testsAffected, gpInfo, bpInfo, iInfo}
-	return inc
+// func convertDefaultIncidentToIncidentData(i incident.DefaultIncident) incident.IncidentData {
+// 	gpStart, gpEnd := i.GetGoodPeriod()
+// 	bpStart, bpEnd := i.GetBadPeriod()
+// 	gMetric := i.GetGoodMetric()
+// 	bMetric := i.GetBadMetric()
+// 	severity := i.GetSeverity()
+// 	testsAffected := i.GetTestsAffected()
+// 	gpInfo := i.GetGoodPeriodInfo()
+// 	bpInfo := i.GetBadPeriodInfo()
+// 	iInfo := i.GetIncidentInfo()
+// 	locationString := i.GetLocation()
+// 	asn := i.GetASN()
+// 	inc := incident.IncidentData{gpStart, gpEnd, bpStart, bpEnd, gMetric, bMetric, asn, locationString, severity, testsAffected, gpInfo, bpInfo, iInfo}
+// 	return inc
+
+//* This function takes in an array of default incidents *//
+func convertDefaultIncidentToIncident(defaultIncidents []incident.DefaultIncident) []incident.Incident {
+	incidentArr := make([]incident.Incident, len(defaultIncidents), len(defaultIncidents))
+	for i := range defaultIncidents {
+		incidentArr[i] = &defaultIncidents[i]
+	}
+	return incidentArr
 }
 
 // Takes in a location code and slices it into different location levels
@@ -133,12 +141,26 @@ func parseLocationCode(locationCode string) []string {
 		return locationCodesArr
 	}
 
-	for i := 0; i < len(locationCode); i = i + 2 {
-		locationCodesArr = append(locationCodesArr, locationCode[i:i+2])
-	}
+// <<<<<<< location-AS-support-memorycommit
+// 	for i := 0; i < len(locationCode); i = i + 2 {
+// 		locationCodesArr = append(locationCodesArr, locationCode[i:i+2])
+// 	}
+// =======
+// 	// Use data retrieved through the Incident interface to create incidents formatted for JSON
+// 	for i := 0; i < numObjects; i++ {
+// 		inc := arr[i]
+// 		var incidentData = incident.IncidentData{}
+// 		incidentData.MakeJsonIncident(inc.GetIncidentData())
+// 		objs[i] = incidentData
+// 	}
 
-	return locationCodesArr
-}
+// 	// Write the incident JSON file
+// 	bytes, err := json.Marshal(objs)
+// 	n, err := f.Write(bytes)
+// >>>>>>> master
+
+// 	return locationCodesArr
+// }
 
 // Checks if a specific directory, which corresponds to a specific location, has been created
 // Returns a bool
