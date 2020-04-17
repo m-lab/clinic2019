@@ -15,7 +15,8 @@ import (
 func generateTestIncidents() []incident.DefaultIncident {
 
 	testIncident := new(incident.DefaultIncident)
-	testIncident.MakeIncidentData(time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC).AddDate(-1, 0, 0),
+	testIncident.MakeIncidentData(
+		time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC).AddDate(-1, 0, 0),
 		time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC),
 		time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC),
 		time.Date(2018, time.April, 1, 0, 0, 0, 0, time.UTC),
@@ -23,10 +24,13 @@ func generateTestIncidents() []incident.DefaultIncident {
 		5.334354,
 		"AS10774x",
 		"eufr",
-		0.3565, 68089)
+		0.3565,
+		68089,
+	)
 
 	testIncidentTwo := new(incident.DefaultIncident)
-	testIncidentTwo.MakeIncidentData(time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC).AddDate(-1, 0, 0),
+	testIncidentTwo.MakeIncidentData(
+		time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC).AddDate(-1, 0, 0),
 		time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC),
 		time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC),
 		time.Date(2018, time.April, 1, 0, 0, 0, 0, time.UTC),
@@ -34,10 +38,13 @@ func generateTestIncidents() []incident.DefaultIncident {
 		5.334354,
 		"AS10774x",
 		"naus",
-		0.3565, 68089)
+		0.3565,
+		68089,
+	)
 
 	testIncidentThree := new(incident.DefaultIncident)
-	testIncidentThree.MakeIncidentData(time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC).AddDate(-1, 0, 0),
+	testIncidentThree.MakeIncidentData(
+		time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC).AddDate(-1, 0, 0),
 		time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC),
 		time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC),
 		time.Date(2018, time.April, 1, 0, 0, 0, 0, time.UTC),
@@ -45,10 +52,13 @@ func generateTestIncidents() []incident.DefaultIncident {
 		5.334354,
 		"AS10774x",
 		"eufr",
-		0.3575, 69089)
+		0.3575,
+		69089,
+	)
 
 	testIncidentFour := new(incident.DefaultIncident)
-	testIncidentFour.MakeIncidentData(time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC).AddDate(-1, 0, 0),
+	testIncidentFour.MakeIncidentData(
+		time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC).AddDate(-1, 0, 0),
 		time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC),
 		time.Date(2016, time.July, 1, 0, 0, 0, 0, time.UTC),
 		time.Date(2018, time.April, 1, 0, 0, 0, 0, time.UTC),
@@ -56,7 +66,9 @@ func generateTestIncidents() []incident.DefaultIncident {
 		5.334354,
 		"AS10774z",
 		"eufr",
-		0.3565, 68089)
+		0.3565,
+		68089,
+	)
 
 	testIncidentsArr := make([]incident.DefaultIncident, 0)
 	testIncidentsArr = append(testIncidentsArr, *testIncident)

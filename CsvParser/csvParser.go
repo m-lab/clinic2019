@@ -254,9 +254,8 @@ func mapIncidentsToLocAndISP(incArr []incident.DefaultIncident) map[string]map[s
 			if !valFound {
 				var incidents []incident.IncidentJsonData = make([]incident.IncidentJsonData, 0)
 				incidentsMemMap[location][asn] = append(incidents, convertDefaultIncidentToIncidentJsonData(incArr[i]))
-
-				// Already existing asn within an exisiting location
 			}
+			// Already existing asn within an exisiting location
 			if valFound {
 				incidentsMemMap[location][asn] = append(incidentsMemMap[location][asn], convertDefaultIncidentToIncidentJsonData(incArr[i]))
 			}
