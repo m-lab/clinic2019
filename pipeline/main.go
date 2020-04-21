@@ -1,12 +1,10 @@
-package pipeline
+package main
 
 import (
 	"os"
 	"os/exec"
 
 	"github.com/m-lab/clinic2019/csvParser"
-
-	"github.com/m-lab/clinic2019/incident_viewer_demo/incident"
 )
 
 type IncidentProducer interface {
@@ -20,14 +18,18 @@ func (ai *AnalyzerIncidents) findIncidents() {
 	exec.Command("bash", "-c", "go run github.com/m-lab/signal-searcher  | sort -nk1 > incidents.csv").Output()
 }
 
-func runPipeline() []incident.DefaultIncident {
+func runPipeline() {
 	// Run script that generates CSV
 	var i AnalyzerIncidents
 	i.findIncidents()
 	// Use os.Getenv("HOME") to get the /Users/[username] path
 	// When submitting, replace bucket name with "incidents-location-hierarchy"
-	csvParser.CreateHierarchy("/Users/jacquigiese/Desktop/incidentFileHierarchy", "incidents.csv", "incident_mounting_test")
-	// TODO: remove the csv file
+	csvParser.CreateHierarchy("incidents.csv", "/Users/jacquigiese/Desktop/clinicTest/", "incident_mounting_test")
+	// Remove the csv file
 	os.Remove("incidents.csv")
 
+}
+
+func main() {
+	runPipeline()
 }
