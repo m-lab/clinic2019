@@ -287,7 +287,7 @@ func readRootDir(rootPath string) []string {
 func createHierarchy(rootPath string, incidentsCSVfilePath string, bucketName string) {
 	incidentArray := CsvParser("incidentfile.csv")
 	incidentMap := mapIncidentsToLocAndISP(incidentArray)
-	placeIncidentsInFileHierarchy(rootPath, incMemMap)
+	placeIncidentsInFileHierarchy(rootPath, incidentMap)
 	list := readRootDir(rootPath)
 
 	index := 0
