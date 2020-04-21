@@ -266,14 +266,39 @@ func mapIncidentsToLocAndISP(incArr []incident.DefaultIncident) map[string]map[s
 	return incidentsMemMap
 }
 
+func readRootDir(rootPath string) []string {
+	file, err := os.Open(rootPath)
+	if err != nil {
+		log.Fatalf("failed opening directory: %s", err)
+	}
+	defer file.Close()
+
+	list, _ := file.Readdirnames(0) // 0 to read all files and folders
+	// for _, name := range list {
+	// 	fmt.Println(name)
+	// }
+	return list
+}
+
 func main() {
 
 	incidentArray := CsvParser("incidentfile.csv")
 	incMemMap := mapIncidentsToLocAndISP(incidentArray)
-	rootPath := "/Users/[username]/Desktop/clinicTest/"
+	rootPath := "/Users/jacquigiese/Desktop/clinicTest/"
 	placeIncidentsInFileHierarchy(rootPath, incMemMap)
-	// cloudWriteCmd := "gsutil -m cp -r " + rootPath + " gs://incident_mounting_test"
-	exec.Command("bash", "-c", "gsutil -m cp -r /Users/[username]/Desktop/clinicTest gs://incident_mounting_test")
+	list := readRootDir(rootPath)
 
-	// gsutil -m cp -r /Users/[username]/Desktop/clinicTest/* gs://incident_mounting_test
+	index := 0
+	for _, name := range list {
+		// Ignore the first file since it is a .DS_Store
+		// Ignore the last folder since it is an incident template
+		if index != 0 && index != 7 {
+			dirUploadCmd := "gsutil -m cp -r " + rootPath + name + " gs://incident_mounting_test"
+			cmd := exec.Command("bash", "-c", dirUploadCmd)
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
+			cmd.Run()
+		}
+		index++
+	}
 }

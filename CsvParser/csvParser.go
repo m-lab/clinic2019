@@ -6,10 +6,11 @@ import (
 	"io"
 	"log"
 	"os"
+	"os/exec"
 	"strconv"
 	"strings"
 	"time"
-	"os/exec"
+
 	"github.com/m-lab/clinic2019/incident_viewer_demo/incident"
 )
 
@@ -265,16 +266,42 @@ func mapIncidentsToLocAndISP(incArr []incident.DefaultIncident) map[string]map[s
 	return incidentsMemMap
 }
 
-// A wrapper function that takes a csv file of incidents metadata and 
+// Return a list of all file and directory names in the given path
+func readRootDir(rootPath string) []string {
+	file, err := os.Open(rootPath)
+	if err != nil {
+		log.Fatalf("failed opening directory: %s", err)
+	}
+	defer file.Close()
+
+	list, _ := file.Readdirnames(0) // 0 to read all files and folders
+
+	return list
+}
+
+// A wrapper function that takes a csv file of incidents metadata and
 // a root path to create a file hierarchy of incidents where directories
 // represents location in internet topography and files have incidents mapped to
 // a specific ISP and location
-func createHierarchy(rootPath string, incidentsCSVfilePath string){
-	arrayofIncidents := csvParser(incidentsCSVfilePath)
-	incidentsMap := mapIncidentsToLocAndISP(arrayofIncidents)
-	placeIncidentsInFileHierarchy(rootPath, incidentsMap)
+// Root path can be "/Users/[username]/Desktop/incidents/"
+func createHierarchy(rootPath string, incidentsCSVfilePath string, bucketName string) {
+	incidentArray := CsvParser("incidentfile.csv")
+	incidentMap := mapIncidentsToLocAndISP(incidentArray)
+	placeIncidentsInFileHierarchy(rootPath, incMemMap)
+	list := readRootDir(rootPath)
 
-	cloudWriteCmd := "gsutil -m cp -r " + rootPath + " gs://incident_mounting_test"
-	exec.Commmand("bash", "-c", cloudWriteCmd)
-
+	index := 0
+	for _, name := range list {
+		// Ignore the first file since it is a .DS_Store
+		// Ignore the last folder since it is an incident template
+		if index != 0 && index != 7 {
+			// Upload file structure to Google Cloud Storage using the command line gsutil tool
+			dirUploadCmd := "gsutil -m cp -r " + rootPath + name + " gs://" + bucketName
+			cmd := exec.Command("bash", "-c", dirUploadCmd)
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
+			cmd.Run()
+		}
+		index++
+	}
 }
