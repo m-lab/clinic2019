@@ -284,8 +284,8 @@ func readRootDir(rootPath string) []string {
 // represents location in internet topography and files have incidents mapped to
 // a specific ISP and location
 // Root path can be "/Users/[username]/Desktop/incidents/"
-func createHierarchy(rootPath string, incidentsCSVfilePath string, bucketName string) {
-	incidentArray := CsvParser("incidentfile.csv")
+func CreateHierarchy(rootPath string, incidentsCSVfilePath string, bucketName string) {
+	incidentArray := CsvParser(incidentsCSVfilePath)
 	incidentMap := mapIncidentsToLocAndISP(incidentArray)
 	placeIncidentsInFileHierarchy(rootPath, incidentMap)
 	list := readRootDir(rootPath)
