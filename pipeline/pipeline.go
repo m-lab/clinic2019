@@ -5,29 +5,35 @@ import (
 	"os/exec"
 
 	"github.com/m-lab/clinic2019/csvParser"
-
-	"github.com/m-lab/clinic2019/incident_viewer_demo/incident"
 )
 
+var BUCKET_NAME = "incidents-location-hierarchy"
+var INCIDENT_CSV = "incidents.csv"
+
 type IncidentProducer interface {
-	FindIncidents()
+	findIncidents()
 }
 
 type AnalyzerIncidents struct{}
 
 func (ai *AnalyzerIncidents) findIncidents() {
-	// I think this will generate the CSV without needing a cmd.Run()
-	exec.Command("bash", "-c", "go run github.com/m-lab/signal-searcher  | sort -nk1 > incidents.csv").Output()
+	runSignalSearcher := "go run github.com/m-lab/signal-searcher  | sort -nk1 > " + INCIDENT_CSV
+	cmd := exec.Command("bash", "-c", runSignalSearcher)
+	cmd.Run()
 }
 
-func runPipeline() []incident.DefaultIncident {
-	// Run script that generates CSV
+func runPipeline() {
+	// Run script that generates CSV of incidents
 	var i AnalyzerIncidents
 	i.findIncidents()
-	// Use os.Getenv("HOME") to get the /Users/[username] path
-	// When submitting, replace bucket name with "incidents-location-hierarchy"
-	csvParser.CreateHierarchy("/Users/jacquigiese/Desktop/incidentFileHierarchy", "incidents.csv", "incident_mounting_test")
-	// TODO: remove the csv file
-	os.Remove("incidents.csv")
+
+	// Temporary place a directory of incidents on the user's desktop to copy files to GCS
+	usersPath := os.Getenv("HOME")
+	incidentPath := usersPath + "/Desktop/generatedIncidents/"
+	csvParser.CreateHierarchy(incidentPath, INCIDENT_CSV, BUCKET_NAME)
+
+	// Remove CSV file and directory of incidents
+	os.Remove(INCIDENT_CSV)
+	os.RemoveAll(incidentPath)
 
 }
