@@ -44,8 +44,10 @@ func Test_findIncidents(t *testing.T) {
 	}
 }
 
-// Test takes around 10 minutes to run
-// Checks if there are particular incidents in each of the top level directories in the incidents-location-hierarchy bucket
+// Test takes around 10 minutes to run with runPipeline() uncommented
+// Checks if there are particular incidents in each of the top level directories in
+// the incidents-location-hierarchy bucket
+// Assumes that these incidents already exist in the bucket on Google Cloud Storage
 func Test_runPipeline(t *testing.T) {
 	afTest := incident.IncidentJsonData{
 		GoodPeriodStart:  time.Date(2010, time.September, 1, 0, 0, 0, 0, time.UTC),
@@ -186,7 +188,9 @@ func Test_runPipeline(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			// Uncomment this call to update incidents on Google Cloud Storage
 			// runPipeline()
+
 			// Obtain an object handle for a particular incident in the tested region
 			obj := bkt.Object(tt.input)
 			r, err := obj.NewReader(ctx)
