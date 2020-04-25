@@ -4,7 +4,7 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/m-lab/clinic2019/csvParser"
+	csvParser "github.com/m-lab/clinic2019/CsvParser"
 )
 
 var BUCKET_NAME = "incidents-location-hierarchy"
