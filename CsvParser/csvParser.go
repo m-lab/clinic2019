@@ -185,10 +185,8 @@ func dynamicallyMakeDir(originPath string, locationCode string) string {
 // The rootPath argument specifies where the incident file hierarchy is going to sit on disk
 // Example: placeIncidentsInFileHierarchy("/Users/pascoball7/Documents/test", someIncidentMap)
 func placeIncidentsInFileHierarchy(rootPath string, incMap map[string]map[string][]incident.IncidentJsonData) {
-
 	for key, value := range incMap {
 		pathToAsnJsonFiles := dynamicallyMakeDir(rootPath, key)
-
 		for asnkey, asnValue := range value {
 			filePath := pathToAsnJsonFiles + "/" + asnkey + ".json"
 
@@ -290,18 +288,13 @@ func CreateHierarchy(rootPath string, incidentsCSVfilePath string, bucketName st
 	placeIncidentsInFileHierarchy(rootPath, incidentMap)
 	list := readRootDir(rootPath)
 
-	index := 0
 	for _, name := range list {
-		// Ignore the first file since it is a .DS_Store
-		// Ignore the last folder since it is an incident template
-		if index != 0 && index != 7 {
-			// Upload file structure to Google Cloud Storage using the command line gsutil tool
-			dirUploadCmd := "gsutil -m cp -r " + rootPath + name + " gs://" + bucketName
-			cmd := exec.Command("bash", "-c", dirUploadCmd)
-			cmd.Stdout = os.Stdout
-			cmd.Stderr = os.Stderr
-			cmd.Run()
-		}
-		index++
+		// Upload file structure to Google Cloud Storage using the command line gsutil tool
+		dirUploadCmd := "gsutil -m cp -r " + rootPath + name + " gs://" + bucketName
+		cmd := exec.Command("bash", "-c", dirUploadCmd)
+		// Uncomment the following lines to see progress of upload
+		// cmd.Stdout = os.Stdout
+		// cmd.Stderr = os.Stderr
+		cmd.Run()
 	}
 }
