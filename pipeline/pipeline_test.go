@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"testing"
 	"time"
 
@@ -13,34 +14,35 @@ import (
 	"google.golang.org/api/option"
 )
 
-// func Test_findIncidents(t *testing.T) {
+// Check that the CSV was generated
+func Test_findIncidents(t *testing.T) {
 
-// 	tests := []struct {
-// 		name  string
-// 		input string
-// 	}{
-// 		{
-// 			name:  "Test that CSV is generated",
-// 			input: INCIDENT_CSV,
-// 		},
-// 	}
+	tests := []struct {
+		name  string
+		input string
+	}{
+		{
+			name:  "Test that CSV is generated",
+			input: INCIDENT_CSV,
+		},
+	}
 
-// 	for _, tt := range tests {
-// 		t.Run(tt.name, func(t *testing.T) {
-// 			analyzer := AnalyzerIncidents{}
-// 			analyzer.findIncidents()
-// 			// Attempt to open the file
-// 			_, err := os.Open(tt.input)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			analyzer := AnalyzerIncidents{}
+			analyzer.findIncidents()
+			// Attempt to open the file
+			_, err := os.Open(tt.input)
 
-// 			if err != nil {
-// 				t.Errorf("Cannot open '%s':%s\n", tt.input, err.Error())
-// 			} else {
-// 				// File generation was confirmed, remove to clean test state
-// 				os.Remove(INCIDENT_CSV)
-// 			}
-// 		})
-// 	}
-// }
+			if err != nil {
+				t.Errorf("Cannot open '%s':%s\n", tt.input, err.Error())
+			} else {
+				// File generation was confirmed, remove to clean test state
+				os.Remove(INCIDENT_CSV)
+			}
+		})
+	}
+}
 
 // This test takes around 10 minutes to run
 // Checks if there are particular incidents in each of the top level directories in the incidents-location-hierarchy bucket
