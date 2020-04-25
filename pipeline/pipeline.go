@@ -8,26 +8,17 @@ import (
 )
 
 var BUCKET_NAME = "incidents-location-hierarchy"
-
-// var BUCKET_NAME = "incident_mounting_test"
 var INCIDENT_CSV = "incidents.csv"
 
-type IncidentProducer interface {
-	findIncidents()
-}
-
-type AnalyzerIncidents struct{}
-
-func (ai *AnalyzerIncidents) findIncidents() {
+func findIncidents() {
 	runSignalSearcher := "go run github.com/m-lab/signal-searcher  | sort -nk1 > " + INCIDENT_CSV
 	cmd := exec.Command("bash", "-c", runSignalSearcher)
 	cmd.Run()
 }
 
 func runPipeline() {
-	// Run script that generates CSV of incidents
-	var i AnalyzerIncidents
-	i.findIncidents()
+	// Generate a CSV file of incidents
+	findIncidents()
 
 	// Temporary place a directory of incidents on the user's desktop to copy files to GCS
 	usersPath := os.Getenv("HOME")

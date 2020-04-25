@@ -14,6 +14,7 @@ import (
 	"google.golang.org/api/option"
 )
 
+// Test takes around 5 minutes to run
 // Check that the CSV was generated
 func Test_findIncidents(t *testing.T) {
 
@@ -29,8 +30,7 @@ func Test_findIncidents(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			analyzer := AnalyzerIncidents{}
-			analyzer.findIncidents()
+			findIncidents()
 			// Attempt to open the file
 			_, err := os.Open(tt.input)
 
@@ -44,7 +44,7 @@ func Test_findIncidents(t *testing.T) {
 	}
 }
 
-// This test takes around 10 minutes to run
+// Test takes around 10 minutes to run
 // Checks if there are particular incidents in each of the top level directories in the incidents-location-hierarchy bucket
 func Test_runPipeline(t *testing.T) {
 	afTest := incident.IncidentJsonData{
@@ -199,8 +199,6 @@ func Test_runPipeline(t *testing.T) {
 				t.Errorf("Could not create read object")
 			}
 			var resultIncidentJson []incident.IncidentJsonData
-			// resultIncidentJson := []incident.IncidentJsonData{}
-			// resultIncidentJson := [incident.IncidentJsonData{}]
 			json.Unmarshal(data, &resultIncidentJson)
 			if resultIncidentJson[0] != tt.want {
 				t.Errorf("JSON objects are not the same")
