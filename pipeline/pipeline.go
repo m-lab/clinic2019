@@ -8,6 +8,8 @@ import (
 )
 
 var BUCKET_NAME = "incidents-location-hierarchy"
+
+// var BUCKET_NAME = "incident_mounting_test"
 var INCIDENT_CSV = "incidents.csv"
 
 type IncidentProducer interface {
