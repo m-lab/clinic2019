@@ -31,16 +31,7 @@ func CsvParser(filePath string, numIncidents ...int) []incident.DefaultIncident 
 	defer f.Close()
 
 	reader := csv.NewReader(f)
-
 	reader.Comma = ','
-
-	//Uncomment this if the csv file has a header
-
-	// rec, err = reader.Read();
-
-	// if err != nil{
-	// 	log.Fatal(err)
-	// }
 
 	if len(numIncidents) > 1 {
 		log.Fatal("Please only input one integer to signify the number of incidents you would like to generate.")
@@ -75,8 +66,6 @@ func CsvParser(filePath string, numIncidents ...int) []incident.DefaultIncident 
 		severityString := strings.Split(rec[5], " ")
 		severity, _ := strconv.ParseFloat(severityString[1], 64)
 
-		testsAffected, _ := strconv.Atoi(rec[0])
-
 		avgGoodDString := strings.Split(rec[6], " ")
 		avgGoodDS, _ := strconv.ParseFloat(avgGoodDString[1], 64)
 
@@ -87,12 +76,18 @@ func CsvParser(filePath string, numIncidents ...int) []incident.DefaultIncident 
 
 		ASN := strings.Split(rec[1], " ")[1]
 
+		testsAffected, err := strconv.Atoi(rec[0])
+
 		// Make an instance of a DefaultIncident that is compatible with the Incident interface
 		defaultIncident := new(incident.DefaultIncident)
 		defaultIncident.MakeIncidentData(goodStartTime, goodEndTime, timeStart, timeEnd, avgGoodDS, avgBadDS, ASN, locationString, severity, testsAffected)
 
-		defaultIncidents = append(defaultIncidents, *defaultIncident)
-
+		// Not all the rows in the csv are for incident data. The title row makes a good example for that
+		// We don't want to treat them as incidents
+		if err == nil {
+			defaultIncidents = append(defaultIncidents, *defaultIncident)
+		}
+		
 		i++
 
 	}
@@ -284,24 +279,19 @@ func readRootDir(rootPath string) []string {
 // represents location in internet topography and files have incidents mapped to
 // a specific ISP and location
 // Root path can be "/Users/[username]/Desktop/incidents/"
-func createHierarchy(rootPath string, incidentsCSVfilePath string, bucketName string) {
-	incidentArray := CsvParser("incidentfile.csv")
+func CreateHierarchy(rootPath string, incidentsCSVfilePath string, bucketName string) {
+	incidentArray := CsvParser(incidentsCSVfilePath)
 	incidentMap := mapIncidentsToLocAndISP(incidentArray)
 	placeIncidentsInFileHierarchy(rootPath, incidentMap)
 	list := readRootDir(rootPath)
 
-	index := 0
 	for _, name := range list {
-		// Ignore the first file since it is a .DS_Store
-		// Ignore the last folder since it is an incident template
-		if index != 0 && index != 7 {
-			// Upload file structure to Google Cloud Storage using the command line gsutil tool
-			dirUploadCmd := "gsutil -m cp -r " + rootPath + name + " gs://" + bucketName
-			cmd := exec.Command("bash", "-c", dirUploadCmd)
-			cmd.Stdout = os.Stdout
-			cmd.Stderr = os.Stderr
-			cmd.Run()
-		}
-		index++
+		// Upload file structure to Google Cloud Storage using the command line gsutil tool
+		dirUploadCmd := "gsutil -m cp -r " + rootPath + name + " gs://" + bucketName
+		cmd := exec.Command("bash", "-c", dirUploadCmd)
+		// To see the upload telemetery progress
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		cmd.Run()
 	}
 }
