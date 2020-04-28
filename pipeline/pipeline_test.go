@@ -189,7 +189,7 @@ func Test_runPipeline(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Uncomment this call to update incidents on Google Cloud Storage
-			runPipeline()
+			// runPipeline()
 
 			// Obtain an object handle for a particular incident in the tested region
 			obj := bkt.Object(tt.input)
