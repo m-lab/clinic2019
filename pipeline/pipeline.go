@@ -7,8 +7,14 @@ import (
 	csvParser "github.com/m-lab/clinic2019/CsvParser"
 )
 
+// The unique identifier of the Google Cloud Storage bucket used to store incidents
 var BUCKET_NAME = "incidents-location-hierarchy"
+
+// The name of the CSV used to hold ungrouped incident data
 var INCIDENT_CSV = "incidents.csv"
+
+// The path where the incident hierarchy will be stored
+var INCIDENT_HIERARCHY_PATH = os.Getenv("HOME") + "/Desktop/generatedIncidents/"
 
 func findIncidents() {
 	runSignalSearcher := "go run github.com/m-lab/signal-searcher  | sort -nk1 > " + INCIDENT_CSV
@@ -16,17 +22,19 @@ func findIncidents() {
 	cmd.Run()
 }
 
+func mountHierarchy() {
+	csvParser.CreateHierarchy(INCIDENT_HIERARCHY_PATH, INCIDENT_CSV, BUCKET_NAME)
+}
+
 func runPipeline() {
 	// Generate a CSV file of incidents
 	findIncidents()
 
-	// Temporary place a directory of incidents on the user's desktop to copy files to GCS
-	usersPath := os.Getenv("HOME")
-	incidentPath := usersPath + "/Desktop/generatedIncidents/"
-	csvParser.CreateHierarchy(incidentPath, INCIDENT_CSV, BUCKET_NAME)
+	// Temporary place a directory of incidents to copy files to GCS
+	mountHierarchy()
 
 	// Remove CSV file and directory of incidents
 	os.Remove(INCIDENT_CSV)
-	os.RemoveAll(incidentPath)
+	os.RemoveAll(INCIDENT_HIERARCHY_PATH)
 
 }
