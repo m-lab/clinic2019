@@ -10,12 +10,12 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
 	"github.com/m-lab/clinic2019/incident_viewer_demo/incident"
 )
 
-// Given a CSV file of incidents metadata, retrieve that meta data to construct incidents
-// Returns an Array of constructed incidents
+// Given a CSV file of incidents metadata and an optional integer, numIncidents, retrieve that meta data to construct incidents
+// Returns an Array of constructed incidents of size numIncidents
+// Returns an Array of all possible incidents if numIncidents argument is omitted
 func CsvParser(filePath string, numIncidents ...int) []incident.DefaultIncident {
 
 	var defaultIncidents []incident.DefaultIncident = make([]incident.DefaultIncident, 0)
@@ -36,7 +36,7 @@ func CsvParser(filePath string, numIncidents ...int) []incident.DefaultIncident 
 	if len(numIncidents) > 1 {
 		log.Fatal("Please only input one integer to signify the number of incidents you would like to generate.")
 	}
-
+ 
 	var i = 0
 	for {
 		rec, err = reader.Read()
@@ -58,7 +58,7 @@ func CsvParser(filePath string, numIncidents ...int) []incident.DefaultIncident 
 		badTimeEndString := strings.Split(rec[4], " ")
 		timeEnd, _ := time.Parse(shortForm, badTimeEndString[1])
 
-		// The good period starts one year prior to the start of the bad period in this demo
+		// Generally the good period starts one year prior to the start of the bad period
 		goodStartTime := timeStart.AddDate(-1, 0, 0)
 		goodEndTime := timeStart
 
@@ -82,8 +82,7 @@ func CsvParser(filePath string, numIncidents ...int) []incident.DefaultIncident 
 		defaultIncident := new(incident.DefaultIncident)
 		defaultIncident.MakeIncidentData(goodStartTime, goodEndTime, timeStart, timeEnd, avgGoodDS, avgBadDS, ASN, locationString, severity, testsAffected)
 
-		// Not all the rows in the csv are for incident data. The title row makes a good example for that
-		// We don't want to treat them as incidents
+		// Do not treat the title row (or any other row where testsAffected is not an integer) as an incident
 		if err == nil {
 			defaultIncidents = append(defaultIncidents, *defaultIncident)
 		}
@@ -98,10 +97,11 @@ func CsvParser(filePath string, numIncidents ...int) []incident.DefaultIncident 
 // Returns incident of type IncidentJsonData
 func convertDefaultIncidentToIncidentJsonData(i incident.DefaultIncident) incident.IncidentJsonData {
 	gpStart, gpEnd, bpStart, bpEnd, gMetric, bMetric, asn, locationString, severity, testsAffected, gpInfo, bpInfo, iInfo := i.GetIncidentData()
-	inc := incident.IncidentJsonData{
-		GoodPeriodStart:  gpStart,
-		GoodPeriodEnd:    gpEnd,
-		BadPeriodStart:   bpStart,
+	
+	return incident.IncidentJsonData{
+		GoodPeriodStart:  gpStart, 
+		GoodPeriodEnd:    gpEnd, 
+		BadPeriodStart:   bpStart, 
 		BadPeriodEnd:     bpEnd,
 		GoodPeriodMetric: gMetric,
 		BadPeriodMetric:  bMetric,
@@ -112,7 +112,6 @@ func convertDefaultIncidentToIncidentJsonData(i incident.DefaultIncident) incide
 		GoodPeriodInfo:   gpInfo,
 		BadPeriodInfo:    bpInfo,
 		IncidentInfo:     iInfo}
-	return inc
 }
 
 // Takes in a location code and slices it into different location levels
@@ -191,8 +190,6 @@ func placeIncidentsInFileHierarchy(rootPath string, incMap map[string]map[string
 			// Call create later. This is all to avoid anything "incremental running"
 			if _, err := os.Stat(filePath); !os.IsNotExist(err) {
 				removeErr := os.Remove(filePath)
-				// Don't know if os.Remove is atomic
-				// Might have to wait for it
 
 				if removeErr != nil {
 					log.Fatalf("failed to remove an existing: %p", removeErr)
@@ -232,6 +229,7 @@ func mapIncidentsToLocAndISP(incArr []incident.DefaultIncident) map[string]map[s
 
 	incidentsMemMap := make(map[string]map[string][]incident.IncidentJsonData)
 	incNum := len(incArr)
+	var incidentsArr []incident.IncidentJsonData = make([]incident.IncidentJsonData, 0)
 
 	for i := 0; i < incNum; i++ {
 
@@ -240,19 +238,17 @@ func mapIncidentsToLocAndISP(incArr []incident.DefaultIncident) map[string]map[s
 		_, found := incidentsMemMap[location]
 		if !found {
 			incidentsAsnMap := make(map[string][]incident.IncidentJsonData)
-			var incidents []incident.IncidentJsonData = make([]incident.IncidentJsonData, 0)
-			incidentsAsnMap[asn] = append(incidents, convertDefaultIncidentToIncidentJsonData(incArr[i]))
+			incidentsAsnMap[asn] = append(incidentsArr, convertDefaultIncidentToIncidentJsonData(incArr[i]))
 			incidentsMemMap[location] = incidentsAsnMap
 
 		} else {
 			// New asn within an existing location
 			_, valFound := incidentsMemMap[location][asn]
 			if !valFound {
-				var incidents []incident.IncidentJsonData = make([]incident.IncidentJsonData, 0)
-				incidentsMemMap[location][asn] = append(incidents, convertDefaultIncidentToIncidentJsonData(incArr[i]))
-			}
+				incidentsMemMap[location][asn] = append(incidentsArr, convertDefaultIncidentToIncidentJsonData(incArr[i]))
+			
 			// Already existing asn within an exisiting location
-			if valFound {
+			} else {
 				incidentsMemMap[location][asn] = append(incidentsMemMap[location][asn], convertDefaultIncidentToIncidentJsonData(incArr[i]))
 			}
 		}
@@ -289,7 +285,7 @@ func CreateHierarchy(rootPath string, incidentsCSVfilePath string, bucketName st
 		// Upload file structure to Google Cloud Storage using the command line gsutil tool
 		dirUploadCmd := "gsutil -m cp -r " + rootPath + name + " gs://" + bucketName
 		cmd := exec.Command("bash", "-c", dirUploadCmd)
-		// To see the upload telemetery progress
+		//The following two lines print upload progress to GCP
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 		cmd.Run()
