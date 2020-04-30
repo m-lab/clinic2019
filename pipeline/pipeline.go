@@ -17,6 +17,7 @@ var INCIDENT_CSV = "incidents.csv"
 var INCIDENT_HIERARCHY_PATH = os.Getenv("HOME") + "/Desktop/generatedIncidents/"
 
 func findIncidents() {
+	// Successfully running this requires appropriate GOOGLE_APPLICATION_CREDENTIALS
 	runSignalSearcher := "go run github.com/m-lab/signal-searcher  | sort -nk1 > " + INCIDENT_CSV
 	cmd := exec.Command("bash", "-c", runSignalSearcher)
 	cmd.Run()
