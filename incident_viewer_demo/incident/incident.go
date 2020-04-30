@@ -65,8 +65,10 @@ func (i *DefaultIncident) MakeIncidentData(goodStartTime time.Time, goodEndTime 
 	testsAffected int) {
 
 	// Convert strings to be float64 types described by 2 decimal places
+	// The 'f' specifier indicates that there is no exponent in the original
+	// floating point number
 	gds := strconv.FormatFloat(avgGoodDS, 'f', 2, 64)
-	bds := strconv.FormatFloat(avgGoodDS, 'f', 2, 64)
+	bds := strconv.FormatFloat(avgBadDS, 'f', 2, 64)
 	s := strconv.FormatFloat(severity*100, 'f', 2, 64)
 	ta := strconv.Itoa(testsAffected)
 
